@@ -3,4 +3,4 @@ from cas import *
 import unittest
 
 class Polynomial(usertest.TestCase):
-def
+    
