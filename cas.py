@@ -1,20 +1,37 @@
 #!/usr/bin/env python3.1
 
 import math
-from ntypes import handle_type
+from ntypes import handle_type, constant
 from decimal import *
+from functools import *
 
 # Set precision for numbers
 getcontext().prec = 3
 
 class function:
     ''' A class to hold arbitrary algebraic functions '''
-    def __init__(self,var):
-        self.var = var
+    def __init__(self,abscissa):
+        self.abscissa = abscissa
     def evaluate(n): pass
-    # TODO: Add numberic differentiation and integration here
-    def differential(): pass
-    def integral(): pass
+    def numerical_integral(self,a,b,n=100): 
+        ''' The numerical integral of the function using the composite 3/8
+        Simpson's Rule
+        (see http://mathworld.wolfram.com/Newton-CotesFormulas.html) '''
+    #    getcontext().prec = 50
+        h = (b - a) / n
+        x = lambda i: a + i*h
+        f = lambda i: float(self.evaluate( x(i) ))
+
+        return h*( (17/48)*f(0) + (59/48)*f(1) + (43/48)*f(2) + (49/48)*f(3)\
+            + sum([f(i) for i in range(4,n-3)])\
+            + (17/48)*f(n-3) + (59/48)*f(n-2) + (43/48)*f(n-1) + (49/48)*f(n) )
+    def trapezoidal_integral(self,a,b,n=100):
+        ''' Numerically integrate functions via the Trapezium Rule'''
+        h = (b - a) / n
+        x = lambda i: a + i*h
+        f = lambda i: float(self.evaluate( x(i) ))
+        
+        return h*( (1/2)*f(0) + sum([ f(i) for i in range(1,n) ]) + (1/2)*f(n) ) 
     def limit(self,lower,upper):
         '''
         >>> y = polynomial('y',1,1,2,3,4,5)
@@ -24,51 +41,21 @@ class function:
         return self.evaluate(upper) - self.evaluate(lower)
 
 class term(function):
-    ''' A class holding a polynomial term
-    >>> y = term(4,'t',5.57); print (y)
-    4*t^5.57
-    >>> y = term(4.45345,'t',5.57); print (y)
-    4.45345*t^5.57
-    >>> y = term(4,'t',3); print (y)
-    4*t^3
-    >>> y = term(4,'t',3); print (y.integral().differential())
-    4*t^3
-    >>> y = term(4,'t',-3); print (y)
-    4*t^-3
-    >>> y = term(-3.4,'t',-3); print (y)
-    -3.4*t^-3
-    >>> y = term(0,'t',-3); print (y)
-    <BLANKLINE>
-    >>> y = term(7,'t',0); print (y)
-    7
-    >>> y = term(7,'t',1); print (y)
-    7*t
-    >>> y = term(1,'t',1); print (y)
-    t
-    >>> y = term(1,'t',0); print (y)
-    1
-    '''
-    def __init__(self, coefficient, var, power):
+    ''' A class holding a polynomial term '''
+    def __init__(self, coefficient, abscissa, power):
         self.coefficient = handle_type(coefficient)
         self.power = handle_type(power)
-        function.__init__(self, var)
+        function.__init__(self, abscissa)
     def __str__(self):
         ''' Output the term nicely via assorted logic '''
         if self.coefficient == 0: return ''
         else: return \
             ('', str(self.coefficient))[self.coefficient != 1 or self.power == 0] \
             + ('', '*')[self.coefficient != 1 and self.power != 0] \
-            + ('', self.var)[self.power != 0] \
+            + ('', self.abscissa)[self.power != 0] \
             + ('', '^' + str(self.power))[0 != self.power != 1]
     def sign(self):
-        ''' Return 0, 1 or -1 depending on the sign of the coefficient
-        >>> y = term(0,'t',3); print (y.sign())
-        0
-        >>> y = term(-5,'t',3); print (y.sign())
-        -1
-        >>> y = term(16.5,'t',3); print (y.sign())
-        1
-        '''
+        ''' Return 0, 1 or -1 depending on the sign of the coefficient '''
         return (0, 1, -1)[(self.coefficient > 0) + 2*(self.coefficient < 0)]
     def __abs__(self):
         ''' Return a version of the term, with the coefficient positive 
@@ -77,19 +64,25 @@ class term(function):
         >>> y = term(12.5,'t',3); print (abs(y))
         12.5*t^3
         '''
-        return term(abs(self.coefficient), self.var, self.power)
+        return term(abs(self.coefficient), self.abscissa, self.power)
     def differential(self):
         '''
         >>> y = term(4,'t',3); print (y.differential())
         12*t^2
         '''
-        return term(self.coefficient * self.power, self.var, self.power - 1)
+        if self.power == 0:
+            return term(0, self.abscissa, 0)
+        else:
+            return term(self.coefficient * self.power, self.abscissa, self.power - 1)
     def integral(self):
         '''
         >>> y = term(4,'t',3); print (y.integral())
         t^4
         '''
-        return term(self.coefficient/(self.power + 1), self.var, self.power + 1)
+        if self.coefficient == 0:
+            return constant()
+        else:
+            return term(self.coefficient/(self.power + 1), self.abscissa, self.power + 1)
     def evaluate(self,x):
         ''' Returns the value of the term for x
         >>> y = term (3, 'x', 2)
@@ -103,12 +96,19 @@ class term(function):
         48
         '''
         return self.coefficient * handle_type(x) ** self.power
+    def __eq__(a,b):
+        return a.coefficient == b.coefficient\
+            and a.abscissa == b.abscissa\
+            and a.power == b.power
+    def __repr__(self):
+        return "term(%s, '%s', %s)"\
+            % (self.coefficient, self.abscissa, self.power)
 
 class polynomial(function):
     ''' A class representing a polynomial '''
-    def __init__(self, var, *nums):
-        function.__init__(self, var)
-        self.terms = [ term(a, var, b) for (a,b) in zip (nums[::2], nums[1::2]) ]
+    def __init__(self, abscissa, *nums):
+        function.__init__(self, abscissa)
+        self.terms = [ term(a, abscissa, b) for (a,b) in zip (nums[::2], nums[1::2]) ]
     def __str__(self):
         ''' A list comprehension to combine the terms of the polynomial
         >>> y = polynomial('y',1,1,2,3,4,5)
@@ -124,7 +124,7 @@ class polynomial(function):
             return ''
     def map_to_terms(self,f):
         ''' Allows list proccessing of terms '''
-        y = polynomial(self.var)
+        y = polynomial(self.abscissa)
         y.terms = list(map(f, self.terms))
         return y
     def differential(self):
@@ -140,11 +140,13 @@ class polynomial(function):
          - Integrate each term
          - Return a polynomial object based on the new terms
         >>> y = polynomial('y',1,1,2,3,4,5)
-        >>> print ('∫ f(y) dy =',y.integral(),'+ c')
+        >>> print ('∫ f(y) dy =',y.integral())
         ∫ f(y) dy = 0.5*y^2 + 0.5*y^4 + 0.667*y^6 + c
         '''
         f = lambda x: x.integral()
-        return (self.map_to_terms(f))
+        a = self.map_to_terms(f)
+        a.terms += [ constant() ]
+        return (a)
     def append(self, coefficient, power):
         ''' Add a term to the polynomial
         >>> y = polynomial('y',1,1,2,3,4,5)
@@ -152,12 +154,26 @@ class polynomial(function):
         >>> print(y)
         y + 2*y^3 + 4*y^5 + 3.14*y^666
         '''
-        self.terms += [ term(coefficient, self.var, power) ]
+        self.terms += [ term(coefficient, self.abscissa, power) ]
+    def newton_raphson(self, x0, n=100):
+        x = Decimal(repr(x0))
+        for i in range(n):
+            x = x - self.evaluate(x) / self.differential().evaluate(x)
+        return x
+    def roots(self, n=100):
+        ''' Numerically locate all roots (real and complex) of an equation using the Durand-Kerner method '''
+        mul = lambda a, b: a * b
+        roots = [ (0.4+0.9j)**n for n in range(len(self.terms)-1) ]
+        print(roots)
+        for i in range(n):
+            for i in range(len(roots)):
+            #    print(x - (self.evaluate(x)) / ( reduce(mul, [x - a for a in roots if not (a is x)]) ))
+                roots[i] = roots[i] - (self.evaluate(roots[i])) / ( reduce(mul, [roots[i] - a for a in roots if not (a is roots[i])]) )
+        return roots
     def evaluate(self, x):
         ''' Return the value of f(x)
          - Evalute each term
-         - Sum them
-        '''
+         - Sum them '''
         g = lambda a: a.evaluate(x)
         return sum(map(g, self.terms))
 

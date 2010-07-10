@@ -1,12 +1,25 @@
 #!/usr/bin/env python3.1
 
 from fractions import Fraction
-from decimal import Decimal
+from decimal import Decimal, getcontext
+
+# Set precision for numbers
+getcontext().prec = 3
 
 def handle_type (a):
     if type(a) == int: return nint(a)
-    elif type(a) == float: return Decimal(repr(a))
-    else: return Decimal(a)
+    elif type(a) == float: return Decimal(repr(a)).normalize()
+    elif type(a) == complex: return a
+    else: return Decimal(a).normalize()
+
+class constant():
+    ''' A class to represent an unknown constant term '''
+    name='c'
+    def sign(self): return 1
+    def __eq__(a,b): return True
+    def __str__(self): return self.name
+    def __abs__(self): return self
+    def evaluate(self,a): return 0
 
 class nint(int):
     ''' An extended integer class, providing better mathematical
@@ -15,5 +28,3 @@ class nint(int):
         if a % b == 0: return a // b
         else: return Decimal(a) / Decimal(b)
         #    return Fraction(a,b)
-
-# class nconst(Decimal):
