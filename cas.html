@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module cas</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>cas</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/tom/Desktop/Computing Project/cas.py">/home/tom/Desktop/Computing Project/cas.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="cas.html#Function">Function</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="cas.html#Polynomial">Polynomial</a>
+</font></dt><dt><font face="helvetica, arial"><a href="cas.html#Term">Term</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Function">class <strong>Function</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;class&nbsp;to&nbsp;hold&nbsp;arbitrary&nbsp;algebraic&nbsp;functions<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Function-__init__"><strong>__init__</strong></a>(self, abscissa)</dt></dl>
+
+<dl><dt><a name="Function-evaluate"><strong>evaluate</strong></a>(n)</dt></dl>
+
+<dl><dt><a name="Function-limit"><strong>limit</strong></a>(self, lower, upper)</dt><dd><tt>Calculate&nbsp;the&nbsp;limit&nbsp;of&nbsp;a&nbsp;funtion&nbsp;between&nbsp;2&nbsp;points</tt></dd></dl>
+
+<dl><dt><a name="Function-numerical_integral"><strong>numerical_integral</strong></a>(self, a, b, n<font color="#909090">=100</font>)</dt><dd><tt>The&nbsp;numerical&nbsp;integral&nbsp;of&nbsp;the&nbsp;function&nbsp;using&nbsp;the&nbsp;composite&nbsp;3/8<br>
+Simpson's&nbsp;Rule<br>
+(see&nbsp;<a href="http://mathworld.wolfram.com/Newton-CotesFormulas.html">http://mathworld.wolfram.com/Newton-CotesFormulas.html</a>)</tt></dd></dl>
+
+<dl><dt><a name="Function-trapezoidal_integral"><strong>trapezoidal_integral</strong></a>(self, a, b, n<font color="#909090">=100</font>)</dt><dd><tt>Numerically&nbsp;integrate&nbsp;functions&nbsp;via&nbsp;the&nbsp;Trapezium&nbsp;Rule</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Polynomial">class <strong>Polynomial</strong></a>(<a href="cas.html#Function">Function</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;class&nbsp;representing&nbsp;a&nbsp;polynomial<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="cas.html#Polynomial">Polynomial</a></dd>
+<dd><a href="cas.html#Function">Function</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Polynomial-__add__"><strong>__add__</strong></a>(a, b)</dt></dl>
+
+<dl><dt><a name="Polynomial-__init__"><strong>__init__</strong></a>(self, abscissa, *nums)</dt><dd><tt>Initiates&nbsp;the&nbsp;polynomial&nbsp;with&nbsp;a&nbsp;string&nbsp;containing&nbsp;the&nbsp;abscissa<br>
+followed&nbsp;by&nbsp;pairs&nbsp;of&nbsp;coefficients&nbsp;and&nbsp;powers</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-__radd__"><strong>__radd__</strong></a> = <a href="#Polynomial-__add__">__add__</a>(a, b)</dt></dl>
+
+<dl><dt><a name="Polynomial-__repr__"><strong>__repr__</strong></a> = <a href="#Polynomial-__str__">__str__</a>(self)</dt></dl>
+
+<dl><dt><a name="Polynomial-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>A&nbsp;list&nbsp;comprehension&nbsp;to&nbsp;combine&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;polynomial</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-append"><strong>append</strong></a>(self, coefficient, power)</dt><dd><tt>Add&nbsp;a&nbsp;term&nbsp;to&nbsp;the&nbsp;polynomial</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-differential"><strong>differential</strong></a>(self)</dt><dd><tt>Calculate&nbsp;the&nbsp;differential&nbsp;of&nbsp;the&nbsp;expression<br>
+&gt;&gt;&gt;&nbsp;y&nbsp;=&nbsp;<a href="#Polynomial">Polynomial</a>('y',1,1,2,3,4,5)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;('f`(y)&nbsp;=',&nbsp;y.<a href="#Polynomial-differential">differential</a>())<br>
+f`(y)&nbsp;=&nbsp;1&nbsp;+&nbsp;6*y^2&nbsp;+&nbsp;20*y^4</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-evaluate"><strong>evaluate</strong></a>(self, x)</dt><dd><tt>Return&nbsp;the&nbsp;value&nbsp;of&nbsp;f(x)<br>
+-&nbsp;Evalute&nbsp;each&nbsp;term<br>
+-&nbsp;Sum&nbsp;them</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-integral"><strong>integral</strong></a>(self)</dt><dd><tt>Calculate&nbsp;the&nbsp;indefinite&nbsp;integral&nbsp;of&nbsp;the&nbsp;expression<br>
+&nbsp;-&nbsp;Integrate&nbsp;each&nbsp;term<br>
+&nbsp;-&nbsp;Return&nbsp;a&nbsp;polynomial&nbsp;<a href="builtins.html#object">object</a>&nbsp;based&nbsp;on&nbsp;the&nbsp;new&nbsp;terms<br>
+&gt;&gt;&gt;&nbsp;y&nbsp;=&nbsp;<a href="#Polynomial">Polynomial</a>('y',1,1,2,3,4,5)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;('∫&nbsp;f(y)&nbsp;dy&nbsp;=',&nbsp;y.<a href="#Polynomial-integral">integral</a>())<br>
+∫&nbsp;f(y)&nbsp;dy&nbsp;=&nbsp;0.5*y^2&nbsp;+&nbsp;0.5*y^4&nbsp;+&nbsp;0.667*y^6&nbsp;+&nbsp;c</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-map_to_terms"><strong>map_to_terms</strong></a>(self, f)</dt><dd><tt>Allows&nbsp;list&nbsp;processing&nbsp;of&nbsp;terms</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-newton_raphson"><strong>newton_raphson</strong></a>(self, x0, n<font color="#909090">=100</font>)</dt><dd><tt>Find&nbsp;1&nbsp;root&nbsp;of&nbsp;an&nbsp;equation&nbsp;based&nbsp;upon&nbsp;an&nbsp;initial&nbsp;guess&nbsp;of&nbsp;x0&nbsp;and<br>
+n&nbsp;iteration&nbsp;of&nbsp;the&nbsp;Newton&nbsp;Raphson&nbsp;method:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x'&nbsp;=&nbsp;x&nbsp;-&nbsp;f(x)&nbsp;/&nbsp;f'(x)</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-order"><strong>order</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;power&nbsp;of&nbsp;the&nbsp;equation&nbsp;(taken&nbsp;to&nbsp;be&nbsp;the&nbsp;greatest&nbsp;power<br>
+of&nbsp;a&nbsp;term&nbsp;i.e.&nbsp;the&nbsp;power&nbsp;of&nbsp;the&nbsp;leading&nbsp;term)</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-roots"><strong>roots</strong></a>(self, n<font color="#909090">=100</font>)</dt><dd><tt>Numerically&nbsp;locate&nbsp;all&nbsp;roots&nbsp;(real&nbsp;and&nbsp;complex)&nbsp;of&nbsp;an&nbsp;equation<br>
+using&nbsp;n&nbsp;iterations&nbsp;of&nbsp;the&nbsp;Durand-Kerner&nbsp;method</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-sort_terms"><strong>sort_terms</strong></a>(self)</dt></dl>
+
+<hr>
+Methods inherited from <a href="cas.html#Function">Function</a>:<br>
+<dl><dt><a name="Polynomial-limit"><strong>limit</strong></a>(self, lower, upper)</dt><dd><tt>Calculate&nbsp;the&nbsp;limit&nbsp;of&nbsp;a&nbsp;funtion&nbsp;between&nbsp;2&nbsp;points</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-numerical_integral"><strong>numerical_integral</strong></a>(self, a, b, n<font color="#909090">=100</font>)</dt><dd><tt>The&nbsp;numerical&nbsp;integral&nbsp;of&nbsp;the&nbsp;function&nbsp;using&nbsp;the&nbsp;composite&nbsp;3/8<br>
+Simpson's&nbsp;Rule<br>
+(see&nbsp;<a href="http://mathworld.wolfram.com/Newton-CotesFormulas.html">http://mathworld.wolfram.com/Newton-CotesFormulas.html</a>)</tt></dd></dl>
+
+<dl><dt><a name="Polynomial-trapezoidal_integral"><strong>trapezoidal_integral</strong></a>(self, a, b, n<font color="#909090">=100</font>)</dt><dd><tt>Numerically&nbsp;integrate&nbsp;functions&nbsp;via&nbsp;the&nbsp;Trapezium&nbsp;Rule</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="cas.html#Function">Function</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Term">class <strong>Term</strong></a>(<a href="cas.html#Function">Function</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;class&nbsp;holding&nbsp;a&nbsp;polynomial&nbsp;term<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="cas.html#Term">Term</a></dd>
+<dd><a href="cas.html#Function">Function</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Term-__abs__"><strong>__abs__</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;version&nbsp;of&nbsp;the&nbsp;term,&nbsp;with&nbsp;the&nbsp;coefficient&nbsp;positive</tt></dd></dl>
+
+<dl><dt><a name="Term-__eq__"><strong>__eq__</strong></a>(a, b)</dt><dd><tt>Compare&nbsp;whether&nbsp;2&nbsp;terms&nbsp;are&nbsp;equal</tt></dd></dl>
+
+<dl><dt><a name="Term-__init__"><strong>__init__</strong></a>(self, coefficient, abscissa, power)</dt></dl>
+
+<dl><dt><a name="Term-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><tt>Print&nbsp;a&nbsp;representation&nbsp;of&nbsp;the&nbsp;term</tt></dd></dl>
+
+<dl><dt><a name="Term-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Output&nbsp;the&nbsp;term&nbsp;nicely&nbsp;via&nbsp;assorted&nbsp;logic</tt></dd></dl>
+
+<dl><dt><a name="Term-differential"><strong>differential</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;differential</tt></dd></dl>
+
+<dl><dt><a name="Term-evaluate"><strong>evaluate</strong></a>(self, x)</dt><dd><tt>Returns&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;term&nbsp;for&nbsp;x</tt></dd></dl>
+
+<dl><dt><a name="Term-integral"><strong>integral</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;indefinite&nbsp;integral</tt></dd></dl>
+
+<dl><dt><a name="Term-invert"><strong>invert</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;term&nbsp;with&nbsp;its&nbsp;coefficient&nbsp;inverted</tt></dd></dl>
+
+<dl><dt><a name="Term-sign"><strong>sign</strong></a>(self)</dt><dd><tt>Return&nbsp;0,&nbsp;1&nbsp;or&nbsp;-1&nbsp;depending&nbsp;on&nbsp;the&nbsp;sign&nbsp;of&nbsp;the&nbsp;coefficient</tt></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<hr>
+Methods inherited from <a href="cas.html#Function">Function</a>:<br>
+<dl><dt><a name="Term-limit"><strong>limit</strong></a>(self, lower, upper)</dt><dd><tt>Calculate&nbsp;the&nbsp;limit&nbsp;of&nbsp;a&nbsp;funtion&nbsp;between&nbsp;2&nbsp;points</tt></dd></dl>
+
+<dl><dt><a name="Term-numerical_integral"><strong>numerical_integral</strong></a>(self, a, b, n<font color="#909090">=100</font>)</dt><dd><tt>The&nbsp;numerical&nbsp;integral&nbsp;of&nbsp;the&nbsp;function&nbsp;using&nbsp;the&nbsp;composite&nbsp;3/8<br>
+Simpson's&nbsp;Rule<br>
+(see&nbsp;<a href="http://mathworld.wolfram.com/Newton-CotesFormulas.html">http://mathworld.wolfram.com/Newton-CotesFormulas.html</a>)</tt></dd></dl>
+
+<dl><dt><a name="Term-trapezoidal_integral"><strong>trapezoidal_integral</strong></a>(self, a, b, n<font color="#909090">=100</font>)</dt><dd><tt>Numerically&nbsp;integrate&nbsp;functions&nbsp;via&nbsp;the&nbsp;Trapezium&nbsp;Rule</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="cas.html#Function">Function</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-reduce"><strong>reduce</strong></a>(...)</dt><dd><tt><a href="#-reduce">reduce</a>(function,&nbsp;sequence[,&nbsp;initial])&nbsp;-&gt;&nbsp;value<br>
+&nbsp;<br>
+Apply&nbsp;a&nbsp;function&nbsp;of&nbsp;two&nbsp;arguments&nbsp;cumulatively&nbsp;to&nbsp;the&nbsp;items&nbsp;of&nbsp;a&nbsp;sequence,<br>
+from&nbsp;left&nbsp;to&nbsp;right,&nbsp;so&nbsp;as&nbsp;to&nbsp;reduce&nbsp;the&nbsp;sequence&nbsp;to&nbsp;a&nbsp;single&nbsp;value.<br>
+For&nbsp;example,&nbsp;<a href="#-reduce">reduce</a>(lambda&nbsp;x,&nbsp;y:&nbsp;x+y,&nbsp;[1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5])&nbsp;calculates<br>
+((((1+2)+3)+4)+5).&nbsp;&nbsp;If&nbsp;initial&nbsp;is&nbsp;present,&nbsp;it&nbsp;is&nbsp;placed&nbsp;before&nbsp;the&nbsp;items<br>
+of&nbsp;the&nbsp;sequence&nbsp;in&nbsp;the&nbsp;calculation,&nbsp;and&nbsp;serves&nbsp;as&nbsp;a&nbsp;default&nbsp;when&nbsp;the<br>
+sequence&nbsp;is&nbsp;empty.</tt></dd></dl>
+</td></tr></table>
+</body></html>
