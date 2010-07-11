@@ -1,13 +1,18 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python3
 
 from fractions import Fraction
 from decimal import Decimal, getcontext
+import re
 
 # Set precision for numbers
 getcontext().prec = 3
 
 def handle_type (a):
-    if type(a) == int: return nint(a)
+    int_pattern = re.compile('^[0-9]+$')
+    if type(a) == nint: return a
+    elif type(a) == Decimal: return a
+    elif type(a) == int: return nint(a)
+    elif type(a) == str and int_pattern.match(a): return nint(a)
     elif type(a) == float: return Decimal(repr(a)).normalize()
     elif type(a) == complex: return a
     else: return Decimal(a).normalize()
