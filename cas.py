@@ -7,8 +7,14 @@ from functools import reduce
 from ntypes import handle_type, constant, nint
 
 # Set precision for numbers
-getcontext().prec = 3
+# getcontext().prec = 3
 
+def boole_composite_integral(f,a,b,m):
+    h = (b-a)/(4*m)
+    print(type(h))
+    x = lambda k: a + k*h
+    return (2*h/45)*sum( 7*f(x(4*k-4)) + 32*f(x(4*k-3)) + 12*f(x(4*k-2))
+            + 32*f(x(4*k-2)) + 7*f(x(4*k)) for k in range(1,m) )
 
 class Function:
     ''' A class to hold arbitrary algebraic functions '''
@@ -22,23 +28,41 @@ class Function:
         Simpson's Rule
         (see http://mathworld.wolfram.com/Newton-CotesFormulas.html) '''
     #    getcontext().prec = 50
-        h = (b - a) / n
-        x = lambda i: a + i*h
-        f = lambda i: float(self.evaluate( x(i) ))
+        return boole_composite_integral(lambda x: self.evaluate(x), a,b,n)
 
-        return h*( (17/48)*f(0) + (59/48)*f(1) + (43/48)*f(2) + (49/48)*f(3)
-            + sum( f(i) for i in range(4,n-3) )
-            + (17/48)*f(n-3) + (59/48)*f(n-2) + (43/48)*f(n-1)
-            + (49/48)*f(n) )
+#        h = (Decimal(repr(b)) - Decimal(repr(a))) / n
+#        x = lambda i: a + i*h
+#        f = lambda i: Decimal(self.evaluate( i ))
+
+#        print(x(n), b)
+#        print([(i, i+1, i+2) for i in range(1,n,3)])
+
+#       Cumulative 3/8
+#        return (3*h/8)*(f(0) + sum(3*f(i) + 3*f(i+1) + 2*f(i+2) 
+#            for i in range(1,n,3)) + f(n))
+
+#       Combined / expanded formula
+#        return h*( (17*f(0) + 59*f(1) + 43*f(2) + 49*f(3))/48
+#            + sum( f(i) for i in range(4,n-3) )
+#            + (17*f(n-3) + 59*f(n-2) + 43*f(n-1) + 49*f(n))/48 )
+
+#       Composite Boole's Rule
+#        x = lambda i: a + k*h
+#        return (2*h/45) * sum(7*f(x(0)) + 32*f(x(1)) + 12*f(x(2))
+#            + 32*f(x(3)) + 7*f(x(4)) for k in range(1,4*n))
+
+#       Open formula
+#        return (8*h/945)*(460*f(1) - 954*f(2) + 2196*f(3) - 2459*f(4)
+#            + 2196*f(5) - 954*f(6) + 460*f(7))
 
     def trapezoidal_integral(self, a, b, n=100):
         ''' Numerically integrate functions via the Trapezium Rule '''
-        h = (b - a) / n
+        h = (Decimal(repr(b)) - Decimal(repr(a))) / n
         x = lambda i: a + i*h
-        f = lambda i: float(self.evaluate( x(i) ))
+        f = lambda i: Decimal(self.evaluate( x(i) ))
         
-        return h*( (1/2)*f(0)
-            + sum( f(i) for i in range(1,n) ) + (1/2)*f(n) ) 
+        return h*( f(0)/2
+            + sum( f(i) for i in range(1,n) ) + f(n)/2 ) 
 
     def limit(self, lower, upper):
         ''' Calculate the limit of a funtion between 2 points '''

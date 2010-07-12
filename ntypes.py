@@ -33,3 +33,5 @@ class nint(int):
         if a % b == 0: return a // b
         else: return Decimal(a) / Decimal(b)
         #    return Fraction(a,b)
+    def __sub__(a,b):
+        return nint(int(a) - int(b))

@@ -2,15 +2,16 @@
 
 import os
 import readline
+import os
+import pyparsing_py3
 from calculator import Calculator
 
 calc = Calculator()
 
 if __name__ == '__main__':
 
-    # Read any existing history file  
-    try: readline.read_history_file()
-    except: pass
+    # Read any existing history file 
+    if os.name == 'posix': readline.read_history_file()
 
     while True:
         try:
@@ -18,9 +19,15 @@ if __name__ == '__main__':
             print(calc.evaluate(input('>>> ')))
             
             # Write command history
-            readline.write_history_file()
+            if os.name == 'posix': readline.write_history_file()
         except SystemExit:
             print('Bye!')
             break
-     #   except:
-     #       print('Invalid command!')
+        except KeyError:
+            print('Command not found!')
+        except pyparsing_py3.ParseException:
+            print('Invalid input!')
+        except KeyboardInterrupt:
+            print('Command canceled.')
+#        except:
+#            print('Invalid operation!')
