@@ -4,8 +4,9 @@ from decimal import Decimal, getcontext
 from sys import exit
 
 from cas import *
-from ntypes import nint
+from ntypes import nint, hstr
 from parser import parseCommand
+from gnuplot import plot_function
 getcontext().prec = 3
 
 def print_complex(a):
@@ -20,6 +21,14 @@ def setPrecision(a):
     getcontext().prec = int(a)
     return 'Done!'
 
+def plot(f):
+    file_name = plot_function(f)
+    print(file_name[2:100])
+    return hstr (
+        'Image saved to %s' % file_name,
+        '<img src="%s">' % file_name
+        )
+
 class Calculator():
     commands = {
         'diff1' : lambda a: str(a.differential()),
@@ -33,6 +42,11 @@ class Calculator():
             a.roots())),
         'solve2' : lambda a,n: 'x = ' + ' or '.join(map(print_complex,
             a.roots(n))),
+        'plot1' : plot,
+        'test' : lambda: hstr('test', '<b>test</b>'),
+        'about' : lambda: hstr('Copyright Tom Wright <tom.tdw@gmail.com>',
+            '''<img src="./images/about.png"><br>
+            This program was written by Tom Wright <tom.tdw@gmail.com>'''),
         'evaluate2' : lambda a,b: a.evaluate(b),
         'help' : lambda: 'Commands include: solve, diff, integrate',
         'setprecision1' : setPrecision,

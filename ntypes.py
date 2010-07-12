@@ -35,3 +35,10 @@ class nint(int):
         #    return Fraction(a,b)
     def __sub__(a,b):
         return nint(int(a) - int(b))
+
+class hstr():
+    ''' An extended string also holding a html version '''
+    def __init__(self,plain,html):
+        self.plain, self.html = str(plain), str(html)
+    def __str__(self):
+        return str(self.plain)
