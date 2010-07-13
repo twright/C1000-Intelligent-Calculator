@@ -11,7 +11,6 @@ from ntypes import handle_type, constant, nint
 
 def boole_composite_integral(f,a,b,m):
     h = (b-a)/(4*m)
-    print(type(h))
     x = lambda k: a + k*h
     return (2*h/45)*sum( 7*f(x(4*k-4)) + 32*f(x(4*k-3)) + 12*f(x(4*k-2))
             + 32*f(x(4*k-2)) + 7*f(x(4*k)) for k in range(1,m) )
@@ -28,7 +27,7 @@ class Function:
         Simpson's Rule
         (see http://mathworld.wolfram.com/Newton-CotesFormulas.html) '''
     #    getcontext().prec = 50
-        return boole_composite_integral(lambda x: self.evaluate(x), a,b,n)
+        return boole_composite_integral(lambda x: float(self.evaluate(x)), a,b,n)
 
 #        h = (Decimal(repr(b)) - Decimal(repr(a))) / n
 #        x = lambda i: a + i*h
@@ -57,9 +56,9 @@ class Function:
 
     def trapezoidal_integral(self, a, b, n=100):
         ''' Numerically integrate functions via the Trapezium Rule '''
-        h = (Decimal(repr(b)) - Decimal(repr(a))) / n
+        h = (float(b) - float(a)) / n
         x = lambda i: a + i*h
-        f = lambda i: Decimal(self.evaluate( x(i) ))
+        f = lambda i: float(self.evaluate( x(i) ))
         
         return h*( f(0)/2
             + sum( f(i) for i in range(1,n) ) + f(n)/2 ) 
@@ -228,6 +227,7 @@ class Polynomial(Function):
                 / ( reduce(mul, [roots[i]\
                 - a for a in roots if a is not roots[i]]) )
         return roots
+        
     def evaluate(self, x):
         ''' Return the value of f(x)
          - Evalute each term

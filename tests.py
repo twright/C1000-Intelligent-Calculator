@@ -3,7 +3,7 @@ from cas import *
 from ntypes import *
 from decimal import Decimal
 import unittest
-import parser
+import expr_parser
 from calculator import *
 
 class Parsing(unittest.TestCase):
@@ -13,7 +13,7 @@ class Parsing(unittest.TestCase):
         ''' Once parsed, each polynomial is converted to a string and
         compareed with the input '''
         for a in self.polys:
-            self.assertEqual(a, str(parser.parsePoly(a)))
+            self.assertEqual(a, str(expr_parser.parse_poly(a)))
 
 class HandlingTypes(unittest.TestCase):
     vals = [(3.4,Decimal), (1,nint), ('3.4',Decimal), ('4',nint)]
@@ -40,18 +40,19 @@ class Polynomials(unittest.TestCase):
 
     def test_differential(self):
         ''' Tests polynomials can be correctly differentiated '''
-        self.assertEqual(str(self.y.differential()), '1 + 6x^2 + 20x^4')
+        self.assertEqual(str(self.y.differential()),
+            '20x^4 + 6x^2 + 1')
         
     def test_integral(self):
         ''' Tests polynomials can be correctly integrated '''
         self.assertEqual(str(self.y.integral()),
-            '0.5x^2 + 0.5x^4 + 0.667x^6 + c')
+            '0.667x^6 + 0.5x^4 + 0.5x^2 + c')
 
     def test_append(self):
         ''' Tests elements can be appended to functions '''
         import copy
         z = copy.deepcopy(self.y); z.append(3.141, 666)
-        self.assertEqual(str(z), 'x + 2x^3 + 4x^5 + 3.14x^666')
+        self.assertEqual(str(z), '3.14x^666 + 4x^5 + 2x^3 + x')
 
     def test_abs(self):
         ''' Tests abs works '''
