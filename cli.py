@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import os
-import readline
-import os
+
+if os.name == 'posix': import readline
 import pyparsing_py3
 from calculator import Calculator
 
@@ -28,6 +28,6 @@ if __name__ == '__main__':
         except pyparsing_py3.ParseException:
             print('Invalid input!')
         except KeyboardInterrupt:
-            print('Command canceled.')
-#        except:
-#            print('Invalid operation!')
+            print('Command cancelled.')
+        except:
+            print('Invalid operation!')

@@ -5,8 +5,8 @@ from sys import exit
 
 from cas import *
 from ntypes import nint, hstr
-from parser import parseCommand
-from gnuplot import plot_function
+from expr_parser import parse_command
+from gnuplot import Gnuplot
 getcontext().prec = 3
 
 def print_complex(a):
@@ -21,12 +21,13 @@ def setPrecision(a):
     getcontext().prec = int(a)
     return 'Done!'
 
-def plot(f):
-    file_name = plot_function(f)
-    print(file_name[2:100])
+def plot(f, *between):
+    graph = Gnuplot()
+    file_name = graph.file_name
+    graph.plot_function(f, *between)
     return hstr (
         'Image saved to %s' % file_name,
-        '<img src="%s">' % file_name
+        r'<img src="' + file_name + '">'
         )
 
 class Calculator():
@@ -43,6 +44,7 @@ class Calculator():
         'solve2' : lambda a,n: 'x = ' + ' or '.join(map(print_complex,
             a.roots(n))),
         'plot1' : plot,
+        'plot3' : plot,
         'test' : lambda: hstr('test', '<b>test</b>'),
         'about' : lambda: hstr('Copyright Tom Wright <tom.tdw@gmail.com>',
             '''<img src="./images/about.png"><br>
@@ -53,7 +55,8 @@ class Calculator():
         'quit' : exit
     }
     def _evaluate(self, a):
+        # print (*a)
         return (self.commands[a[0] + str(len(a)-1)] (*a[1:100]) if len(a) > 1 
             else self.commands[a[0]]())
     def evaluate(self, a):
-        return self._evaluate(parseCommand(a))
+        return self._evaluate(parse_command(a))

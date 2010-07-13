@@ -2,25 +2,31 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 from calculator import Calculator
+from ntypes import hstr
 
 
 class Ui_MainWindow():
     def runCommand(self):
-      #  try:
+        self.textEdit.moveCursor(QtGui.QTextCursor.End)
+    #    self.textEdit.selectAll()
+        self.textEdit.insertHtml('\n<p>\n')
+        #try:
         command = self.lineEdit.text()
         output = self.calc.evaluate(command)
-        self.textEdit.append(command + '\n')
-        if type(output) == str:
-            self.textEdit.append(output + '\n')
+        self.textEdit.append(command)
+        if type(output) == hstr:
+            self.textEdit.insertHtml('\n<br>\n' + output.html + '\n')
         else:
-            self.textEdit.insertHtml(output.html + '\n<br>\n')
-     #   except:
-     #       self.textEdit.insertHtml('<b style="color : red">Invalid Command!</b><br>\n<img src="///home/tom/Desktop/Computing%20Project/logo.png">')
+            self.textEdit.append('   ' + str(output))
+       # except:
+       #     self.textEdit.insertHtml('<br><b style="color : red">Invalid Command!</b><br>\n')
+        self.textEdit.insertHtml('\n</p>\n')
     def setupUi(self, MainWindow):
         self.calc = Calculator()
         MainWindow.setObjectName('MainWindow')
-        MainWindow.resize(512, 422)
+        MainWindow.setFixedSize(512, 422)
 
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -39,7 +45,8 @@ class Ui_MainWindow():
         self.lineEdit.setObjectName("lineEdit")
         MainWindow.setCentralWidget(self.centralwidget)
 
-        QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL("returnPressed()"), self.runCommand)
+        QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL("returnPressed()"),
+            self.runCommand)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 if __name__ == "__main__":

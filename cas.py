@@ -249,6 +249,16 @@ class Polynomial(Function):
             c.append((aterms[i].coefficient if i in aterms else 0) 
                 - (bterms[i].coefficient if i in bterms else 0), i)
         return c
+        
+    def as_gnuplot_expression(self):
+        ''' Convert into the gnuplot format '''
+        from re import sub
+        expr = str(self)
+        # Add * from multiplication
+        expr = sub(r'([0-9])x', r'\1*x', expr, 100) 
+        # Replace ^ with ** for powers
+        expr = sub(r'\^', r'**', expr, 100) 
+        return expr
 
     __rsub__ = __sub__
 
