@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.1
 import os
 import random
 from tempfile import gettempdir
