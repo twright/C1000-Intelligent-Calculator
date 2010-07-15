@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.1
 from cas import *
 from ntypes import *
 from decimal import Decimal
@@ -165,12 +165,17 @@ class Calculations(unittest.TestCase):
         self.calc = Calculator()
 
     def test_solve(self):
+        ''' Test the solver works correctly '''
         self.assertEqual(self.calc.evaluate('solve x^2 - 2x - 15'),
             'x = 5 or -3')
         self.assertEqual(self.calc.evaluate('solve x^3 - 19x - 30'),
             'x = 5 or -3 or -2')
         self.assertEqual(self.calc.evaluate('solve x^3 + 3x^2 - 6x - 8'),
             'x = 2 or -4 or -1')
+
+    def test_basic_maths(self):
+        ''' Test that basic calculator functionality works '''
+        pass
 
 
 if __name__ == '__main__':

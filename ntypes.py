@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.1
 
 from fractions import Fraction
 from decimal import Decimal, getcontext

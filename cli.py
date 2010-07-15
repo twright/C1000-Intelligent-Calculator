@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.1
 
 import os
 
@@ -11,7 +11,9 @@ calc = Calculator()
 if __name__ == '__main__':
 
     # Read any existing history file 
-    if os.name == 'posix': readline.read_history_file()
+    if os.name == 'posix': 
+        try: readline.read_history_file()
+        except: pass
 
     while True:
         try:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.1
 
 from decimal import Decimal, getcontext
 from copy import deepcopy, copy
@@ -140,6 +140,30 @@ class Term(Function):
         a = deepcopy(self); a.coefficient *= -1
         return a
 
+    def __mul__(a,b):
+        assert (a.abscissa == b.abscissa)
+        return Term(a.coefficient*b.coefficient, a.abscissa, a.power+b.power)
+    __rmul__ = __mul__
+
+    def _convert_other(self, other):
+        if isinstance(other, Term):
+            return other
+        elif isinstance(other, nint) or isinstance(other, Decimal):
+            return Term(other, self.abscissa, 0)
+
+    def __truediv__(a,b):
+        b = a._convert_other(b)
+        return Term(a.coefficient/b.coefficient, a.abscissa, a.power-b.power)
+
+    def __sub__(a,b):
+        return a + b.invert()
+
+    def __add__(a,b):
+        assert (a.abscissa == b.abscissa)
+        c = Polynomial(a.abscissa)
+        c.terms = [a, b]
+        c.sort_terms()
+        return c + Polynomial(a.abscissa,0,0)
 
 class Polynomial(Function):
     ''' A class representing a polynomial '''
@@ -230,25 +254,69 @@ class Polynomial(Function):
         
     def evaluate(self, x):
         ''' Return the value of f(x)
-         - Evalute each term
+         - Evaluate each term
          - Sum them '''
         g = lambda a: a.evaluate(x)
         return sum(map(g, self.terms))
 
     def sort_terms(self):
+        ''' Sort terms in order of descending power '''
         power = lambda a: a.power
         self.terms.sort(key=power, reverse=True)
 
+    def simplify(a):
+        a.sort_terms()
+        b = Polynomial(a.abscissa)
+        b.terms += [ a.terms[0] ]
+        for i in range(1,len(a.terms)):
+            if a.terms[i].power != b.terms[-1].power:
+                b.terms += [ a.terms[i] ]
+            elif a.terms[i].coefficient != 0:
+                b.terms[-1].coefficient += a.terms[i].coefficient
+        return b
+
+    def invert(self):
+        return self.map_to_terms(lambda t: t.invert())
+
+    def _convert_other(self, other):
+        if isinstance(other, Polynomial):
+            return other
+        elif isinstance(other,nint) or isinstance(other,Decimal):
+            return Polynomial(self.abscissa, other, 0)
+        else:
+            return NotImplemented
+
     def __sub__(a, b):
-        if a.abscissa != b.abscissa: return None
-        aterms = dict([(t.power, t) for t in a.terms])
-        bterms = dict([(t.power, t) for t in b.terms])
-        highest_power = max([a.order(), b.order()])
+        b = a._convert_other(b)
+        return a + b.invert()
+    __rsub__ = __sub__
+
+    def __add__(a, b):
+        b = a._convert_other(b)
         c = Polynomial(a.abscissa)
-        for i in range(highest_power, 0, -1):
-            c.append((aterms[i].coefficient if i in aterms else 0) 
-                - (bterms[i].coefficient if i in bterms else 0), i)
-        return c
+        c.terms = a.terms + b.terms
+        return c.simplify()
+    __radd__ = __add__
+
+    def __mul__(a, b):
+        b = a._convert_other(b)
+        c = Polynomial(a.abscissa)
+        for l in a.terms:
+            for m in b.terms:
+                c.terms += [ l * m ]
+        return c.simplify()
+    __rmul__ = __mul__
+
+    def __truediv__(a,b):
+        assert isinstance(b, nint) or isinstance(b, Decimal)
+        c = Polynomial(a.abscissa)
+        for l in a.terms:
+            c.terms += [ l / b ]
+        return c.simplify()
+
+    def __pow__(self, m):
+        assert isinstance(m, nint)
+        return reduce(lambda a,b: a * b, [self for i in range(m)])
         
     def as_gnuplot_expression(self):
         ''' Convert into the gnuplot format '''
@@ -259,8 +327,6 @@ class Polynomial(Function):
         # Replace ^ with ** for powers
         expr = sub(r'\^', r'**', expr, 100) 
         return expr
-
-    __rsub__ = __sub__
 
 if __name__ == '__main__':
     import doctest
