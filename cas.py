@@ -27,7 +27,7 @@ class Function:
         Simpson's Rule
         (see http://mathworld.wolfram.com/Newton-CotesFormulas.html) '''
     #    getcontext().prec = 50
-        return boole_composite_integral(lambda x: float(self.evaluate(x)), a,b,n)
+        return boole_composite_integral(lambda x: float(self.evaluate(x)), float(a),float(b),n)
 
 #        h = (Decimal(repr(b)) - Decimal(repr(a))) / n
 #        x = lambda i: a + i*h
@@ -57,7 +57,7 @@ class Function:
     def trapezoidal_integral(self, a, b, n=100):
         ''' Numerically integrate functions via the Trapezium Rule '''
         h = (float(b) - float(a)) / n
-        x = lambda i: a + i*h
+        x = lambda i: float(a) + i*h
         f = lambda i: float(self.evaluate( x(i) ))
         
         return h*( f(0)/2
@@ -67,16 +67,103 @@ class Function:
         ''' Calculate the limit of a funtion between 2 points '''
         return self.evaluate(upper) - self.evaluate(lower)
 
+class Fraction(Function):
+    def __init__(self, abscissa, numerator, denominator):
+        assert(abscissa == numerator.abscissa == denominator.abscissa)
+        self.numerator = numerator
+        self.denominator = denominator
+        Function.__init__(self, abscissa)
+
+    def __str__(self):
+        return '(' + str(self.numerator) + ') / (' + str(self.denominator) + ')'
+
+    def evaluate(self, x):
+        return self.numerator.evaluate(x) / self.denominator.evaluate(x)
+
+    def roots(self, n=100):
+        return numerator.roots(n) + denominator.roots(n)
+
+    def simplify(self):
+        power = lambda t: t.power
+        a = Polynomial(self.abscissa); b = Polynomial(self.abscissa)
+        lowest_power = min(map(power, self.numerator.terms + self.denominator.terms))
+        reduce_power = lambda t: t / Term(1, self.abscissa, lowest_power)
+        a.terms = list(map(reduce_power, self.numerator.terms)) 
+        b.terms = list(map(reduce_power, self.denominator.terms)) 
+        return Fraction(self.abscissa, a.simplify(), b.simplify())
+
+    def differential(self):
+        ''' Making use of the quotient rule,
+        if f(x) = g(x) / h(x)
+        then f'(x) = ( g'(x)*h(x) - h'(x)*g(x) ) / h(x)^2 '''
+        return ((self.numerator.differential()*self.denominator - self.denominator.differential()*self.numerator)
+            / self.denominator**2).simplify()
+
+    def as_gnuplot_expression(self):
+        return '(' + self.numerator.as_gnuplot_expression() + ') / ('\
+            + self.denominator.as_gnuplot_expression() + ')'
+
+class Product(Function):
+    def __init__(self, abscissa, g, h):
+        super().__init__(abscissa)
+        self.g = g
+        self.h = h
+        self.sort_terms()
+
+    def sort_terms(self):
+        if (isinstance(self.h, Power) ^ isinstance(self.g, Power)):
+            if isinstance(self.g, Power):
+                self.g, self.h = self.h, self.g
+
+    def __mul__(a, b):
+        return Product(a.abscissa, self.g*b, self.h)
+
+    def __str__(self):
+        bracket = lambda a: ('(%s)' if isinstance(a, Polynomial) else '%s') % str(a)
+        return  bracket(self.g) + ' * ' + bracket(self.h)
+
+    def as_gnuplot_expression(self):
+        return '(' + self.g.as_gnuplot_expression() + ') * ('\
+            + self.h.as_gnuplot_expression() + ')'
+
+
+class Power(Function):
+    def __init__(self, abscissa, polynomial, power):
+        super().__init__(abscissa)
+        self.function = polynomial
+        self.power = power
+
+    def __str__(self):
+        return '(' + str(self.function) + ')^' + str(self.power)
+
+    def __mul__(a, b):
+        return Product(a.abscissa, a, b)
+    __rmul__ = __mul__
+
+    def differential(self):
+        ''' Drawing on chain rule, 
+        if f(x) = g(x)^n
+        then f'(x) = n * g'(x) * g(x)^(n-1) '''
+        return self.power * self.function.differential() * self.function ** (self.power - 1)
+
+    def evaluate(self, x):
+        return self.function.evaluate(x) ** self.power
+
+    def as_gnuplot_expression(self):
+        return '(' + self.function.as_gnuplot_expression() + ')**' + str(self.power)
+
 
 class Equality:
     def __init__(self, a, b):
+        assert(a.abscissa == b.abscissa)
         self.a = a; self.b = b
+        self.abscissa = a.abscissa
 
     def __repr__(self):
         return str(self.a) + ' = ' + str(self.b)
 
     def roots(self, n=100):
-        return (self.a - self.b).roots(n)
+        return (self.a - self.b).simplify().roots(n)
 
 
 class Term(Function):
@@ -84,7 +171,7 @@ class Term(Function):
     def __init__(self, coefficient, abscissa, power):
         self.coefficient = handle_type(coefficient)
         self.power = handle_type(power)
-        Function.__init__(self, abscissa)
+        super().__init__(abscissa)
 
     def __str__(self):
         ''' Output the term nicely via assorted logic '''
@@ -112,6 +199,9 @@ class Term(Function):
             return Term(self.coefficient * self.power, self.abscissa,
                 self.power - 1)
 
+    def roots(self,n=0):
+        return [0 for i in range(self.power)]
+
     def integral(self):
         ''' Return the indefinite integral '''
         if self.coefficient == 0:
@@ -126,6 +216,10 @@ class Term(Function):
 
     def __eq__(a, b):
         ''' Compare whether 2 terms are equal '''
+        b = a._convert_other(b)
+        if b == NotImplemented:
+            return b
+
         return a.coefficient == b.coefficient\
             and a.abscissa == b.abscissa\
             and a.power == b.power
@@ -141,8 +235,14 @@ class Term(Function):
         return a
 
     def __mul__(a,b):
-        assert (a.abscissa == b.abscissa)
-        return Term(a.coefficient*b.coefficient, a.abscissa, a.power+b.power)
+        b = a._convert_other(b)
+        if b == NotImplemented:
+            return b
+
+        if isinstance(b, Term):
+            return Term(a.coefficient*b.coefficient, a.abscissa, a.power+b.power)
+        else:
+            return NotImplemented
     __rmul__ = __mul__
 
     def _convert_other(self, other):
@@ -150,27 +250,37 @@ class Term(Function):
             return other
         elif isinstance(other, nint) or isinstance(other, Decimal):
             return Term(other, self.abscissa, 0)
+        else:
+            return NotImplemented
 
     def __truediv__(a,b):
         b = a._convert_other(b)
+        if b == NotImplemented:
+            return b
         return Term(a.coefficient/b.coefficient, a.abscissa, a.power-b.power)
 
     def __sub__(a,b):
+        b = a._convert_other(b)
+        if b == NotImplemented:
+            return b
         return a + b.invert()
 
     def __add__(a,b):
-        assert (a.abscissa == b.abscissa)
+        b = a._convert_other(b)
+        if b == NotImplemented:
+            return b
         c = Polynomial(a.abscissa)
         c.terms = [a, b]
         c.sort_terms()
         return c + Polynomial(a.abscissa,0,0)
+
 
 class Polynomial(Function):
     ''' A class representing a polynomial '''
     def __init__(self, abscissa, *nums):
         ''' Initiates the polynomial with a string containing the abscissa
         followed by pairs of coefficients and powers '''
-        Function.__init__(self, abscissa)
+        super().__init__(abscissa)
         self.terms = [ Term(a, abscissa, b) for a, b
             in zip(nums[::2], nums[1::2]) ]
         self.sort_terms()
@@ -237,6 +347,9 @@ class Polynomial(Function):
     def roots(self, n=100):
         ''' Numerically locate all roots (real and complex) of an equation
         using n iterations of the Durand-Kerner method '''
+        if self.order() == 1:
+            return [ - self.terms[1].coefficient / self.terms[0].coefficient ]
+
         mul = lambda a, b: a * b
         g = deepcopy(self)
         m = float(g.terms[0].coefficient) 
@@ -269,10 +382,11 @@ class Polynomial(Function):
         b = Polynomial(a.abscissa)
         b.terms += [ a.terms[0] ]
         for i in range(1,len(a.terms)):
-            if a.terms[i].power != b.terms[-1].power:
-                b.terms += [ a.terms[i] ]
-            elif a.terms[i].coefficient != 0:
-                b.terms[-1].coefficient += a.terms[i].coefficient
+            if a.terms[i].coefficient != 0:
+                if a.terms[i].power != b.terms[-1].power:
+                    b.terms += [ a.terms[i] ]
+                else:
+                    b.terms[-1].coefficient += a.terms[i].coefficient
         return b
 
     def invert(self):
@@ -281,6 +395,10 @@ class Polynomial(Function):
     def _convert_other(self, other):
         if isinstance(other, Polynomial):
             return other
+        elif isinstance(other, Term):
+            c = Polynomial(other.abscissa)
+            c.terms = [ other ]
+            return c
         elif isinstance(other,nint) or isinstance(other,Decimal):
             return Polynomial(self.abscissa, other, 0)
         else:
@@ -300,6 +418,8 @@ class Polynomial(Function):
 
     def __mul__(a, b):
         b = a._convert_other(b)
+        if b == NotImplemented:
+            return b
         c = Polynomial(a.abscissa)
         for l in a.terms:
             for m in b.terms:
@@ -308,15 +428,21 @@ class Polynomial(Function):
     __rmul__ = __mul__
 
     def __truediv__(a,b):
-        assert isinstance(b, nint) or isinstance(b, Decimal)
-        c = Polynomial(a.abscissa)
-        for l in a.terms:
-            c.terms += [ l / b ]
-        return c.simplify()
+        if isinstance(b, Polynomial):
+            return Fraction(a.abscissa, a, b).simplify()
+        elif isinstance(b, nint) or isinstance(b, Decimal):
+            c = Polynomial(a.abscissa)
+            for l in a.terms:
+                c.terms += [ l / b ]
+            return c.simplify()
+        else:
+            return NotImplemented
 
     def __pow__(self, m):
-        assert isinstance(m, nint)
-        return reduce(lambda a,b: a * b, [self for i in range(m)])
+        if (isinstance(m, nint) or isinstance(m, int)):
+            return reduce(lambda a,b: a * b, [self for i in range(m)])
+        elif isinstance(m, Decimal):
+            return Power(self.abscissa, self, m)
         
     def as_gnuplot_expression(self):
         ''' Convert into the gnuplot format '''

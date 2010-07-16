@@ -20,7 +20,7 @@ def print_complex(a):
     elif abs(r) < Decimal('0.001'): return str(i) + 'j'
     else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'j'
 
-def setPrecision(a): 
+def set_precision(a): 
     getcontext().prec = int(a)
     return 'Done!'
 
@@ -34,30 +34,6 @@ def plot(f, *between):
         )
 
 class Calculator():
-    commands = {
-        'diff1' : lambda a: str(a.differential()),
-        'integrate1' : lambda a: str(a.integral()),
-        'integrate3' : lambda a,b,c: str(a.integral().limit(b,c)),
-        'trapeziumrule3' : lambda a,b,c: str(a.trapezoidal_integral(b,c)),
-        'trapeziumrule4' : lambda a,b,c,n: str(a.trapezoidal_integral(b,c,n)),
-        'nintegrate3' : lambda a,b,c: str(a.numerical_integral(b,c)),
-        'nintegrate4' : lambda a,b,c,n: str(a.numerical_integral(b,c,n)),
-        'solve1' : lambda a: 'x = ' + ' or '.join(map(print_complex,
-            a.roots())),
-        'solve2' : lambda a,n: 'x = ' + ' or '.join(map(print_complex,
-            a.roots(n))),
-        'plot1' : plot,
-        'plot3' : plot,
-        'test' : lambda: hstr('test', '<b>test</b>'),
-        'about' : lambda: hstr('Copyright Tom Wright <tom.tdw@gmail.com>',
-            '''<img src="./images/about.png"><br>
-            This program was written by Tom Wright <tom.tdw@gmail.com>'''),
-        'evaluate2' : lambda a,b: a.evaluate(b),
-        'help' : lambda: 'Commands include: solve, diff, integrate',
-        'setprecision1' : setPrecision,
-        'quit' : exit
-    }
-
     def compose_poly(a):
         y = Polynomial('x')
         y.terms = list(a)
@@ -75,8 +51,10 @@ class Calculator():
         # term (n)x(^m)
         n = a[0] if type(a[0]) != str else 1
         m = a[-1] if type(a[-1]) != str else 1
-        #return Term(n, 'x', m)
-        return Polynomial('x',n,m)
+        for t in a:
+            if isinstance(t,str): abscissa = t
+        return Term(n, abscissa, m)
+        # return Polynomial('x',n,m)
 
     def sign_action(a):
         ''' Generates a number based on an optional sign and number '''
@@ -132,6 +110,19 @@ class Calculator():
         'nCr' : lambda n,r: factorial(n) / (factorial(n - r) * factorial(r)),
         'nPr' : lambda n,r: factorial(n) / factorial(r),
         'round' : round,
+        'differentiate' : lambda a: a.differential(),
+        'integrate' : lambda *a: a[0].integral() if len(a) == 1 else a[0].integral().limit(a[1],a[2]),
+        'trapeziumrule' : lambda a,b,c,n=100: str(a.trapezoidal_integral(b,c,n)),
+        'nintegrate' : lambda a,b,c,n=100: str(a.numerical_integral(b,c,n)),
+        'solve' : lambda a, n=100: a.abscissa + ' = ' + ' or '.join(map(print_complex,
+            a.roots(n))),
+        'plot' : plot,
+        'evaluate' : lambda a,b: a.evaluate(b),
+        'setprecision' : set_precision,
+        'about' : lambda: hstr('Copyright Tom Wright <tom.tdw@gmail.com>',
+            '''<img src="./images/about.png"><br>
+            This program was written by Tom Wright <tom.tdw@gmail.com>'''),
+        'help' : lambda: 'Commands include: solve, diff, integrate',
         'quit' : exit,
     }
 
@@ -160,7 +151,7 @@ class Calculator():
 
     numterm = unum + Suppress(Empty())
     numterm.setParseAction(lambda a: Term(a[0],'x',0))
-    fullterm = Optional(unum + Optional(Suppress('*'))) + 'x' \
+    fullterm = Optional(unum + Optional(Suppress('*'))) + variable\
         + Optional(Suppress('^') + uint)
     fullterm.setParseAction(full_term_action)
     baseterm = numterm ^ fullterm
@@ -169,24 +160,22 @@ class Calculator():
     term = sign + baseterm
     term.setParseAction(signed_term_action)
 
-    nx = Optional(num) + Suppress('x')
-    nx.setParseAction(lambda a: Polynomial('x', a[0] if len(a) != 0 else 1, 1))
-
     poly = firstterm + ZeroOrMore(term)
     poly.setParseAction(compose_poly)
 
-    equality = poly + Suppress('=') + poly
+    expr = Forward(); factor = Forward(); aterm = Forward()
+    atom = Forward(); aexpr = Forward(); expr = Forward()
+
+    equality = aexpr + Suppress('=') + aexpr
     equality.setParseAction(lambda a: Equality(*a))
 
-    expr = Forward(); factor = Forward(); aterm = Forward()
-    atom = Forward()
     exp = Literal("^")
     mul = Literal("*") | Literal("/")
     add = Literal("+") | Literal("-")
     func = Word(alphas) + (atom | Suppress('(') + Optional(delimitedList(expr)) + Suppress(')'))
-    func.setParseAction(lambda a: functions[a[0]] (*a[1:]))
+    func.setParseAction(lambda a: Calculator.functions[a[0]] (*a[1:]))
     post_func = atom + (Literal('degs') | '!')
-    post_func.setParseAction(lambda a: post_functions[a[1]] (a[0]))
+    post_func.setParseAction(lambda a: Calculator.post_functions[a[1]] (a[0]))
     const = Literal('pi') | 'e' | 'g' | 'h'
     const.setParseAction(lambda a: consts[''.join(a)])
     aabs = Suppress('|') + expr + Suppress('|')
@@ -199,12 +188,15 @@ class Calculator():
     aterm.setParseAction(aterm_action)
     #expr << aterm + Optional(add + expr)
     #expr << Optional(expr + add) + aterm
-    expr << aterm + ZeroOrMore(add + aterm)
-    expr.setParseAction(expr_action2)
+    aexpr << aterm + ZeroOrMore(add + aterm)
+    aexpr.setParseAction(expr_action2)
+    expr << (aexpr + NotAny('=') | equality)
 
+    command = Forward()
     action = Word(alphas)
     qualifier = Suppress(':') + delimitedList(num)
-    command = (expr ^ (action + Optional(poly ^ equality) + Optional(qualifier)))
+    # command = (expr ^ (action + Optional(poly ^ equality) + Optional(qualifier)))
+    command << expr
     # End of BFN
 
     def _evaluate(self, a):
@@ -212,7 +204,7 @@ class Calculator():
         if isinstance(a[0], Decimal):
             return '= ' + str(a[0].normalize())
         elif (len(a) == 1) or (type(a[0]) == int) or (type(a[0]) == float):
-            return '= ' + str(a[0])
+            return a[0]
         else:
             return (self.commands[a[0] + str(len(a)-1)] (*a[1:100]) if len(a) > 1 else self.commands[a[0]]())
 

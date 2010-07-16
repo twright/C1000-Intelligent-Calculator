@@ -30,11 +30,16 @@ class nint(int):
     ''' An extended integer class, providing better mathematical
     handling of integers '''
     def __truediv__(a, b):
-        if a % b == 0: return a // b
-        else: return Decimal(a) / Decimal(b)
+        if a % b == 0:
+            return a // b
+        else:
+            return Decimal(a) / Decimal(b)
         #    return Fraction(a,b)
     def __sub__(a,b):
-        return nint(int(a) - int(b))
+        if isinstance(b,int):
+            return nint(int(a) - int(b))
+        else:
+            return NotImplemented
 
 class hstr():
     ''' An extended string also holding a html version '''
