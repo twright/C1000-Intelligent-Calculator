@@ -4,7 +4,7 @@ from PyQt4 import QtCore, QtGui
 
 from gui_ui import Ui_Calculator
 from calculator import Calculator
-from ntypes import hstr
+from cas_core import hstr
 
 class CalculatorForm(QtGui.QMainWindow):
     def __init__(self, parent=None):

@@ -4,7 +4,8 @@ from decimal import Decimal, getcontext
 from copy import deepcopy, copy
 from functools import reduce
 
-from ntypes import handle_type, constant, nint
+from cas_core import handle_type, constant, nint
+import cas_expressions as ce
 
 # Set precision for numbers
 # getcontext().prec = 3
@@ -18,6 +19,7 @@ def boole_composite_integral(f,a,b,m):
 class Function:
     ''' A class to hold arbitrary algebraic functions '''
     def __init__(self, abscissa):
+        assert(len(abscissa) == 1)
         self.abscissa = abscissa
 
     def evaluate(n): pass
@@ -67,6 +69,40 @@ class Function:
         ''' Calculate the limit of a funtion between 2 points '''
         return self.evaluate(upper) - self.evaluate(lower)
 
+    def __add__(a, b):
+        if b == 0:
+            return a
+        else:
+            return NotImplemented
+    __radd__ = __add__
+
+    def __sub__(a, b):
+        if b == 0:
+            return a
+        else:
+            return NotImplemented
+
+    def __mul__(a, b):
+        if b == 1:
+            return a
+        elif b == 0:
+            return 0
+        else:
+            return NotImplemented
+    __rmul__ = __mul__
+    
+    def __truediv__(a, b):
+        if b == 1:
+            return a
+        else:
+            return NotImplemented
+
+    def __rtruediv__(a, b):
+        if b == 0:
+            return nint(0)
+        else:
+            return NotImplemented
+
 class Fraction(Function):
     def __init__(self, abscissa, numerator, denominator):
         assert(abscissa == numerator.abscissa == denominator.abscissa)
@@ -84,12 +120,16 @@ class Fraction(Function):
         return numerator.roots(n) + denominator.roots(n)
 
     def simplify(self):
+    #    return self
         power = lambda t: t.power
         a = Polynomial(self.abscissa); b = Polynomial(self.abscissa)
         lowest_power = min(map(power, self.numerator.terms + self.denominator.terms))
         reduce_power = lambda t: t / Term(1, self.abscissa, lowest_power)
         a.terms = list(map(reduce_power, self.numerator.terms)) 
-        b.terms = list(map(reduce_power, self.denominator.terms)) 
+        b.terms = list(map(reduce_power, self.denominator.terms))
+        b.sort_terms()
+        if b.order() == 0:
+            return a / b.terms[0].coefficient
         return Fraction(self.abscissa, a.simplify(), b.simplify())
 
     def differential(self):
@@ -155,9 +195,9 @@ class Power(Function):
 
 class Equality:
     def __init__(self, a, b):
-        assert(a.abscissa == b.abscissa)
+        assert(isinstance(a, Function) or isinstance(b, Function))
         self.a = a; self.b = b
-        self.abscissa = a.abscissa
+        self.abscissa = a.abscissa if isinstance(a,Function) else b.abscissa
 
     def __repr__(self):
         return str(self.a) + ' = ' + str(self.b)
@@ -212,7 +252,10 @@ class Term(Function):
 
     def evaluate(self, x):
         ''' Returns the value of the term for x '''
-        return self.coefficient * handle_type(x) ** self.power
+        if self.power == 0:
+            return self.coefficient
+        else:
+            return self.coefficient * handle_type(x) ** self.power
 
     def __eq__(a, b):
         ''' Compare whether 2 terms are equal '''
@@ -239,10 +282,12 @@ class Term(Function):
         if b == NotImplemented:
             return b
 
-        if isinstance(b, Term):
+        if a.abscissa == b.abscissa:
             return Term(a.coefficient*b.coefficient, a.abscissa, a.power+b.power)
         else:
-            return NotImplemented
+            return ce.Term(a.coefficient*b.coefficient,
+                ce.Factor(a.abscissa, a.power),
+                ce.Factor(b.abscissa, b.power))
     __rmul__ = __mul__
 
     def _convert_other(self, other):
@@ -258,12 +303,14 @@ class Term(Function):
         if b == NotImplemented:
             return b
         return Term(a.coefficient/b.coefficient, a.abscissa, a.power-b.power)
+    __rtruediv__ = __truediv__
 
     def __sub__(a,b):
         b = a._convert_other(b)
         if b == NotImplemented:
             return b
         return a + b.invert()
+    __rsub__ = __sub__
 
     def __add__(a,b):
         b = a._convert_other(b)
@@ -273,6 +320,22 @@ class Term(Function):
         c.terms = [a, b]
         c.sort_terms()
         return c + Polynomial(a.abscissa,0,0)
+    __radd__ = __add__
+
+    def __pow__(self, m):
+        assert (isinstance(m, nint))
+        return Term(self.coefficient**m, self.abscissa, self.power*m)
+
+    def as_gnuplot_expression(self):
+        ''' Convert into the gnuplot format '''
+        from re import sub
+        expr = str(self)
+        expr = sub(r'[a-z]', r'x', expr, 100)
+        # Add * from multiplication
+        expr = sub(r'([0-9])x', r'\1*x', expr, 100) 
+        # Replace ^ with ** for powers
+        expr = sub(r'\^', r'**', expr, 100) 
+        return expr
 
 
 class Polynomial(Function):
@@ -406,11 +469,15 @@ class Polynomial(Function):
 
     def __sub__(a, b):
         b = a._convert_other(b)
+        if b == NotImplemented:
+            return b
         return a + b.invert()
     __rsub__ = __sub__
 
     def __add__(a, b):
         b = a._convert_other(b)
+        if b == NotImplemented:
+            return b
         c = Polynomial(a.abscissa)
         c.terms = a.terms + b.terms
         return c.simplify()
@@ -435,19 +502,27 @@ class Polynomial(Function):
             for l in a.terms:
                 c.terms += [ l / b ]
             return c.simplify()
+        elif isinstance(b, Term):
+            return a / a._convert_other(b)
         else:
             return NotImplemented
+    __rtruediv__ = __truediv__
 
     def __pow__(self, m):
-        if (isinstance(m, nint) or isinstance(m, int)):
+        if m == 0:
+            return 1
+        elif (isinstance(m, nint) or isinstance(m, int)) and m > 1:
             return reduce(lambda a,b: a * b, [self for i in range(m)])
-        elif isinstance(m, Decimal):
+        elif isinstance(m, Decimal) or m < 1:
             return Power(self.abscissa, self, m)
+        else:
+            return NotImplemented
         
     def as_gnuplot_expression(self):
         ''' Convert into the gnuplot format '''
         from re import sub
         expr = str(self)
+        expr = sub(r'[a-z]', r'x', expr, 100)
         # Add * from multiplication
         expr = sub(r'([0-9])x', r'\1*x', expr, 100) 
         # Replace ^ with ** for powers

@@ -30,19 +30,42 @@ class nint(int):
     ''' An extended integer class, providing better mathematical
     handling of integers '''
     def __truediv__(a, b):
-        if a % b == 0:
-            return a // b
+        if isinstance(b, int) or isinstance(b, Decimal):
+            if a % b == 0:
+                return a // b
+            else:
+                return Decimal(a) / Decimal(b)
         else:
-            return Decimal(a) / Decimal(b)
+            return NotImplemented
         #    return Fraction(a,b)
+
     def __sub__(a,b):
         if isinstance(b,int):
             return nint(int(a) - int(b))
         else:
             return NotImplemented
 
+    def __rsub__(a,b):
+        if isinstance(b,int):
+            return nint(int(b) - int(a))
+
+    def __add__(a,b):
+        if isinstance(b,int):
+            return nint(int(a) + int(b))
+        else:
+            return NotImplemented
+    __radd__ = __add__
+
+    def __mul__(a,b):
+        if isinstance(b,int):
+            return nint(int(a) * int(b))
+        else:
+            return NotImplemented
+    __rmul__ = __mul__
+
 class hstr():
     ''' An extended string also holding a html version '''
+    # TODO: Extend concept to any object with a .html() method
     def __init__(self,plain,html):
         self.plain, self.html = str(plain), str(html)
     def __str__(self):

@@ -27,9 +27,9 @@ if __name__ == '__main__':
             break
         except KeyError:
             print('Command not found!')
-        except pyparsing_py3.ParseException:
-            print('Invalid input!')
+  #      except pyparsing_py3.ParseException:
+  #          print('Invalid input!')
         except KeyboardInterrupt:
             print('Command cancelled.')
-        except:
-            print('Invalid operation!')
+  #      except:
+  #          print('Invalid operation!')

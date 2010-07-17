@@ -6,8 +6,8 @@ from sys import exit
 from pyparsing_py3 import *
 from dmath import *
 
-from cas import *
-from ntypes import nint, hstr
+import cas_functions
+from cas_core import nint, hstr
 # from expr_parser import parse_command
 from gnuplot import Gnuplot
 getcontext().prec = 3
@@ -17,8 +17,8 @@ def print_complex(a):
         Decimal().from_float(a.imag).normalize()
     if abs(r) < Decimal('0.001') and abs(i) < Decimal('0.001'): return '0'
     elif abs(i) < Decimal('0.001'): return str(r)
-    elif abs(r) < Decimal('0.001'): return str(i) + 'j'
-    else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'j'
+    elif abs(r) < Decimal('0.001'): return str(i) + 'i'
+    else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'i'
 
 def set_precision(a): 
     getcontext().prec = int(a)
@@ -27,6 +27,7 @@ def set_precision(a):
 def plot(f, *between):
     graph = Gnuplot()
     file_name = graph.file_name
+    graph.send("set xlabel '%s'" % f.abscissa)
     graph.plot_function(f, *between)
     return hstr (
         'Image saved to %s' % file_name,
@@ -34,18 +35,6 @@ def plot(f, *between):
         )
 
 class Calculator():
-    def compose_poly(a):
-        y = Polynomial('x')
-        y.terms = list(a)
-        y.sort_terms()
-        return y
-
-    def signed_term_action(a):
-        ''' Generates a term based on a term and sign '''
-        if len(a) == 1: return a[0]
-        elif a[0] == '+': return a[1]
-        elif a[0] == '-': return a[1].invert()
-
     def full_term_action(a):
         ''' Generates a term from the parse output '''
         # term (n)x(^m)
@@ -53,7 +42,7 @@ class Calculator():
         m = a[-1] if type(a[-1]) != str else 1
         for t in a:
             if isinstance(t,str): abscissa = t
-        return Term(n, abscissa, m)
+        return cas_functions.Term(n, abscissa, m)
         # return Polynomial('x',n,m)
 
     def sign_action(a):
@@ -63,21 +52,19 @@ class Calculator():
 
     def aterm_action(a):
         if len(a) == 1: return a[0]
+        elif len(a) == 2: return a[0] * a[1]
         elif a[1] == '*': return a[0] * a[2]
         elif a[1] == '/': return a[0] / a[2]
 
     def expr_action(a):
-        if len(a) == 1: return a[0]
-        elif a[1] == '+': return a[0] + a[2]
-        elif a[1] == '-': return a[0] - a[2]
-
-    def expr_action2(a):
-        result = a[0]
+        result = a[0]#nint(0)
+    #    b = list(a)
+    #    if not isinstance(a[0], str):
+    #        b = [ '+' ] + b
         for i in range(1,len(a),2):
             if a[i] == '+': result += a[i+1]
             if a[i] == '-': result -= a[i+1]
         return result
-
 
     def factor_action(a):
         if len(a) == 1: return a[0]
@@ -116,6 +103,7 @@ class Calculator():
         'nintegrate' : lambda a,b,c,n=100: str(a.numerical_integral(b,c,n)),
         'solve' : lambda a, n=100: a.abscissa + ' = ' + ' or '.join(map(print_complex,
             a.roots(n))),
+        'simplify' : lambda expr: expr.simplify(),
         'plot' : plot,
         'evaluate' : lambda a,b: a.evaluate(b),
         'setprecision' : set_precision,
@@ -148,26 +136,13 @@ class Calculator():
     num = Optional(sign) + unum
     num.setParseAction(sign_action)
     variable = Word(alphas, max=1)
-
-    numterm = unum + Suppress(Empty())
-    numterm.setParseAction(lambda a: Term(a[0],'x',0))
-    fullterm = Optional(unum + Optional(Suppress('*'))) + variable\
-        + Optional(Suppress('^') + uint)
-    fullterm.setParseAction(full_term_action)
-    baseterm = numterm ^ fullterm
-    firstterm = Optional(sign) + baseterm
-    firstterm.setParseAction(signed_term_action)
-    term = sign + baseterm
-    term.setParseAction(signed_term_action)
-
-    poly = firstterm + ZeroOrMore(term)
-    poly.setParseAction(compose_poly)
+    variable.setParseAction(lambda a: cas_functions.Term(1, a[0], 1))
 
     expr = Forward(); factor = Forward(); aterm = Forward()
     atom = Forward(); aexpr = Forward(); expr = Forward()
 
     equality = aexpr + Suppress('=') + aexpr
-    equality.setParseAction(lambda a: Equality(*a))
+    equality.setParseAction(lambda a: cas_functions.Equality(*a))
 
     exp = Literal("^")
     mul = Literal("*") | Literal("/")
@@ -181,32 +156,30 @@ class Calculator():
     aabs = Suppress('|') + expr + Suppress('|')
     aabs.setParseAction(lambda a: abs(a[0]))
     atom << (Suppress('(') + expr + Suppress(')') | Suppress('$') + expr 
-        | fullterm | num | aabs | func | const)
+        | variable | num | aabs | func | const)
     factor << (atom ^ post_func) + Optional(exp + factor)
     factor.setParseAction(factor_action)
-    aterm << factor + Optional(mul + aterm)
+    # TODO: Seperate definitions of '/' and '*' to fix 4xy and similar
+    aterm << factor + Optional((mul | Optional(mul) + FollowedBy('(' | variable)) + aterm)
     aterm.setParseAction(aterm_action)
-    #expr << aterm + Optional(add + expr)
-    #expr << Optional(expr + add) + aterm
-    aexpr << aterm + ZeroOrMore(add + aterm)
-    aexpr.setParseAction(expr_action2)
+    aexpr << Optional(add) + aterm + ZeroOrMore(add + aterm)
+    aexpr.setParseAction(expr_action)
     expr << (aexpr + NotAny('=') | equality)
 
     command = Forward()
     action = Word(alphas)
     qualifier = Suppress(':') + delimitedList(num)
-    # command = (expr ^ (action + Optional(poly ^ equality) + Optional(qualifier)))
-    command << expr
+    command << expr # + StringEnd()
     # End of BFN
 
     def _evaluate(self, a):
         # print (*a)
         if isinstance(a[0], Decimal):
             return '= ' + str(a[0].normalize())
-        elif (len(a) == 1) or (type(a[0]) == int) or (type(a[0]) == float):
+        elif isinstance(a[0], str) or isinstance(a[0], hstr):
             return a[0]
-        else:
-            return (self.commands[a[0] + str(len(a)-1)] (*a[1:100]) if len(a) > 1 else self.commands[a[0]]())
+        elif (len(a) == 1) or (type(a[0]) == int) or (type(a[0]) == float):
+            return '= ' + str(a[0])
 
     def evaluate(self, a):
         return self._evaluate(self.command.parseString(a))
