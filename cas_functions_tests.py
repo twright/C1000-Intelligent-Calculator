@@ -124,7 +124,7 @@ class Equalities(unittest.TestCase):
         ''' Tests that equalities can be correctly created '''
         self.assertIsNotNone(Equality(nint(0), Term(3, 'x', 2)))
         self.assertIsNotNone(Equality(Polynomial('t', 2,3, 2,1), Term(2,'t',1)))
-        self.assertRaises(Exception, Equality, Polynomial('y', 2,1), Polynomial('x', 1,2))
+        self.assertRaises(ValueError, Equality, Polynomial('y', 2,1), Polynomial('x', 1,2))
 
     def test_str(self):
         ''' Tests that equalities are correctly printed '''
