@@ -1,30 +1,29 @@
 #!/usr/bin/env python3.1
 
-from decimal import Decimal, getcontext
-from copy import deepcopy, copy
+from decimal import Decimal
 from functools import reduce
 
-from cas_core import handle_type, constant, nint
+from cas_core import handle_type, Integer
 
 class Expression():
-    def __add__(a, b):
-        if b == 0:
-            return a
+    def __add__(self, other):
+        if other == 0:
+            return self
         else:
             return NotImplemented
     __radd__ = __add__
 
-    def __sub__(a, b):
-        if b == 0:
-            return a
+    def __sub__(self, other):
+        if other == 0:
+            return self
         else:
             return NotImplemented
     __rsub__ = __sub__
 
-    def __mul__(a, b):
-        if b == 1:
-            return a
-        elif b == 0:
+    def __mul__(self, other):
+        if other == 1:
+            return self
+        elif other == 0:
             return 0
         else:
             return NotImplemented
@@ -42,7 +41,7 @@ class Polynomial(Expression):
                 else ' - ' + str(t)[1:]) if t.coefficient != 0 else ''
         return result
 
-    def simplify():
+    def simplify(self):
         pass
 
     def _convert_other(self, other):
@@ -55,9 +54,9 @@ class Polynomial(Expression):
 
 
 class Term(Expression):
-    def __init__(self, a, *b):
-        self.coefficient = handle_type(a)
-        self.factors = list(b)
+    def __init__(self, coefficient, *factors):
+        self.coefficient = handle_type(coefficient)
+        self.factors = list(factors)
         self.sort_factors()
 
     def _convert_other(self, other):
@@ -68,12 +67,12 @@ class Term(Expression):
         else:
             return NotImplemented
 
-    def __mul__(a, b):
-        b = a._convert_other(b)
-        if b == NotImplemented:
-            return b
+    def __mul__(self, other):
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
 
-        return Term(a.coefficient*b.coefficient, *(a.factors + b.factors))
+        return Term(self.coefficient*other.coefficient, *(self.factors + other.factors))
     __rmul__ = __mul__
 
     def sort_factors(self):
@@ -81,12 +80,12 @@ class Term(Expression):
 
     def __str__(self):
         self.sort_factors()
-        return (str(self.coefficient) if self.coefficient != 1 else '')\
+        return (str(self.coefficient) if abs(self.coefficient) != 1 else '')\
             + (reduce(lambda a,b: a+b, map(str, self.factors)) 
             if len(self.factors) else '') if self.coefficient != 0 else ''
 
-    def __add__(a, b):
-        return Polynomial(a, a._convert_other(b))
+    def __add__(self, other):
+        return Polynomial(self, self._convert_other(other))
     __radd__ = __add__
 
 

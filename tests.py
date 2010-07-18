@@ -12,7 +12,7 @@ class Parsing(unittest.TestCase):
         ''' Once parsed, each polynomial is converted to a string and
         compareed with the input '''
         for a in self.polys:
-            self.assertEqual(a, str(Calculator().command.parseString(a)[0]))
+            self.assertEqual(a, str(Calculator().grammar().parseString(a)[0]))
 
 class Calculations(unittest.TestCase):
     def setUp(self):

@@ -3,7 +3,6 @@
 import os
 
 if os.name == 'posix': import readline
-import pyparsing_py3
 from calculator import Calculator
 
 calc = Calculator()
@@ -25,8 +24,8 @@ if __name__ == '__main__':
         except SystemExit:
             print('Bye!')
             break
-        except KeyError:
-            print('Command not found!')
+  #      except KeyError:
+  #          print('Command not found!')
   #      except pyparsing_py3.ParseException:
   #          print('Invalid input!')
         except KeyboardInterrupt:

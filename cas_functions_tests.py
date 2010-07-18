@@ -2,12 +2,13 @@
 ''' Test the functionality of core cas functions like type handling,
 the nint datatype and hstr's (html strings) '''
 
-from cas_functions import Polynomial
-import unittest
 from decimal import Decimal
+import unittest
 
+from cas_core import Integer
+import cas_expressions as ce
 from cas_functions import *
-from cas_core import nint
+from cas_functions import Polynomial
 
 class Functions(unittest.TestCase):
     y = Polynomial('x',1,1,2,3,4,5)
@@ -43,6 +44,11 @@ class Functions(unittest.TestCase):
         ''' Test division identities '''
         self.assertEqual(self.z/1, self.z)
         self.assertEqual(0/self.z, 0)
+
+    def test_powers(self):
+        ''' Test indicies identities '''
+        self.assertEqual(self.z**0, 1)
+        self.assertEqual(self.z**2, Power(self.z, 2))
 
 class Polynomials(unittest.TestCase):
     y = Polynomial('x',1,1,2,3,4,5)
@@ -112,6 +118,61 @@ class Terms(unittest.TestCase):
         xys = [ (5,75),(4.5,Decimal('60.6')),(0,0),(-4,48),(2+3j,-15+36j) ]
         for x,y in xys:
             self.assertEqual(y, f.evaluate(x))
+
+    def test_equality(self):
+        ''' Tests that equal terms are considered equal and unequal, unequal '''
+        self.assertEqual(Term(3,'x',2), Term(3,'x',2))
+        self.assertNotEqual(Term(3,'x',2), Term(2,'x',3))
+        self.assertNotEqual(Term(3,'x',2), Term(3,'x',3))
+        self.assertNotEqual(Term(3,'x',2), Term(2,'x',2))
+        self.assertNotEqual(Term(3,'x',2), Term(3,'y',2))
+        self.assertEqual(Term(2,'x',0), 2)
+        self.assertEqual(Term(0,'x',2), Term(0,'x',5))
+        self.assertEqual(Term(0,'x',5), 0)
+
+    def test_powers(self):
+        ''' Tests that sample powers are correctly evaluated '''
+        self.assertEqual(Term(3,'x',2)**4, Term(81,'x',8))
+        self.assertEqual(Term(4,'x',2)**0, 1)
+        self.assertEqual(Term(4,'x',3)**1.1, Power(Term(4,'x',3), 1.1))
+        self.assertEqual(Term(4,'x',2), InproperTerm(0.25,'x',-2))
+
+    def test_convert_other(self):
+        ''' Tests that various types are correctly converted '''
+        vals = [ (2,Term(2,'x',0)), (3.2,Term(3.2,'x',0)), (2+1j,Term(2+1j,'x',0)) ]
+        for a, b in vals:
+            self.assertEqual(Term(0,'x',0)._convert_other(a), b)
+        self.assertRaises(Exception, Term, 'sdf', 'x', 2)
+
+    def test_as_gnuplot_expression(self):
+        ''' Tests the expression is correctly converted to the gnuplot format '''
+        vals = [ (Term(5,'x',2), '5*x**2'), (Term(3,'y',1), '3*x'),
+            (Term(1,'x',2), 'x**2') ]
+        for a, b in vals:
+            self.assertEqual(a.as_gnuplot_expression(), b)
+
+    def test_multiplication(self):
+        ''' Tests that ax^n * bx^m = ab*x^(n+m) '''
+        vals = [ (Term(3,'x',2),Term(4,'x',1),Term(12,'x',3)),
+        (1,Term(6,'x',3),Term(6,'x',3)), (Term(6,'x',3),1,Term(6,'x',3)),
+        (0,Term(6,'x',3),Integer(0)), (Term(6,'x',3),0,Integer(0)),
+        (Term(2,'x',1),Term(3,'y',1),ce.Term(6,ce.Factor('x',1),ce.Factor('y',1))),
+        (Term(2,'x',2),Term(3,'y',1),ce.Term(6,ce.Factor('y',1),ce.Factor('x',2))),
+        (Term(2.1,'x',2),Term(3,'x',2),Term(6.3,'x',4)) ]
+        for a, b, c in vals:
+            self.assertEqual(a*b, c)
+
+    def test_subtraction(self):
+        pass
+
+    def test_addition(self):
+        pass
+
+    def test_division(self):
+        pass
+
+    def test_repr(self):
+        pass
 
 class Equalities(unittest.TestCase):
     vals = [ (Equality(Polynomial('x', 2,3), Polynomial('x', 2,1, 3,2)), '2x^3 = 3x^2 + 2x'),

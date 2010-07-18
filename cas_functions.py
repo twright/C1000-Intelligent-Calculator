@@ -4,10 +4,11 @@ from copy import deepcopy
 from decimal import Decimal
 from decimal import getcontext
 from functools import reduce
+from numbers import Number
 
-from cas_core import constant
+from cas_core import Constant
 from cas_core import handle_type
-from cas_core import nint
+from cas_core import Integer
 import cas_expressions as ce
 
 # Set precision for numbers
@@ -26,6 +27,18 @@ class Function:
         self.abscissa = abscissa
 
     def evaluate(self, n): pass
+    
+    def roots(self): pass
+    
+    def differential(self): pass
+
+    def maxima(self):
+        return list(filter(lambda x: self.differential().differential().evaluate(x) < 0,
+            self.differential().roots()))
+
+    def minima(self):
+        return list(filter(lambda x: self.differential().differential().evaluate(x) > 0,
+            self.differential().roots()))
 
     def numerical_integral(self, a, b, n=100): 
         ''' The numerical integral of the function using the composite 3/8
@@ -107,6 +120,16 @@ class Function:
         else:
             return NotImplemented
 
+    def __pow__(self, other):
+        if other == 1:
+            return self
+        elif other == 0:
+            return Integer(1)
+        elif isinstance(other, Number):
+            return Power(self, other)
+        else:
+            return NotImplemented
+
 class Fraction(Function):
     def __init__(self, abscissa, numerator, denominator):
         assert(abscissa == numerator.abscissa == denominator.abscissa)
@@ -172,10 +195,10 @@ class Product(Function):
 
 
 class Power(Function):
-    def __init__(self, abscissa, polynomial, power):
-        super().__init__(abscissa)
-        self.function = polynomial
-        self.power = power
+    def __init__(self, function, power):
+        super().__init__(function.abscissa)
+        self.function = function
+        self.power = handle_type(power)
 
     def __str__(self):
         return '(' + str(self.function) + ')^' + str(self.power)
@@ -183,6 +206,10 @@ class Power(Function):
     def __mul__(self, other):
         return Product(self.abscissa, self, other)
     __rmul__ = __mul__
+
+    def __eq__(self, other):
+        if isinstance(other, Power):
+            return self.function == other.function and self.power == other.power
 
     def differential(self):
         ''' Drawing on chain rule, 
@@ -231,6 +258,12 @@ class Term(Function):
             + (self.abscissa if self.power != 0 else '')\
             + ('^' + str(self.power) if 0 != self.power != 1 else '')
 
+    def simplify(self):
+        if self.coefficient == 0:
+            return Term(0, self.abscissa, 0)
+        else:
+            return self
+
     def sign(self):
         ''' Return 0, 1 or -1 depending on the sign of the coefficient '''
         return (0, 1, -1)[(self.coefficient > 0) + 2*(self.coefficient < 0)]
@@ -249,6 +282,7 @@ class Term(Function):
                 self.power - 1)
 
     def roots(self,n=0):
+        ''' The roots of ax^n are n zeros as it is already fully factorized '''
         return [0 for i in range(self.power)]
 
     def integral(self):
@@ -272,9 +306,11 @@ class Term(Function):
         if other == NotImplemented:
             return other
 
-        return self.coefficient == other.coefficient\
-            and self.abscissa == other.abscissa\
-            and self.power == other.power
+        a = self.simplify(); b = other.simplify()
+
+        return a.coefficient == b.coefficient\
+            and a.abscissa == b.abscissa\
+            and a.power == b.power
 
     def __repr__(self):
         ''' Print a representation of the term '''
@@ -302,7 +338,7 @@ class Term(Function):
     def _convert_other(self, other):
         if isinstance(other, Term):
             return other
-        elif isinstance(other, Integer) or isinstance(other, Decimal):
+        elif isinstance(other, Number):
             return Term(other, self.abscissa, 0)
         else:
             return NotImplemented
@@ -332,8 +368,12 @@ class Term(Function):
     __radd__ = __add__
 
     def __pow__(self, m):
-        assert (isinstance(m, Integer))
-        return Term(self.coefficient**m, self.abscissa, self.power*m)
+        m = handle_type(m)
+        if isinstance(m, Integer):
+            return Term(self.coefficient**m, self.abscissa, self.power*m)
+        else:
+            return NotImplemented
+
 
     def as_gnuplot_expression(self):
         ''' Convert into the gnuplot format '''
@@ -378,7 +418,7 @@ class Polynomial(Function):
     def differential(self):
         ''' Calculate the differential of the expression '''
         f = lambda x: x.differential()
-        return (self.map_to_terms(f))
+        return (self.simplify().map_to_terms(f))
 
     def integral(self):
         ''' Calculate the indefinite integral of the expression
@@ -438,7 +478,7 @@ class Polynomial(Function):
 
     def sort_terms(self):
         ''' Sort terms in order of descending power '''
-        power = lambda a: a.power
+        power = lambda a: a.power if isinstance(a, Term) else 0
         self.terms.sort(key=power, reverse=True)
 
     def simplify(self):
@@ -446,7 +486,7 @@ class Polynomial(Function):
         result = Polynomial(self.abscissa)
         result.terms += [ self.terms[0] ]
         for i in range(1,len(self.terms)):
-            if self.terms[i].coefficient != 0:
+            if self.terms[i] != 0:
                 if self.terms[i].power != result.terms[-1].power:
                     result.terms += [ self.terms[i] ]
                 else:
@@ -488,11 +528,17 @@ class Polynomial(Function):
         other = self._convert_other(other)
         if other == NotImplemented:
             return other
-        c = Polynomial(self.abscissa)
+
+        terms = []
         for l in self.terms:
             for m in other.terms:
-                c.terms += [ l * m ]
-        return c.simplify()
+                terms += [ l * m ]
+        if reduce(lambda a, b: a and b, map(lambda t: isinstance(t, Polynomial), terms)):
+            c = Polynomial(self.abscissa); c.terms = term
+            return c.simplify
+        else:
+            conv = lambda a: a if isinstance(a, ce.Term) else ce.Term(a.coefficient, Factor(a.abscissa, a.power))
+            return ce.Polynomial(*terms)
     __rmul__ = __mul__
 
     def __truediv__(self, other):

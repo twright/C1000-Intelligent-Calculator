@@ -16,6 +16,15 @@ def handle_type (x):
     elif type(x) == complex: return x
     else: return Decimal(x).normalize()
 
+def print_complex(a):
+    ''' Nicely print a complex number '''
+    r, i = Decimal().from_float(a.real).normalize(),\
+        Decimal().from_float(a.imag).normalize()
+    if abs(r) < Decimal('0.001') and abs(i) < Decimal('0.001'): return '0'
+    elif abs(i) < Decimal('0.001'): return str(r)
+    elif abs(r) < Decimal('0.001'): return str(i) + 'i'
+    else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'i'
+
 class Constant():
     ''' A class to represent an unknown constant term '''
     name = 'c'
@@ -23,7 +32,9 @@ class Constant():
     def __eq__(self, other): return True
     def __str__(self): return self.name
     def __abs__(self): return self
-    def evaluate(self, x): return 0
+    def evaluate(self, x): return Integer(0)
+    def differential(self): return Integer(0)
+
 
 class Integer(int):
     ''' An extended integer class, providing better mathematical
