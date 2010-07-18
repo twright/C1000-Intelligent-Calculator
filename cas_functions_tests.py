@@ -133,10 +133,12 @@ class Equalities(unittest.TestCase):
 
     def test_roots(self):
         ''' Tests that sample equalities can correctly be solved '''
+        # Evaluate functions or return variables
+        getoreval = lambda f, x: f.evaluate(x) if isinstance(f, Function) else f
         for eq, string in self.vals:
             for root in eq.roots():
-                self.assertAlmostEqual(eq.a.evaluate(root), eq.b.evaluate(root),
-                    places = 3)
+                self.assertAlmostEqual(getoreval(eq.a, root), getoreval(eq.b, root),
+                    places = 7)
 
 class NumericalMethods(unittest.TestCase):
     pols = [ Polynomial('x', 1,2), Polynomial('x', 1,3,2,2,1,1,-5,0),
