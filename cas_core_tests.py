@@ -8,7 +8,7 @@ from decimal import Decimal
 from cas_core import *
 
 class HandlingTypes(unittest.TestCase):
-    vals = [(3.4,Decimal), (1,nint), ('3.4',Decimal), ('4',nint)]
+    vals = [(3.4,Decimal), (1,Integer), ('3.4',Decimal), ('4',Integer)]
     def test_handle_type(self):
         ''' Test that handle type assigns sample values the
         correct type'''
@@ -21,22 +21,22 @@ class NInts(unittest.TestCase):
         or integer, depending on common factors '''
         vals = [(3,4,Decimal('0.75')),(8,4,2)]
         for a,b,c in vals:
-            self.assertEqual(nint(a) / nint(b), c)
+            self.assertEqual(Integer(a) / Integer(b), c)
 
     def test_addition(self):
         ''' Test addition works correctly for sample values '''
-        vals = [(nint(1),nint(2),nint(3)),
-            (nint(1),int(2),nint(3)), (int(3),nint(2),nint(5)),
-            (nint(4),Decimal('2.1'),Decimal('6.1'))]
+        vals = [(Integer(1),Integer(2),Integer(3)),
+            (Integer(1),int(2),Integer(3)), (int(3),Integer(2),Integer(5)),
+            (Integer(4),Decimal('2.1'),Decimal('6.1'))]
         for a,b,c in vals:
             self.assertEqual(a + b, c)
             self.assertEqual(type(a+b),type(c))
 
     def test_subtraction(self):
         ''' Test subtraction works correctly for sample values '''
-        vals = [(nint(1),nint(2),nint(-1)),
-            (nint(1),int(2),nint(-1)), (int(3),nint(2),nint(1)),
-            (nint(4),Decimal('2.1'),Decimal('1.9'))]
+        vals = [(Integer(1),Integer(2),Integer(-1)),
+            (Integer(1),int(2),Integer(-1)), (int(3),Integer(2),Integer(1)),
+            (Integer(4),Decimal('2.1'),Decimal('1.9'))]
         for a,b,c in vals:
             self.assertEqual(a - b, c)
             self.assertEqual(type(a-b),type(c))
@@ -44,9 +44,9 @@ class NInts(unittest.TestCase):
     def test_multiplication(self):
         ''' Test multiplication works correctly for sample
         values '''
-        vals = [(nint(1),nint(2),nint(2)),
-            (nint(1),int(2),nint(2)), (int(3),nint(2),nint(6)),
-            (nint(4),Decimal('2.1'),Decimal('8.4'))]
+        vals = [(Integer(1),Integer(2),Integer(2)),
+            (Integer(1),int(2),Integer(2)), (int(3),Integer(2),Integer(6)),
+            (Integer(4),Decimal('2.1'),Decimal('8.4'))]
         for a,b,c in vals:
             self.assertEqual(a * b, c)
             self.assertEqual(type(a*b),type(c))
@@ -56,7 +56,7 @@ class Constants(unittest.TestCase):
         ''' Constants should be equal any number '''
         vals = (2, Decimal('5.6'), -2, 0, Decimal('Inf'))
         for x in vals:
-            self.assertEqual(x, constant())
+            self.assertEqual(x, Constant())
 
 if __name__ == '__main__':
     unittest.main()

@@ -46,7 +46,7 @@ class Polynomial(Expression):
         pass
 
     def _convert_other(self, other):
-        if isinstance(other, nint) or isinstance(other, Decimal):
+        if isinstance(other, Integer) or isinstance(other, Decimal):
             return Polynomial(Term(other))
         elif isinstance(other, term):
             return Polynomial(other)
@@ -61,7 +61,7 @@ class Term(Expression):
         self.sort_factors()
 
     def _convert_other(self, other):
-        if isinstance(other, nint) or isinstance(other, Decimal):
+        if isinstance(other, Integer) or isinstance(other, Decimal):
             return Term(other)
         elif isinstance(other, Factor):
             return Term(1, other)
@@ -94,7 +94,7 @@ class Factor(Expression):
     def __init__(self, abscissa, power):
         assert isinstance(power, int)
         self.abscissa = abscissa
-        self.power = nint(power)
+        self.power = Integer(power)
 
     def __str__(self):
         return self.abscissa + ('^' + str(self.power) if self.power != 1 else '') if self.power != 0 else ''

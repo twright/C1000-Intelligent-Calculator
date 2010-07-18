@@ -21,7 +21,7 @@ class CalculatorForm(QtGui.QMainWindow):
         command = self.ui.lineEdit.text()
         output = self.calc.evaluate(command)
         self.ui.textEdit.append(command)
-        if type(output) == hstr:
+        if type(output) == StrWithHtml:
             self.ui.textEdit.insertHtml('\n<br>\n'
                 + output.html + '\n')
         else:

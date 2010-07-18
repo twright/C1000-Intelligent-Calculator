@@ -115,14 +115,14 @@ class Terms(unittest.TestCase):
 
 class Equalities(unittest.TestCase):
     vals = [ (Equality(Polynomial('x', 2,3), Polynomial('x', 2,1, 3,2)), '2x^3 = 3x^2 + 2x'),
-        (Equality(nint(0), Polynomial('y', 4,2, -5,0)), '0 = 4y^2 - 5'),
-        (Equality(Polynomial('z', 4,2, -5,0), nint(0)), '4z^2 - 5 = 0'),
-        (Equality(nint(5), Term(1, 't', 1)), '5 = t'),
-        (Equality(Term(1, 'x', 5), nint(0)), 'x^5 = 0') ]
+        (Equality(Integer(0), Polynomial('y', 4,2, -5,0)), '0 = 4y^2 - 5'),
+        (Equality(Polynomial('z', 4,2, -5,0), Integer(0)), '4z^2 - 5 = 0'),
+        (Equality(Integer(5), Term(1, 't', 1)), '5 = t'),
+        (Equality(Term(1, 'x', 5), Integer(0)), 'x^5 = 0') ]
 
     def test_init(self):
         ''' Tests that equalities can be correctly created '''
-        self.assertIsNotNone(Equality(nint(0), Term(3, 'x', 2)))
+        self.assertIsNotNone(Equality(Integer(0), Term(3, 'x', 2)))
         self.assertIsNotNone(Equality(Polynomial('t', 2,3, 2,1), Term(2,'t',1)))
         self.assertRaises(ValueError, Equality, Polynomial('y', 2,1), Polynomial('x', 1,2))
 

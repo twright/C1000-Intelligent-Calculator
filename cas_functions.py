@@ -90,7 +90,7 @@ class Function:
         if other == 1:
             return self
         elif other == 0:
-            return nint(0)
+            return Integer(0)
         else:
             return NotImplemented
     __rmul__ = __mul__
@@ -103,7 +103,7 @@ class Function:
 
     def __rtruediv__(self, other):
         if other == 0:
-            return nint(0)
+            return Integer(0)
         else:
             return NotImplemented
 
@@ -199,14 +199,19 @@ class Power(Function):
 
 class Equality:
     def __init__(self, a, b):
+        '''  '''
         assert(isinstance(a, Function) or isinstance(b, Function))
         self.a = a; self.b = b
+        if isinstance(a, Function) and isinstance(b, Function) and a.abscissa != b.abscissa:
+            raise ValueError('Both functions must be in the same variable')
         self.abscissa = a.abscissa if isinstance(a,Function) else b.abscissa
 
     def __repr__(self):
+        ''' Convert to string '''
         return str(self.a) + ' = ' + str(self.b)
 
     def roots(self, n=100):
+        ''' Return all solutions of the quality '''
         return (self.a - self.b).simplify().roots(n)
 
 
@@ -249,7 +254,7 @@ class Term(Function):
     def integral(self):
         ''' Return the indefinite integral '''
         if self.coefficient == 0:
-            return constant()
+            return Constant()
         else:
             return Term(self.coefficient/(self.power + 1),
                 self.abscissa, self.power + 1)
@@ -297,7 +302,7 @@ class Term(Function):
     def _convert_other(self, other):
         if isinstance(other, Term):
             return other
-        elif isinstance(other, nint) or isinstance(other, Decimal):
+        elif isinstance(other, Integer) or isinstance(other, Decimal):
             return Term(other, self.abscissa, 0)
         else:
             return NotImplemented
@@ -327,7 +332,7 @@ class Term(Function):
     __radd__ = __add__
 
     def __pow__(self, m):
-        assert (isinstance(m, nint))
+        assert (isinstance(m, Integer))
         return Term(self.coefficient**m, self.abscissa, self.power*m)
 
     def as_gnuplot_expression(self):
@@ -381,7 +386,7 @@ class Polynomial(Function):
          - Return a polynomial object based on the new terms '''
         f = lambda x: x.integral()
         a = self.map_to_terms(f)
-        a.terms += [ constant() ]
+        a.terms += [ Constant() ]
         return (a)
 
     def append(self, coefficient, power):
@@ -458,7 +463,7 @@ class Polynomial(Function):
             c = Polynomial(other.abscissa)
             c.terms = [ other ]
             return c
-        elif isinstance(other,nint) or isinstance(other,Decimal):
+        elif isinstance(other,Integer) or isinstance(other,Decimal):
             return Polynomial(self.abscissa, other, 0)
         else:
             return NotImplemented
@@ -493,7 +498,7 @@ class Polynomial(Function):
     def __truediv__(self, other):
         if isinstance(other, Polynomial):
             return Fraction(self.abscissa, self, other).simplify()
-        elif isinstance(other, nint) or isinstance(other, Decimal):
+        elif isinstance(other, Integer) or isinstance(other, Decimal):
             c = Polynomial(self.abscissa)
             for l in self.terms:
                 c.terms += [ l / other ]
@@ -507,7 +512,7 @@ class Polynomial(Function):
     def __pow__(self, m):
         if m == 0:
             return 1
-        elif (isinstance(m, nint) or isinstance(m, int)) and m > 1:
+        elif (isinstance(m, Integer) or isinstance(m, int)) and m > 1:
             return reduce(lambda a,b: a * b, [self for i in range(m)])
         elif isinstance(m, Decimal) or m < 1:
             return Power(self.abscissa, self, m)

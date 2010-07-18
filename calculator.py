@@ -29,7 +29,7 @@ def plot(f, *between):
     file_name = graph.file_name
     graph.send("set xlabel '%s'" % f.abscissa)
     graph.plot_function(f, *between)
-    return hstr (
+    return StrWithHtml (
         'Image saved to %s' % file_name,
         r'<img src="' + file_name + '">'
         )
@@ -57,7 +57,7 @@ class Calculator():
         elif a[1] == '/': return a[0] / a[2]
 
     def expr_action(a):
-        result = a[0]#nint(0)
+        result = a[0]#Integer(0)
     #    b = list(a)
     #    if not isinstance(a[0], str):
     #        b = [ '+' ] + b
@@ -107,7 +107,7 @@ class Calculator():
         'plot' : plot,
         'evaluate' : lambda a,b: a.evaluate(b),
         'setprecision' : set_precision,
-        'about' : lambda: hstr('Copyright Tom Wright <tom.tdw@gmail.com>',
+        'about' : lambda: StrWithHtml('Copyright Tom Wright <tom.tdw@gmail.com>',
             '''<img src="./images/about.png"><br>
             This program was written by Tom Wright <tom.tdw@gmail.com>'''),
         'help' : lambda: 'Commands include: solve, diff, integrate',
@@ -128,7 +128,7 @@ class Calculator():
 
     # Start of BFN for parser
     uint = Word(nums)
-    uint.setParseAction(lambda a: nint(a[0]))
+    uint.setParseAction(lambda a: Integer(a[0]))
     ufloat = Word(nums) + '.' + Word(nums)
     ufloat.setParseAction(lambda a: Decimal(''.join(a)))
     unum = ufloat ^ uint
@@ -176,7 +176,7 @@ class Calculator():
         # print (*a)
         if isinstance(a[0], Decimal):
             return '= ' + str(a[0].normalize())
-        elif isinstance(a[0], str) or isinstance(a[0], hstr):
+        elif isinstance(a[0], str) or isinstance(a[0], StrWithHtml):
             return a[0]
         elif (len(a) == 1) or (type(a[0]) == int) or (type(a[0]) == float):
             return '= ' + str(a[0])
