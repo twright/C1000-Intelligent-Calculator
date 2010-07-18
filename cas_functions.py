@@ -1,10 +1,13 @@
 #!/usr/bin/env python3.1
 
-from decimal import Decimal, getcontext
-from copy import deepcopy, copy
+from copy import deepcopy
+from decimal import Decimal
+from decimal import getcontext
 from functools import reduce
 
-from cas_core import handle_type, constant, nint
+from cas_core import constant
+from cas_core import handle_type
+from cas_core import nint
 import cas_expressions as ce
 
 # Set precision for numbers
@@ -22,14 +25,15 @@ class Function:
         assert(len(abscissa) == 1)
         self.abscissa = abscissa
 
-    def evaluate(n): pass
+    def evaluate(self, n): pass
 
     def numerical_integral(self, a, b, n=100): 
         ''' The numerical integral of the function using the composite 3/8
         Simpson's Rule
         (see http://mathworld.wolfram.com/Newton-CotesFormulas.html) '''
     #    getcontext().prec = 50
-        return boole_composite_integral(lambda x: float(self.evaluate(x)), float(a),float(b),n)
+        return boole_composite_integral(lambda x: float(self.evaluate(x)),
+            float(a),float(b),n)
 
 #        h = (Decimal(repr(b)) - Decimal(repr(a))) / n
 #        x = lambda i: a + i*h
@@ -69,36 +73,36 @@ class Function:
         ''' Calculate the limit of a funtion between 2 points '''
         return self.evaluate(upper) - self.evaluate(lower)
 
-    def __add__(a, b):
-        if b == 0:
-            return a
+    def __add__(self, other):
+        if other == 0:
+            return self
         else:
             return NotImplemented
     __radd__ = __add__
 
-    def __sub__(a, b):
-        if b == 0:
-            return a
+    def __sub__(self, other):
+        if other == 0:
+            return self
         else:
             return NotImplemented
 
-    def __mul__(a, b):
-        if b == 1:
-            return a
-        elif b == 0:
-            return 0
+    def __mul__(self, other):
+        if other == 1:
+            return self
+        elif other == 0:
+            return nint(0)
         else:
             return NotImplemented
     __rmul__ = __mul__
     
-    def __truediv__(a, b):
-        if b == 1:
-            return a
+    def __truediv__(self, other):
+        if other == 1:
+            return self
         else:
             return NotImplemented
 
-    def __rtruediv__(a, b):
-        if b == 0:
+    def __rtruediv__(self, other):
+        if other == 0:
             return nint(0)
         else:
             return NotImplemented
@@ -155,8 +159,8 @@ class Product(Function):
             if isinstance(self.g, Power):
                 self.g, self.h = self.h, self.g
 
-    def __mul__(a, b):
-        return Product(a.abscissa, self.g*b, self.h)
+    def __mul__(self, other):
+        return Product(self.abscissa, self.g*other, self.h)
 
     def __str__(self):
         bracket = lambda a: ('(%s)' if isinstance(a, Polynomial) else '%s') % str(a)
@@ -176,8 +180,8 @@ class Power(Function):
     def __str__(self):
         return '(' + str(self.function) + ')^' + str(self.power)
 
-    def __mul__(a, b):
-        return Product(a.abscissa, a, b)
+    def __mul__(self, other):
+        return Product(self.abscissa, self, other)
     __rmul__ = __mul__
 
     def differential(self):
@@ -257,15 +261,15 @@ class Term(Function):
         else:
             return self.coefficient * handle_type(x) ** self.power
 
-    def __eq__(a, b):
+    def __eq__(self, other):
         ''' Compare whether 2 terms are equal '''
-        b = a._convert_other(b)
-        if b == NotImplemented:
-            return b
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
 
-        return a.coefficient == b.coefficient\
-            and a.abscissa == b.abscissa\
-            and a.power == b.power
+        return self.coefficient == other.coefficient\
+            and self.abscissa == other.abscissa\
+            and self.power == other.power
 
     def __repr__(self):
         ''' Print a representation of the term '''
@@ -277,17 +281,17 @@ class Term(Function):
         a = deepcopy(self); a.coefficient *= -1
         return a
 
-    def __mul__(a,b):
-        b = a._convert_other(b)
-        if b == NotImplemented:
-            return b
+    def __mul__(self, other):
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
 
-        if a.abscissa == b.abscissa:
-            return Term(a.coefficient*b.coefficient, a.abscissa, a.power+b.power)
+        if self.abscissa == other.abscissa:
+            return Term(self.coefficient*other.coefficient, self.abscissa, self.power+other.power)
         else:
-            return ce.Term(a.coefficient*b.coefficient,
-                ce.Factor(a.abscissa, a.power),
-                ce.Factor(b.abscissa, b.power))
+            return ce.Term(self.coefficient*other.coefficient,
+                ce.Factor(self.abscissa, self.power),
+                ce.Factor(other.abscissa, other.power))
     __rmul__ = __mul__
 
     def _convert_other(self, other):
@@ -298,28 +302,28 @@ class Term(Function):
         else:
             return NotImplemented
 
-    def __truediv__(a,b):
-        b = a._convert_other(b)
-        if b == NotImplemented:
-            return b
-        return Term(a.coefficient/b.coefficient, a.abscissa, a.power-b.power)
+    def __truediv__(self, other):
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
+        return Term(self.coefficient/other.coefficient, self.abscissa, self.power-other.power)
     __rtruediv__ = __truediv__
 
-    def __sub__(a,b):
-        b = a._convert_other(b)
-        if b == NotImplemented:
-            return b
-        return a + b.invert()
+    def __sub__(self, other):
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
+        return self + other.invert()
     __rsub__ = __sub__
 
-    def __add__(a,b):
-        b = a._convert_other(b)
-        if b == NotImplemented:
-            return b
-        c = Polynomial(a.abscissa)
-        c.terms = [a, b]
+    def __add__(self, other):
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
+        c = Polynomial(self.abscissa)
+        c.terms = [self, other]
         c.sort_terms()
-        return c + Polynomial(a.abscissa,0,0)
+        return c + Polynomial(self.abscissa,0,0)
     __radd__ = __add__
 
     def __pow__(self, m):
@@ -367,22 +371,14 @@ class Polynomial(Function):
         return y
 
     def differential(self):
-        ''' Calculate the differential of the expression
-        >>> y = Polynomial('y',1,1,2,3,4,5)
-        >>> print ('f`(y) =', y.differential())
-        f`(y) = 1 + 6*y^2 + 20*y^4
-        '''
+        ''' Calculate the differential of the expression '''
         f = lambda x: x.differential()
         return (self.map_to_terms(f))
 
     def integral(self):
         ''' Calculate the indefinite integral of the expression
          - Integrate each term
-         - Return a polynomial object based on the new terms
-        >>> y = Polynomial('y',1,1,2,3,4,5)
-        >>> print ('∫ f(y) dy =', y.integral())
-        ∫ f(y) dy = 0.5*y^2 + 0.5*y^4 + 0.667*y^6 + c
-        '''
+         - Return a polynomial object based on the new terms '''
         f = lambda x: x.integral()
         a = self.map_to_terms(f)
         a.terms += [ constant() ]
@@ -440,17 +436,17 @@ class Polynomial(Function):
         power = lambda a: a.power
         self.terms.sort(key=power, reverse=True)
 
-    def simplify(a):
-        a.sort_terms()
-        b = Polynomial(a.abscissa)
-        b.terms += [ a.terms[0] ]
-        for i in range(1,len(a.terms)):
-            if a.terms[i].coefficient != 0:
-                if a.terms[i].power != b.terms[-1].power:
-                    b.terms += [ a.terms[i] ]
+    def simplify(self):
+        self.sort_terms()
+        result = Polynomial(self.abscissa)
+        result.terms += [ self.terms[0] ]
+        for i in range(1,len(self.terms)):
+            if self.terms[i].coefficient != 0:
+                if self.terms[i].power != result.terms[-1].power:
+                    result.terms += [ self.terms[i] ]
                 else:
-                    b.terms[-1].coefficient += a.terms[i].coefficient
-        return b
+                    result.terms[-1].coefficient += self.terms[i].coefficient
+        return result
 
     def invert(self):
         return self.map_to_terms(lambda t: t.invert())
@@ -467,43 +463,43 @@ class Polynomial(Function):
         else:
             return NotImplemented
 
-    def __sub__(a, b):
-        b = a._convert_other(b)
-        if b == NotImplemented:
-            return b
-        return a + b.invert()
+    def __sub__(self, other):
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
+        return self + other.invert()
     __rsub__ = __sub__
 
-    def __add__(a, b):
-        b = a._convert_other(b)
-        if b == NotImplemented:
-            return b
-        c = Polynomial(a.abscissa)
-        c.terms = a.terms + b.terms
+    def __add__(self, other):
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
+        c = Polynomial(self.abscissa)
+        c.terms = self.terms + other.terms
         return c.simplify()
     __radd__ = __add__
 
-    def __mul__(a, b):
-        b = a._convert_other(b)
-        if b == NotImplemented:
-            return b
-        c = Polynomial(a.abscissa)
-        for l in a.terms:
-            for m in b.terms:
+    def __mul__(self, other):
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
+        c = Polynomial(self.abscissa)
+        for l in self.terms:
+            for m in other.terms:
                 c.terms += [ l * m ]
         return c.simplify()
     __rmul__ = __mul__
 
-    def __truediv__(a,b):
-        if isinstance(b, Polynomial):
-            return Fraction(a.abscissa, a, b).simplify()
-        elif isinstance(b, nint) or isinstance(b, Decimal):
-            c = Polynomial(a.abscissa)
-            for l in a.terms:
-                c.terms += [ l / b ]
+    def __truediv__(self, other):
+        if isinstance(other, Polynomial):
+            return Fraction(self.abscissa, self, other).simplify()
+        elif isinstance(other, nint) or isinstance(other, Decimal):
+            c = Polynomial(self.abscissa)
+            for l in self.terms:
+                c.terms += [ l / other ]
             return c.simplify()
-        elif isinstance(b, Term):
-            return a / a._convert_other(b)
+        elif isinstance(other, Term):
+            return self / self._convert_other(other)
         else:
             return NotImplemented
     __rtruediv__ = __truediv__

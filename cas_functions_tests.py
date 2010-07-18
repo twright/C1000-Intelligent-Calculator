@@ -2,10 +2,12 @@
 ''' Test the functionality of core cas functions like type handling,
 the nint datatype and hstr's (html strings) '''
 
+from cas_functions import Polynomial
 import unittest
 from decimal import Decimal
 
 from cas_functions import *
+from cas_core import nint
 
 class Functions(unittest.TestCase):
     y = Polynomial('x',1,1,2,3,4,5)
@@ -111,6 +113,31 @@ class Terms(unittest.TestCase):
         for x,y in xys:
             self.assertEqual(y, f.evaluate(x))
 
+class Equalities(unittest.TestCase):
+    vals = [ (Equality(Polynomial('x', 2,3), Polynomial('x', 2,1, 3,2)), '2x^3 = 3x^2 + 2x'),
+        (Equality(nint(0), Polynomial('y', 4,2, -5,0)), '0 = 4y^2 - 5'),
+        (Equality(Polynomial('z', 4,2, -5,0), nint(0)), '4z^2 - 5 = 0'),
+        (Equality(nint(5), Term(1, 't', 1)), '5 = t'),
+        (Equality(Term(1, 'x', 5), nint(0)), 'x^5 = 0') ]
+
+    def test_init(self):
+        ''' Tests that equalities can be correctly created '''
+        self.assertIsNotNone(Equality(nint(0), Term(3, 'x', 2)))
+        self.assertIsNotNone(Equality(Polynomial('t', 2,3, 2,1), Term(2,'t',1)))
+        self.assertRaises(Exception, Equality, Polynomial('y', 2,1), Polynomial('x', 1,2))
+
+    def test_str(self):
+        ''' Tests that equalities are correctly printed '''
+        for a, b in self.vals:
+            self.assertEqual(str(a), b)
+
+    def test_roots(self):
+        ''' Tests that sample equalities can correctly be solved '''
+        for eq, string in self.vals:
+            for root in eq.roots():
+                self.assertAlmostEqual(eq.a.evaluate(root), eq.b.evaluate(root),
+                    places = 3)
+
 class NumericalMethods(unittest.TestCase):
     pols = [ Polynomial('x', 1,2), Polynomial('x', 1,3,2,2,1,1,-5,0),
         Polynomial('x', 1,3,2,1,7,0), Polynomial('x', 4,3,2,1,7,0),
@@ -135,11 +162,12 @@ class NumericalMethods(unittest.TestCase):
     def test_numerical_integral(self):
         ''' Numerical integration should produce results close to the true
         value '''
+        # TODO: Make harsher when proper numerical integration finished
         a = 3.4; b = 7.5
         reldiff = lambda a, b: abs(a - b) / a
         for y in self.pols:
             self.assertAlmostEqual(reldiff(float(y.integral().limit(a,b)),
-            y.numerical_integral(a,b)), 0, places = 2)
+            y.numerical_integral(a,b)), 0, places = 1)
 
     def test_trapezoidal_integral(self):
         ''' The trapezium rule should give an ok estimate of the integral '''
