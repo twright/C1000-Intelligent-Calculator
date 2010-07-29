@@ -87,7 +87,7 @@ class Integer(int):
     __rmul__ = __mul__
     
     def _factors(self):
-        ''' Naively factorise an integer '''
+        ''' Naively factorise an integer using trial division. '''
         a = self
         
         if a < 0:
@@ -160,7 +160,7 @@ class Product(Algebra):
     def simplify(self):
         return self._simplify_multiply()
         
-    def __iter__(self, i):
+    def __getitem__(self, i):
         return self._factors[i]
         
     def __mul__(self):
@@ -170,11 +170,15 @@ class Product(Algebra):
     def __str__(self):
         return '*'.join(map(str, self._factors))
         
+    def __eq__(self, other):
+        # TODO: Add handling for unsimplifyable products
+        return self.simplify() == other
+    
+    def __len__(self):
+        return len(self._factors)
+        
     def as_gnuplot_expression(self):
         return '*'.join(map(lambda a: a.as_gnuplot_expression(), self._factors))
-        
-    def factors(self):
-        return self
         
 class List():
     def __init__(self, *a):

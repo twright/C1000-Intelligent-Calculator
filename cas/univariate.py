@@ -1,4 +1,6 @@
 #!/usr/bin/env python3.1
+''' A module containing representations of algebraic functions in single variables
+in the general form f(x) '''
 
 from copy import deepcopy
 from decimal import Decimal, getcontext, localcontext
@@ -26,13 +28,17 @@ class Function(Algebra):
     
     def differential(self): pass
 
-    def maxima(self):
+    def maxima(self, n=100):
+        ''' Calculate the maxima of a function by the turning points at which
+        its second differential is negative '''
         return list(filter(lambda x: self.differential().differential().evaluate(x) < 0,
-            self.differential().roots()))
+            self.differential().roots(n)))
 
-    def minima(self):
+    def minima(self, n=100):
+        ''' Calculate the minima of a function by the turning points at which its
+        second differential is positive '''
         return list(filter(lambda x: self.differential().differential().evaluate(x) > 0,
-            self.differential().roots()))
+            self.differential().roots(n)))
 
 #    def numerical_integral(self, a, b, n=100): 
 #        ''' The numerical integral of the function using the composite 3/8
