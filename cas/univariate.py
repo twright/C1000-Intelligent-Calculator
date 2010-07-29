@@ -1,30 +1,24 @@
 #!/usr/bin/env python3.1
 
 from copy import deepcopy
-from decimal import Decimal
-from decimal import getcontext
+from decimal import Decimal, getcontext, localcontext
 from functools import reduce
 from numbers import Number
 
-from cas_core import Constant
-from cas_core import handle_type
-from cas_core import Integer
-import cas_expressions as ce
+from .core import Constant, handle_type, Integer, Algebra, print_complex
+import cas.core as core
+import cas.multivariate as ce
+import numerical_methods as nm
 
 # Set precision for numbers
 # getcontext().prec = 3
 
-def boole_composite_integral(f,a,b,m):
-    h = (b-a)/(4*m)
-    x = lambda k: a + k*h
-    return (2*h/45)*sum( 7*f(x(4*k-4)) + 32*f(x(4*k-3)) + 12*f(x(4*k-2))
-            + 32*f(x(4*k-2)) + 7*f(x(4*k)) for k in range(1,m) )
-
-class Function:
+class Function(Algebra):
     ''' A class to hold arbitrary algebraic functions '''
     def __init__(self, abscissa):
         assert(len(abscissa) == 1)
         self.abscissa = abscissa
+        super().__init__()
 
     def evaluate(self, n): pass
     
@@ -40,92 +34,33 @@ class Function:
         return list(filter(lambda x: self.differential().differential().evaluate(x) > 0,
             self.differential().roots()))
 
-    def numerical_integral(self, a, b, n=100): 
-        ''' The numerical integral of the function using the composite 3/8
-        Simpson's Rule
-        (see http://mathworld.wolfram.com/Newton-CotesFormulas.html) '''
-    #    getcontext().prec = 50
-        return boole_composite_integral(lambda x: float(self.evaluate(x)),
-            float(a),float(b),n)
-
-#        h = (Decimal(repr(b)) - Decimal(repr(a))) / n
-#        x = lambda i: a + i*h
-#        f = lambda i: Decimal(self.evaluate( i ))
-
-#        print(x(n), b)
-#        print([(i, i+1, i+2) for i in range(1,n,3)])
-
-#       Cumulative 3/8
-#        return (3*h/8)*(f(0) + sum(3*f(i) + 3*f(i+1) + 2*f(i+2) 
-#            for i in range(1,n,3)) + f(n))
-
-#       Combined / expanded formula
-#        return h*( (17*f(0) + 59*f(1) + 43*f(2) + 49*f(3))/48
-#            + sum( f(i) for i in range(4,n-3) )
-#            + (17*f(n-3) + 59*f(n-2) + 43*f(n-1) + 49*f(n))/48 )
-
-#       Composite Boole's Rule
-#        x = lambda i: a + k*h
-#        return (2*h/45) * sum(7*f(x(0)) + 32*f(x(1)) + 12*f(x(2))
-#            + 32*f(x(3)) + 7*f(x(4)) for k in range(1,4*n))
-
-#       Open formula
-#        return (8*h/945)*(460*f(1) - 954*f(2) + 2196*f(3) - 2459*f(4)
-#            + 2196*f(5) - 954*f(6) + 460*f(7))
+#    def numerical_integral(self, a, b, n=100): 
+#        ''' The numerical integral of the function using the composite 3/8
+#        Simpson's Rule
+#        (see http://mathworld.wolfram.com/Newton-CotesFormulas.html) '''
+#    #    getcontext().prec = 50
+#        return boole_composite_integral(lambda x: float(self.evaluate(x)),
+#            float(a),float(b),n)
+            
+    def numerical_integral(self, method, a, b, n=100):
+        f = lambda x: float(self.evaluate(x))
+        return Decimal.from_float(method(f, float(a), float(b), n)).normalize()
 
     def trapezoidal_integral(self, a, b, n=100):
-        ''' Numerically integrate functions via the Trapezium Rule '''
-        h = (float(b) - float(a)) / n
-        x = lambda i: float(a) + i*h
-        f = lambda i: float(self.evaluate( x(i) ))
-        
-        return h*( f(0)/2
-            + sum( f(i) for i in range(1,n) ) + f(n)/2 ) 
+        ''' Numerically integrate functions via the Trapezium Rule with n strips '''
+        return self.numerical_integral(nm.trapezoidal_composite_integral, a, b, n)
+
+    def romberg_integral(self, a, b, n=5):
+        ''' Numerically integrate functions via the Romberg method comparing n
+            values from interpolating polynomials of order n '''
+        return self.numerical_integral(nm.romberg_integral, a, b, n)
 
     def limit(self, lower, upper):
         ''' Calculate the limit of a funtion between 2 points '''
         return self.evaluate(upper) - self.evaluate(lower)
 
-    def __add__(self, other):
-        if other == 0:
-            return self
-        else:
-            return NotImplemented
-    __radd__ = __add__
-
-    def __sub__(self, other):
-        if other == 0:
-            return self
-        else:
-            return NotImplemented
-
-    def __mul__(self, other):
-        if other == 1:
-            return self
-        elif other == 0:
-            return Integer(0)
-        else:
-            return NotImplemented
-    __rmul__ = __mul__
-    
-    def __truediv__(self, other):
-        if other == 1:
-            return self
-        else:
-            return NotImplemented
-
-    def __rtruediv__(self, other):
-        if other == 0:
-            return Integer(0)
-        else:
-            return NotImplemented
-
     def __pow__(self, other):
-        if other == 1:
-            return self
-        elif other == 0:
-            return Integer(1)
-        elif isinstance(other, Number):
+        if isinstance(other, Number):
             return Power(self, other)
         else:
             return NotImplemented
@@ -139,25 +74,63 @@ class Fraction(Function):
 
     def __str__(self):
         return '(' + str(self.numerator) + ') / (' + str(self.denominator) + ')'
+        
+#    def __mul__(self, other):
+#        if isinstance(other,Fraction):
+#            pass
+#        else:
+#            return Fraction(self.abscissa, self.numerator*other, self.denominator)
+#    __rmul__ = __mul__
+
+    def __mul__(self,other):
+        if isinstance(other, Polynomial):
+            return (self.numerator * other) / self.denominator
+        else:
+            return NotImplemented
+    __rmul__ = __mul__
 
     def evaluate(self, x):
         return self.numerator.evaluate(x) / self.denominator.evaluate(x)
 
-    def roots(self, n=100):
-        return numerator.roots(n) + denominator.roots(n)
+#    def roots(self, n=100):
+#        return numerator.roots(n) + denominator.roots(n)
 
     def simplify(self):
-    #    return self
-        power = lambda t: t.power
-        a = Polynomial(self.abscissa); b = Polynomial(self.abscissa)
-        lowest_power = min(map(power, self.numerator.terms + self.denominator.terms))
-        reduce_power = lambda t: t / Term(1, self.abscissa, lowest_power)
-        a.terms = list(map(reduce_power, self.numerator.terms)) 
-        b.terms = list(map(reduce_power, self.denominator.terms))
-        b.sort_terms()
-        if b.order() == 0:
-            return a / b.terms[0].coefficient
-        return Fraction(self.abscissa, a.simplify(), b.simplify())
+        def areclose(a,b):
+            r = lambda x: -x.terms[1].coefficient if isinstance(x, Polynomial) else x
+            c = complex(r(a)) - complex(r(b))
+            return abs(c.real) < 0.01 and abs(c.imag) < 0.01
+        
+        a = self.numerator.factors(); b = self.denominator.factors()
+        
+        moves = 0
+        
+        i = 0
+        while i < len(a._factors):
+            j = 0
+            while j < len(b._factors):  
+                if areclose(a._factors[i], b._factors[j]):
+                    del a._factors[i]; del b._factors[j]
+                    j -= 1; i -= 1; moves += 1
+                j += 1
+            i += 1
+        
+        if moves == 0:
+            # Only reform object if no simplifications have been made; otherwise
+            # this would recurse infinitely.
+            return self
+        else:       
+            return a.simplify() / b.simplify()
+#        power = lambda t: t.power
+#        a = Polynomial(self.abscissa); b = Polynomial(self.abscissa)
+#        lowest_power = min(map(power, self.numerator.terms + self.denominator.terms))
+#        reduce_power = lambda t: t / Term(1, self.abscissa, lowest_power)
+#        a.terms = list(map(reduce_power, self.numerator.terms)) 
+#        b.terms = list(map(reduce_power, self.denominator.terms))
+#        b.sort_terms()
+#        if b.order() == 0:
+#            return a / b.terms[0].coefficient
+#        return Fraction(self.abscissa, a.simplify(), b.simplify())
 
     def differential(self):
         ''' Making use of the quotient rule,
@@ -170,28 +143,23 @@ class Fraction(Function):
         return '(' + self.numerator.as_gnuplot_expression() + ') / ('\
             + self.denominator.as_gnuplot_expression() + ')'
 
-class Product(Function):
-    def __init__(self, abscissa, g, h):
-        super().__init__(abscissa)
-        self.g = g
-        self.h = h
-        self.sort_terms()
-
-    def sort_terms(self):
-        if (isinstance(self.h, Power) ^ isinstance(self.g, Power)):
-            if isinstance(self.g, Power):
-                self.g, self.h = self.h, self.g
-
-    def __mul__(self, other):
-        return Product(self.abscissa, self.g*other, self.h)
-
+class Product(Function, core.Product):
+    def __init__(self, abscissa, *factors):
+        Function.__init__(self, abscissa)
+        core.Product.__init__(self, *factors)
+        
     def __str__(self):
-        bracket = lambda a: ('(%s)' if isinstance(a, Polynomial) else '%s') % str(a)
-        return  bracket(self.g) + ' * ' + bracket(self.h)
+        bracket = lambda a: ('(%s)' if isinstance(a, Polynomial) else '%s')\
+            % str(a)
+        return ' * '.join(map(bracket, self._factors))
+        
+#    def sort_terms(self):
+#        if (isinstance(self.h, Power) ^ isinstance(self.g, Power)):
+#            if isinstance(self.g, Power):
+#                self.g, self.h = self.h, self.g
 
-    def as_gnuplot_expression(self):
-        return '(' + self.g.as_gnuplot_expression() + ') * ('\
-            + self.h.as_gnuplot_expression() + ')'
+#    def __mul__(self, other):
+#        return Product(self.abscissa, self.g*other, self.h)
 
 
 class Power(Function):
@@ -251,10 +219,12 @@ class Term(Function):
 
     def __str__(self):
         ''' Output the term nicely via assorted logic '''
-        if self.coefficient == 0: return ''
+        s = lambda a: print_complex(a) if isinstance(a, complex) else str(+a)
+        if self.coefficient == 0: return '0'
         else: return \
-            (str(self.coefficient) 
-                if self.coefficient != 1 or self.power == 0 else '')\
+            (s(self.coefficient)
+                if self.coefficient != 1 or self.power == 0 else ''
+                if self.coefficient != -1 else '-')\
             + (self.abscissa if self.power != 0 else '')\
             + ('^' + str(self.power) if 0 != self.power != 1 else '')
 
@@ -317,10 +287,11 @@ class Term(Function):
         return "Term(%s, '%s', %s)"\
             % (self.coefficient, self.abscissa, self.power)
 
-    def invert(self):
+    def __neg__(self):
         ''' Return a copy of the term with its coefficient inverted '''
         a = deepcopy(self); a.coefficient *= -1
         return a
+    invert = __neg__
 
     def __mul__(self, other):
         other = self._convert_other(other)
@@ -369,7 +340,7 @@ class Term(Function):
 
     def __pow__(self, m):
         m = handle_type(m)
-        if isinstance(m, Integer):
+        if isinstance(m, Number):
             return Term(self.coefficient**m, self.abscissa, self.power*m)
         else:
             return NotImplemented
@@ -389,6 +360,7 @@ class Term(Function):
 
 class Polynomial(Function):
     ''' A class representing a polynomial '''
+    # TODO: Consider renaming as it now accepts non-polynomials
     def __init__(self, abscissa, *nums):
         ''' Initiates the polynomial with a string containing the abscissa
         followed by pairs of coefficients and powers '''
@@ -399,9 +371,17 @@ class Polynomial(Function):
 
     def __str__(self):
         ''' A list comprehension to combine the terms of the polynomial '''
+        # print(list(map(str, self.terms)))
+        def term_str(a):
+            if isinstance(a.coefficient, complex):
+                if ('i' not in str(a)) and (str(a)[0] == '-'):
+                    return '- ' + str(a)[1:]
+                else:
+                    return '+ ' + str(a)
+            else:
+                return ('+', '-')[a.sign() == -1] + ' ' + str(abs(a))
         if len(self.terms) > 1:
-            return ' '.join([str(self.terms[0])] + [('+', '-')[a.sign() == -1]
-                + ' ' + str(abs(a)) for a in self.terms[1:] if a.sign() != 0])
+            return ' '.join( [str(self.terms[0])] + list(map(term_str, self.terms[1:])) )
         elif len(self.terms) == 1:
             return str(self.terms[0])
         else:
@@ -447,6 +427,21 @@ class Polynomial(Function):
         ''' Return the power of the equation (taken to be the greatest power
         of a term i.e. the power of the leading term) '''
         return self.terms[0].power
+            
+    def factors(self):
+        def fact(a):
+            ''' Returns a list of any valid factors of the coefficient a '''
+            if a == 1:
+                return []
+            elif isinstance(a, Integer):
+                return a.factors()._factors
+            else:
+                return [a]
+            
+        # TODO: tidy up this mess
+        return Product(self.abscissa, 
+            *(fact(self.terms[0].coefficient)
+            + list(map(lambda a: Term(1,'x',1) - a, self.roots()))))
 
     def roots(self, n=100):
         ''' Numerically locate all roots (real and complex) of an equation
@@ -478,7 +473,8 @@ class Polynomial(Function):
 
     def sort_terms(self):
         ''' Sort terms in order of descending power '''
-        power = lambda a: a.power if isinstance(a, Term) else 0
+        power = lambda a: (a.power if a.coefficient != 0 else 0)\
+            if isinstance(a, Term) else 0
         self.terms.sort(key=power, reverse=True)
 
     def simplify(self):
@@ -533,12 +529,12 @@ class Polynomial(Function):
         for l in self.terms:
             for m in other.terms:
                 terms += [ l * m ]
-        if reduce(lambda a, b: a and b, map(lambda t: isinstance(t, Polynomial), terms)):
-            c = Polynomial(self.abscissa); c.terms = term
-            return c.simplify
+        if reduce(lambda a, b: a and b, map(lambda t: isinstance(t, Term), terms)):
+            c = Polynomial(self.abscissa); c.terms = terms
+            return c.simplify()
         else:
             conv = lambda a: a if isinstance(a, ce.Term) else ce.Term(a.coefficient, Factor(a.abscissa, a.power))
-            return ce.Polynomial(*terms)
+            return ce.Polynomial(*map(conv, terms))
     __rmul__ = __mul__
 
     def __truediv__(self, other):
@@ -553,7 +549,15 @@ class Polynomial(Function):
             return self / self._convert_other(other)
         else:
             return NotImplemented
-    __rtruediv__ = __truediv__
+    #__rtruediv__ = __truediv__
+    
+    def __rtruediv__(self, other):
+        if isinstance(other, Term):
+            return self._convert_other(other) / self
+        elif isinstance(other, Integer):
+            return self._convert_other(other) / self
+        else:
+            return NotImplemented
 
     def __pow__(self, m):
         if m == 0:
@@ -561,7 +565,7 @@ class Polynomial(Function):
         elif (isinstance(m, Integer) or isinstance(m, int)) and m > 1:
             return reduce(lambda a,b: a * b, [self for i in range(m)])
         elif isinstance(m, Decimal) or m < 1:
-            return Power(self.abscissa, self, m)
+            return Power(self, m)
         else:
             return NotImplemented
         

@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module cas.core</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="cas.html"><font color="#ffffff">cas</font></a>.core</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/tom/Documents/Calculator/cas/core.py">/home/tom/Documents/Calculator/cas/core.py</a></font></td></tr></table>
+    <p><tt>Provides&nbsp;core&nbsp;types/classes&nbsp;from&nbsp;use&nbsp;throughout&nbsp;the&nbsp;Computer&nbsp;<a href="#Algebra">Algebra</a><br>
+System&nbsp;representing&nbsp;simple&nbsp;objects&nbsp;such&nbsp;as&nbsp;Integers&nbsp;and&nbsp;Constants<br>
+whilst&nbsp;providing&nbsp;functions&nbsp;to&nbsp;allocate&nbsp;types.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#int">builtins.int</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="cas.core.html#Integer">Integer</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="cas.core.html#Algebra">Algebra</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="cas.core.html#Product">Product</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="cas.core.html#Constant">Constant</a>
+</font></dt><dt><font face="helvetica, arial"><a href="cas.core.html#List">List</a>
+</font></dt><dt><font face="helvetica, arial"><a href="cas.core.html#StrWithHtml">StrWithHtml</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Algebra">class <strong>Algebra</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>The&nbsp;base&nbsp;class&nbsp;for&nbsp;all&nbsp;algebraic&nbsp;types<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Algebra-__add__"><strong>__add__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Algebra-__mul__"><strong>__mul__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Algebra-__pow__"><strong>__pow__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Algebra-__radd__"><strong>__radd__</strong></a> = <a href="#Algebra-__add__">__add__</a>(self, other)</dt></dl>
+
+<dl><dt><a name="Algebra-__rmul__"><strong>__rmul__</strong></a> = <a href="#Algebra-__mul__">__mul__</a>(self, other)</dt></dl>
+
+<dl><dt><a name="Algebra-__rtruediv__"><strong>__rtruediv__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Algebra-__sub__"><strong>__sub__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Algebra-__truediv__"><strong>__truediv__</strong></a>(self, other)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Constant">class <strong>Constant</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;class&nbsp;to&nbsp;represent&nbsp;an&nbsp;unknown&nbsp;constant&nbsp;term<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Constant-__abs__"><strong>__abs__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Constant-__eq__"><strong>__eq__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Constant-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Constant-differential"><strong>differential</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Constant-evaluate"><strong>evaluate</strong></a>(self, x)</dt></dl>
+
+<dl><dt><a name="Constant-sign"><strong>sign</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>name</strong> = 'c'</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Integer">class <strong>Integer</strong></a>(<a href="builtins.html#int">builtins.int</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>An&nbsp;extended&nbsp;integer&nbsp;class,&nbsp;providing&nbsp;better&nbsp;mathematical<br>
+handling&nbsp;of&nbsp;integers<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="cas.core.html#Integer">Integer</a></dd>
+<dd><a href="builtins.html#int">builtins.int</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Integer-__add__"><strong>__add__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__mul__"><strong>__mul__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__pow__"><strong>__pow__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__radd__"><strong>__radd__</strong></a> = <a href="#Integer-__add__">__add__</a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__rmul__"><strong>__rmul__</strong></a> = <a href="#Integer-__mul__">__mul__</a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__rsub__"><strong>__rsub__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__sub__"><strong>__sub__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__truediv__"><strong>__truediv__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-factors"><strong>factors</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Methods inherited from <a href="builtins.html#int">builtins.int</a>:<br>
+<dl><dt><a name="Integer-__abs__"><strong>__abs__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__abs__">__abs__</a>()&nbsp;&lt;==&gt;&nbsp;abs(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__and__"><strong>__and__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__and__">__and__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&amp;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__bool__"><strong>__bool__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__bool__">__bool__</a>()&nbsp;&lt;==&gt;&nbsp;x&nbsp;!=&nbsp;0</tt></dd></dl>
+
+<dl><dt><a name="Integer-__ceil__"><strong>__ceil__</strong></a>(...)</dt><dd><tt>Ceiling&nbsp;of&nbsp;an&nbsp;Integral&nbsp;returns&nbsp;itself.</tt></dd></dl>
+
+<dl><dt><a name="Integer-__divmod__"><strong>__divmod__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__divmod__">__divmod__</a>(y)&nbsp;&lt;==&gt;&nbsp;divmod(x,&nbsp;y)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__eq__"><strong>__eq__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__eq__">__eq__</a>(y)&nbsp;&lt;==&gt;&nbsp;x==y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__float__"><strong>__float__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__float__">__float__</a>()&nbsp;&lt;==&gt;&nbsp;float(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__floor__"><strong>__floor__</strong></a>(...)</dt><dd><tt>Flooring&nbsp;an&nbsp;Integral&nbsp;returns&nbsp;itself.</tt></dd></dl>
+
+<dl><dt><a name="Integer-__floordiv__"><strong>__floordiv__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__floordiv__">__floordiv__</a>(y)&nbsp;&lt;==&gt;&nbsp;x//y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__format__"><strong>__format__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Integer-__ge__"><strong>__ge__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__ge__">__ge__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;=y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="Integer-__getnewargs__"><strong>__getnewargs__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Integer-__gt__"><strong>__gt__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__gt__">__gt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__hash__"><strong>__hash__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__index__"><strong>__index__</strong></a>(...)</dt><dd><tt>x[y:z]&nbsp;&lt;==&gt;&nbsp;x[y.<a href="#Integer-__index__">__index__</a>():z.<a href="#Integer-__index__">__index__</a>()]</tt></dd></dl>
+
+<dl><dt><a name="Integer-__int__"><strong>__int__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__int__">__int__</a>()&nbsp;&lt;==&gt;&nbsp;<a href="builtins.html#int">int</a>(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__invert__"><strong>__invert__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__invert__">__invert__</a>()&nbsp;&lt;==&gt;&nbsp;~x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__le__"><strong>__le__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__le__">__le__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;=y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__lshift__"><strong>__lshift__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__lshift__">__lshift__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;&lt;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__lt__"><strong>__lt__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__lt__">__lt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__mod__"><strong>__mod__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__mod__">__mod__</a>(y)&nbsp;&lt;==&gt;&nbsp;x%y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__ne__"><strong>__ne__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__ne__">__ne__</a>(y)&nbsp;&lt;==&gt;&nbsp;x!=y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__neg__"><strong>__neg__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__neg__">__neg__</a>()&nbsp;&lt;==&gt;&nbsp;-x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__or__"><strong>__or__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__or__">__or__</a>(y)&nbsp;&lt;==&gt;&nbsp;x|y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__pos__"><strong>__pos__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__pos__">__pos__</a>()&nbsp;&lt;==&gt;&nbsp;+x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rand__"><strong>__rand__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rand__">__rand__</a>(y)&nbsp;&lt;==&gt;&nbsp;y&amp;x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rdivmod__"><strong>__rdivmod__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rdivmod__">__rdivmod__</a>(y)&nbsp;&lt;==&gt;&nbsp;divmod(y,&nbsp;x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rfloordiv__"><strong>__rfloordiv__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rfloordiv__">__rfloordiv__</a>(y)&nbsp;&lt;==&gt;&nbsp;y//x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rlshift__"><strong>__rlshift__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rlshift__">__rlshift__</a>(y)&nbsp;&lt;==&gt;&nbsp;y&lt;&lt;x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rmod__"><strong>__rmod__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rmod__">__rmod__</a>(y)&nbsp;&lt;==&gt;&nbsp;y%x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__ror__"><strong>__ror__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__ror__">__ror__</a>(y)&nbsp;&lt;==&gt;&nbsp;y|x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__round__"><strong>__round__</strong></a>(...)</dt><dd><tt>Rounding&nbsp;an&nbsp;Integral&nbsp;returns&nbsp;itself.<br>
+Rounding&nbsp;with&nbsp;an&nbsp;ndigits&nbsp;argument&nbsp;also&nbsp;returns&nbsp;an&nbsp;integer.</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rpow__"><strong>__rpow__</strong></a>(...)</dt><dd><tt>y.<a href="#Integer-__rpow__">__rpow__</a>(x[,&nbsp;z])&nbsp;&lt;==&gt;&nbsp;pow(x,&nbsp;y[,&nbsp;z])</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rrshift__"><strong>__rrshift__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rrshift__">__rrshift__</a>(y)&nbsp;&lt;==&gt;&nbsp;y&gt;&gt;x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rshift__"><strong>__rshift__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rshift__">__rshift__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;&gt;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rtruediv__"><strong>__rtruediv__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rtruediv__">__rtruediv__</a>(y)&nbsp;&lt;==&gt;&nbsp;y/x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rxor__"><strong>__rxor__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rxor__">__rxor__</a>(y)&nbsp;&lt;==&gt;&nbsp;y^x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__sizeof__"><strong>__sizeof__</strong></a>(...)</dt><dd><tt>Returns&nbsp;size&nbsp;in&nbsp;memory,&nbsp;in&nbsp;bytes</tt></dd></dl>
+
+<dl><dt><a name="Integer-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__trunc__"><strong>__trunc__</strong></a>(...)</dt><dd><tt>Truncating&nbsp;an&nbsp;Integral&nbsp;returns&nbsp;itself.</tt></dd></dl>
+
+<dl><dt><a name="Integer-__xor__"><strong>__xor__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__xor__">__xor__</a>(y)&nbsp;&lt;==&gt;&nbsp;x^y</tt></dd></dl>
+
+<dl><dt><a name="Integer-bit_length"><strong>bit_length</strong></a>(...)</dt><dd><tt><a href="builtins.html#int">int</a>.<a href="#Integer-bit_length">bit_length</a>()&nbsp;-&gt;&nbsp;<a href="builtins.html#int">int</a><br>
+&nbsp;<br>
+Number&nbsp;of&nbsp;bits&nbsp;necessary&nbsp;to&nbsp;represent&nbsp;self&nbsp;in&nbsp;binary.<br>
+&gt;&gt;&gt;&nbsp;bin(37)<br>
+'0b100101'<br>
+&gt;&gt;&gt;&nbsp;(37).<a href="#Integer-bit_length">bit_length</a>()<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="Integer-conjugate"><strong>conjugate</strong></a>(...)</dt><dd><tt>Returns&nbsp;self,&nbsp;the&nbsp;complex&nbsp;conjugate&nbsp;of&nbsp;any&nbsp;<a href="builtins.html#int">int</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="builtins.html#int">builtins.int</a>:<br>
+<dl><dt><strong>denominator</strong></dt>
+<dd><tt>the&nbsp;denominator&nbsp;of&nbsp;a&nbsp;rational&nbsp;number&nbsp;in&nbsp;lowest&nbsp;terms</tt></dd>
+</dl>
+<dl><dt><strong>imag</strong></dt>
+<dd><tt>the&nbsp;imaginary&nbsp;part&nbsp;of&nbsp;a&nbsp;complex&nbsp;number</tt></dd>
+</dl>
+<dl><dt><strong>numerator</strong></dt>
+<dd><tt>the&nbsp;numerator&nbsp;of&nbsp;a&nbsp;rational&nbsp;number&nbsp;in&nbsp;lowest&nbsp;terms</tt></dd>
+</dl>
+<dl><dt><strong>real</strong></dt>
+<dd><tt>the&nbsp;real&nbsp;part&nbsp;of&nbsp;a&nbsp;complex&nbsp;number</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="builtins.html#int">builtins.int</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#Integer-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="List">class <strong>List</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="List-__init__"><strong>__init__</strong></a>(self, *a)</dt></dl>
+
+<dl><dt><a name="List-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Product">class <strong>Product</strong></a>(<a href="cas.core.html#Algebra">Algebra</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;representation&nbsp;of&nbsp;the&nbsp;product&nbsp;of&nbsp;n&nbsp;terms<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="cas.core.html#Product">Product</a></dd>
+<dd><a href="cas.core.html#Algebra">Algebra</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Product-__init__"><strong>__init__</strong></a>(self, *a)</dt><dd><tt>Initialise&nbsp;factors&nbsp;from&nbsp;a&nbsp;list&nbsp;of&nbsp;arguments</tt></dd></dl>
+
+<dl><dt><a name="Product-__iter__"><strong>__iter__</strong></a>(self, i)</dt></dl>
+
+<dl><dt><a name="Product-__mul__"><strong>__mul__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Product-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Product-as_gnuplot_expression"><strong>as_gnuplot_expression</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Product-factors"><strong>factors</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Product-simplify"><strong>simplify</strong></a>(self)</dt></dl>
+
+<hr>
+Methods inherited from <a href="cas.core.html#Algebra">Algebra</a>:<br>
+<dl><dt><a name="Product-__add__"><strong>__add__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Product-__pow__"><strong>__pow__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Product-__radd__"><strong>__radd__</strong></a> = __add__(self, other)</dt></dl>
+
+<dl><dt><a name="Product-__rmul__"><strong>__rmul__</strong></a> = __mul__(self, other)</dt></dl>
+
+<dl><dt><a name="Product-__rtruediv__"><strong>__rtruediv__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Product-__sub__"><strong>__sub__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Product-__truediv__"><strong>__truediv__</strong></a>(self, other)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="cas.core.html#Algebra">Algebra</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="StrWithHtml">class <strong>StrWithHtml</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>An&nbsp;extended&nbsp;string&nbsp;also&nbsp;holding&nbsp;a&nbsp;html&nbsp;version<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="StrWithHtml-__init__"><strong>__init__</strong></a>(self, plain, html)</dt><dd><tt>#&nbsp;TODO:&nbsp;Extend&nbsp;concept&nbsp;to&nbsp;any&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;a&nbsp;.html()&nbsp;method</tt></dd></dl>
+
+<dl><dt><a name="StrWithHtml-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-handle_type"><strong>handle_type</strong></a>(x)</dt><dd><tt>Takes&nbsp;in&nbsp;a&nbsp;variable&nbsp;a&nbsp;and&nbsp;output&nbsp;it&nbsp;in&nbsp;the&nbsp;most&nbsp;desirable&nbsp;type</tt></dd></dl>
+ <dl><dt><a name="-print_complex"><strong>print_complex</strong></a>(a)</dt><dd><tt>Nicely&nbsp;print&nbsp;a&nbsp;complex&nbsp;number</tt></dd></dl>
+ <dl><dt><a name="-reduce"><strong>reduce</strong></a>(...)</dt><dd><tt><a href="#-reduce">reduce</a>(function,&nbsp;sequence[,&nbsp;initial])&nbsp;-&gt;&nbsp;value<br>
+&nbsp;<br>
+Apply&nbsp;a&nbsp;function&nbsp;of&nbsp;two&nbsp;arguments&nbsp;cumulatively&nbsp;to&nbsp;the&nbsp;items&nbsp;of&nbsp;a&nbsp;sequence,<br>
+from&nbsp;left&nbsp;to&nbsp;right,&nbsp;so&nbsp;as&nbsp;to&nbsp;reduce&nbsp;the&nbsp;sequence&nbsp;to&nbsp;a&nbsp;single&nbsp;value.<br>
+For&nbsp;example,&nbsp;<a href="#-reduce">reduce</a>(lambda&nbsp;x,&nbsp;y:&nbsp;x+y,&nbsp;[1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5])&nbsp;calculates<br>
+((((1+2)+3)+4)+5).&nbsp;&nbsp;If&nbsp;initial&nbsp;is&nbsp;present,&nbsp;it&nbsp;is&nbsp;placed&nbsp;before&nbsp;the&nbsp;items<br>
+of&nbsp;the&nbsp;sequence&nbsp;in&nbsp;the&nbsp;calculation,&nbsp;and&nbsp;serves&nbsp;as&nbsp;a&nbsp;default&nbsp;when&nbsp;the<br>
+sequence&nbsp;is&nbsp;empty.</tt></dd></dl>
+</td></tr></table>
+</body></html>

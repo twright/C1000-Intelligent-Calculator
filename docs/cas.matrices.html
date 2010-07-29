@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module cas.matrices</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="cas.html"><font color="#ffffff">cas</font></a>.matrices</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/tom/Documents/Calculator/cas/matrices.py">/home/tom/Documents/Calculator/cas/matrices.py</a></font></td></tr></table>
+    <p><tt>A&nbsp;module&nbsp;containing&nbsp;code&nbsp;relating&nbsp;to&nbsp;Matrices.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cas.univariate.html">cas.univariate</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="cas.matrices.html#Matrix">Matrix</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Matrix">class <strong>Matrix</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;class&nbsp;to&nbsp;represent&nbsp;a&nbsp;matrix&nbsp;(2D&nbsp;array)<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Matrix-LU_decomposition"><strong>LU_decomposition</strong></a>(self)</dt><dd><tt>Split&nbsp;a&nbsp;square&nbsp;matrix&nbsp;into&nbsp;an&nbsp;upper&nbsp;and&nbsp;lower&nbsp;triangle&nbsp;matrix</tt></dd></dl>
+
+<dl><dt><a name="Matrix-__add__"><strong>__add__</strong></a>(self, other)</dt><dd><tt>Add&nbsp;two&nbsp;matrices</tt></dd></dl>
+
+<dl><dt><a name="Matrix-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>If&nbsp;two&nbsp;matrices&nbsp;orders&nbsp;and&nbsp;elements&nbsp;are&nbsp;equal,&nbsp;they&nbsp;are&nbsp;equal</tt></dd></dl>
+
+<dl><dt><a name="Matrix-__init__"><strong>__init__</strong></a>(self, *a)</dt><dd><tt>Initiate&nbsp;the&nbsp;the&nbsp;matrix&nbsp;based&nbsp;on&nbsp;...</tt></dd></dl>
+
+<dl><dt><a name="Matrix-__mul__"><strong>__mul__</strong></a>(self, other)</dt><dd><tt>Implement&nbsp;multiplication&nbsp;by&nbsp;Matrices&nbsp;or&nbsp;scalars</tt></dd></dl>
+
+<dl><dt><a name="Matrix-__neg__"><strong>__neg__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Matrix-__radd__"><strong>__radd__</strong></a> = <a href="#Matrix-__add__">__add__</a>(self, other)</dt></dl>
+
+<dl><dt><a name="Matrix-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Matrix-__rmul__"><strong>__rmul__</strong></a>(self, other)</dt><dd><tt><a href="#Matrix">Matrix</a>&nbsp;multiplication&nbsp;is&nbsp;not&nbsp;communicative&nbsp;so&nbsp;rely&nbsp;on&nbsp;other&nbsp;function</tt></dd></dl>
+
+<dl><dt><a name="Matrix-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;string&nbsp;representation</tt></dd></dl>
+
+<dl><dt><a name="Matrix-__sub__"><strong>__sub__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Matrix-adjgate"><strong>adjgate</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Matrix-characteristic_polynomial"><strong>characteristic_polynomial</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Matrix-col"><strong>col</strong></a>(self, j)</dt><dd><tt>Return&nbsp;a&nbsp;list&nbsp;representing&nbsp;one&nbsp;col</tt></dd></dl>
+
+<dl><dt><a name="Matrix-determinant"><strong>determinant</strong></a>(self, row<font color="#909090">=0</font>)</dt><dd><tt>The&nbsp;determinant&nbsp;of&nbsp;a&nbsp;2*2&nbsp;matrix&nbsp;is&nbsp;trivial&nbsp;and&nbsp;those&nbsp;for&nbsp;square&nbsp;matrices<br>
+can&nbsp;be&nbsp;derived&nbsp;recursively&nbsp;from&nbsp;it.</tt></dd></dl>
+
+<dl><dt><a name="Matrix-eigenvalues"><strong>eigenvalues</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Matrix-inverse"><strong>inverse</strong></a>(self)</dt><dd><tt>Calculate&nbsp;the&nbsp;matrix&nbsp;inverse&nbsp;using&nbsp;Gauss-Jordan&nbsp;elimination.</tt></dd></dl>
+
+<dl><dt><a name="Matrix-map_to_all"><strong>map_to_all</strong></a>(self, f)</dt><dd><tt>Apply&nbsp;a&nbsp;function&nbsp;to&nbsp;each&nbsp;value&nbsp;in&nbsp;the&nbsp;matrix</tt></dd></dl>
+
+<dl><dt><a name="Matrix-minor"><strong>minor</strong></a>(self, i, j)</dt><dd><tt>Return&nbsp;a&nbsp;matrix&nbsp;after&nbsp;removing&nbsp;one&nbsp;col&nbsp;and&nbsp;rowumn</tt></dd></dl>
+
+<dl><dt><a name="Matrix-order"><strong>order</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;tuple&nbsp;representing&nbsp;the&nbsp;order&nbsp;of&nbsp;the&nbsp;matrix</tt></dd></dl>
+
+<dl><dt><a name="Matrix-row"><strong>row</strong></a>(self, i)</dt><dd><tt>Return&nbsp;a&nbsp;list&nbsp;representing&nbsp;one&nbsp;rowumn</tt></dd></dl>
+
+<dl><dt><a name="Matrix-trace"><strong>trace</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Matrix-transpose"><strong>transpose</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;copy&nbsp;with&nbsp;cols&nbsp;and&nbsp;rowumns&nbsp;swapped.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-identity_matrix"><strong>identity_matrix</strong></a>(n)</dt><dd><tt>Create&nbsp;an&nbsp;n*n&nbsp;identity&nbsp;matrix&nbsp;I(n)&nbsp;e.g.&nbsp;[[1,0],[0,1]]</tt></dd></dl>
+ <dl><dt><a name="-reduce"><strong>reduce</strong></a>(...)</dt><dd><tt><a href="#-reduce">reduce</a>(function,&nbsp;sequence[,&nbsp;initial])&nbsp;-&gt;&nbsp;value<br>
+&nbsp;<br>
+Apply&nbsp;a&nbsp;function&nbsp;of&nbsp;two&nbsp;arguments&nbsp;cumulatively&nbsp;to&nbsp;the&nbsp;items&nbsp;of&nbsp;a&nbsp;sequence,<br>
+from&nbsp;left&nbsp;to&nbsp;right,&nbsp;so&nbsp;as&nbsp;to&nbsp;reduce&nbsp;the&nbsp;sequence&nbsp;to&nbsp;a&nbsp;single&nbsp;value.<br>
+For&nbsp;example,&nbsp;<a href="#-reduce">reduce</a>(lambda&nbsp;x,&nbsp;y:&nbsp;x+y,&nbsp;[1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5])&nbsp;calculates<br>
+((((1+2)+3)+4)+5).&nbsp;&nbsp;If&nbsp;initial&nbsp;is&nbsp;present,&nbsp;it&nbsp;is&nbsp;placed&nbsp;before&nbsp;the&nbsp;items<br>
+of&nbsp;the&nbsp;sequence&nbsp;in&nbsp;the&nbsp;calculation,&nbsp;and&nbsp;serves&nbsp;as&nbsp;a&nbsp;default&nbsp;when&nbsp;the<br>
+sequence&nbsp;is&nbsp;empty.</tt></dd></dl>
+</td></tr></table>
+</body></html>

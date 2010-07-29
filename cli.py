@@ -1,6 +1,8 @@
 #!/usr/bin/env python3.1
+''' A commandline interface. '''
 
 import os
+from pyparsing_py3 import ParseException
 
 if os.name == 'posix': import readline
 from calculator import Calculator
@@ -8,7 +10,6 @@ from calculator import Calculator
 calc = Calculator()
 
 if __name__ == '__main__':
-
     # Read any existing history file 
     if os.name == 'posix': 
         try: readline.read_history_file()
@@ -24,10 +25,12 @@ if __name__ == '__main__':
         except SystemExit:
             print('Bye!')
             break
-  #      except KeyError:
-  #          print('Command not found!')
-  #      except pyparsing_py3.ParseException:
-  #          print('Invalid input!')
+        except KeyError as e:
+            print('Symbol not found:', e)
+    #    except ParseException as e:
+    #        print('Invalid input:', e)
+    #    except (ValueError, ZeroDivisionError, TypeError) as e:
+    #        print('Math error:', e)
         except KeyboardInterrupt:
             print('Command cancelled.')
   #      except:

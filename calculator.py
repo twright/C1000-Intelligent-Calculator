@@ -1,20 +1,27 @@
 #!/usr/bin/env python3.1
 
-from decimal import Decimal
-from decimal import getcontext
+from decimal import Decimal, getcontext, localcontext
+from functools import reduce
+import math
+from copy import copy
 from sys import exit
 
-from cas_core import StrWithHtml
-from cas_core import Integer
-from cas_core import print_complex
-import cas_functions
+from cas.core import StrWithHtml, Integer, print_complex, List
+from cas.matrices import Matrix, identity_matrix
+from cas.vectors import Vector
+import cas.univariate as cf
 from dmath import *
 from gnuplot import Gnuplot
 from pyparsing_py3 import *
-getcontext().prec = 3
+
+# The precision for internal working must be greater that for display
+# to ensure that results are justified
+PREC_OFFSET = 25
+getcontext().prec = 3 + PREC_OFFSET
 
 def set_precision(a): 
-    getcontext().prec = int(a)
+    assert a >= 0
+    getcontext().prec = int(a) + PREC_OFFSET
     return 'Done!'
 
 def plot(f, *between):
@@ -34,7 +41,7 @@ def _full_term_action(a):
     m = a[-1] if type(a[-1]) != str else 1
     for t in a:
         if isinstance(t,str): abscissa = t
-    return cas_functions.Term(n, abscissa, m)
+    return cf.Term(n, abscissa, m)
     # return Polynomial('x',n,m)
 
 def _sign_action(a):
@@ -68,7 +75,7 @@ def _assign_action(vars, a):
 
 def factorial(a):
     ''' A recursive factorial function '''
-    assert (a > 0)
+    assert (a >= 0)
     if a == 1:
         return 1
     elif a > 1:
@@ -91,43 +98,57 @@ class Calculator():
         'arccosh' : lambda z: log(z + sqrt(z + 1)*sqrt(z - 1)),
         'arctanh' : lambda z: (log(1 + z) - log(1 - z))/2,
         'factorial' : factorial,
+        'factors' : lambda a: a.factors(),
         'degrees' : degrees,
         'nCr' : lambda n,r: factorial(n) / (factorial(n - r) * factorial(r)),
         'nPr' : lambda n,r: factorial(n) / factorial(r),
         'round' : round,
         'differentiate' : lambda a: a.differential(),
         'integrate' : lambda *a: a[0].integral() if len(a) == 1 else a[0].integral().limit(a[1],a[2]),
-        'trapeziumrule' : lambda a,b,c,n=100: str(a.trapezoidal_integral(b,c,n)),
-        'nintegrate' : lambda a,b,c,n=100: str(a.numerical_integral(b,c,n)),
-        'solve' : lambda a, n=100: a.abscissa + ' = ' + ' or '.join(map(print_complex,
-            a.roots(n))),
-        'maxima' : lambda a, n=100: a.abscissa + ' = ' + ' or '.join(map(print_complex,
-            a.maxima())),
-        'minima' : lambda a, n=100: a.abscissa + ' = ' + ' or '.join(map(print_complex,
-            a.minima())),
+        'romberg' : lambda a,b,c,n=5: a.romberg_integral(b,c,n),
+        'trapeziumrule' : lambda a,b,c,n=100: a.trapezoidal_integral(b,c,n),
+        'roots' : lambda a, n=100: List(*a.roots(n)),
+        #a.abscissa + ' = ' + ' or '.join(map(print_complex, a.roots(n))),
+        'abscissa' : lambda a: a.abscissa,
+        'maxima' : lambda a, n=100: List(*a.maxima(n)),
+        'minima' : lambda a, n=100: List(*a.minima(n)),
         'simplify' : lambda expr: expr.simplify(),
         'plot' : plot,
-        'evaluate' : lambda a,b: a.evaluate(b),
+        'transpose' : lambda a: a.transpose(),
+        'order' : lambda a: '{}×{}'.format(*a.order()),
+        'eval' : lambda a,b: a.evaluate(b),
+        'identity' : identity_matrix,
+        'inv' : lambda a: a.inverse(),
+        'decompose' : lambda a: a.LU_decomposition(),
+        'trace' : lambda a: a.trace(),
+        'poly' : lambda a: a.characteristic_polynomial(),
+        'adj' : lambda a: a.adjgate(),
+        'zero' : Matrix,
+        'minor': lambda a, b, c: a.minor(b, c),
+        'det' : lambda a: a.determinant(),
+        'normal' : lambda a: a.normal(),
+        'eigenvalues' : lambda a: List(*a.eigenvalues()),
         'type' : lambda a: str(type(a)),
         'setprecision' : set_precision,
         'about' : lambda: StrWithHtml('Copyright Tom Wright <tom.tdw@gmail.com>',
-            '''<img src="./images/about.png"><br>
-            This program was written by Tom Wright <tom.tdw@gmail.com>
-            <math xmlns='http://www.w3.org/1998/Math/MathML'><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>-</mo><mrow><mn>2</mn><mo>&#8290;</mo><mi>x</mi></mrow></mrow></math>'''),
+            '''<img src="./images/about.png">
+            <br>This program was written by Tom Wright <tom.tdw@gmail.com>'''),
         'help' : lambda: 'Commands include: solve, diff, integrate',
         'quit' : exit,
     }
 
     post_functions = {
         '!' : factorial,
-        'degs' : radians
+        'degs' : radians #lambda a: Decimal.from_float(math.radians(a))
     }
 
     consts = {
         'pi' : Decimal('3.14159265358979846264338327950288419716939937510582097494'),
         'g' : Decimal('9.81'),
         'h' : Decimal('6.62606896e-34'),
-        'e' : e(),
+        'F' : Decimal('96485.3399'),
+        'I' : Integer(1),
+        'E' : e(),
     }
 
     objects = { 'ans' : Integer(0) }
@@ -136,7 +157,7 @@ class Calculator():
         # Start of BFN for parser
         expr = Forward(); factor = Forward(); aterm = Forward()
         atom = Forward(); aexpr = Forward(); expr = Forward()
-        const = Forward()
+        const = Forward(); func = Forward()
 
         uint = Word(nums)
         uint.setParseAction(lambda a: Integer(a[0]))
@@ -146,20 +167,23 @@ class Calculator():
         sign = Word('+-', max=1)
         num = Optional(sign) + unum
         num.setParseAction(_sign_action)
-        variable = Word(srange('[a-z]'), max=1)
-        variable.setParseAction(lambda a: cas_functions.Term(1, a[0], 1))
-        obj = 'ans' | Word(srange('[A-Z]'))
+        variable = reduce(lambda a,b: a | b, map(Literal, srange('[a-z]'))) \
+        + NotAny(func | const)
+        variable.setParseAction(lambda a: cf.Term(1, a[0], 1))
+        obj = 'ans' | Word(srange('[A-Z]'), max=1)
         obj.setParseAction(lambda a: self.objects[a[0]])
-        matrix = Suppress('[') + delimitedList(atom) + Suppress(']')
-        matrix.setParseAction(lambda a: tuple(a))
+        vector = Suppress('[') + delimitedList(NotAny('[') + atom) + Suppress(']')
+        vector.setParseAction(lambda a: Vector(a))
+        matrix = Suppress('[') + delimitedList(vector) + Suppress(']')
+        matrix.setParseAction(lambda a: Matrix(list(map(list,a))))
 
         equality = aexpr + Suppress('=') + aexpr
-        equality.setParseAction(lambda a: cas_functions.Equality(*a))
+        equality.setParseAction(lambda a: cf.Equality(*a))
 
         exp = Literal("^")
         mul = Literal("*") | Literal("/")
         add = Literal("+") | Literal("-")
-        func = Word(srange('[a-z]')) + (atom | Suppress('(') + Optional(delimitedList(expr)) + Suppress(')'))
+        func << Word(srange('[a-zA-Z]')) + (atom | Suppress('(') + Optional(delimitedList(expr)) + Suppress(')'))
         func.setParseAction(lambda a: self.functions[a[0]] (*a[1:]))
         post_func = atom + (Literal('degs') | '!')
         post_func.setParseAction(lambda a: self.post_functions[a[1]] (a[0]))
@@ -168,11 +192,10 @@ class Calculator():
         aabs = Suppress('|') + expr + Suppress('|')
         aabs.setParseAction(lambda a: abs(a[0]))
         atom << (Suppress('(') + expr + Suppress(')') | Suppress('$') + expr
-            | matrix | obj | variable | num | aabs | func)
+            | const | vector | matrix | obj | variable | num | aabs | func)
         factor << (atom ^ post_func) + Optional(exp + factor)
         factor.setParseAction(_factor_action)
-        # TODO: Seperate definitions of '/' and '*' to fix 4xy and similar
-        aterm << factor + Optional((mul | Optional(mul) + FollowedBy('(' | variable | obj)) + aterm)
+        aterm << factor + Optional((mul | FollowedBy(Literal('(') | variable | obj)) + aterm)
         aterm.setParseAction(_aterm_action)
         aexpr << aterm + ZeroOrMore(add + aterm)
         aexpr.setParseAction(_expr_action)
@@ -186,15 +209,21 @@ class Calculator():
         # End of BFN
         return command
 
-    def _evaluate(self, a):
+    def evaluate(self, command):
+        # Parse and evaluate command
+        a = self.grammar().parseString(command)
+        
+        # Assign answer variable to expression
         self.objects['ans'] = a[0]
-        if isinstance(a[0], Decimal):
-            return '= ' + str(a[0].normalize())
-        elif isinstance(a[0], str) or isinstance(a[0], StrWithHtml):
-            return a[0]
-        elif (len(a) == 1) or (type(a[0]) == int) or (type(a[0]) == float):
-            return '= ' + str(a[0])
-
-    def evaluate(self, a):
-        result = self._evaluate(self.grammar().parseString(a))
-        return result
+        
+        # Set resolution for display and print results
+        with localcontext(): 
+            getcontext().prec -= PREC_OFFSET
+            if isinstance(a[0], Decimal):
+                return '= ' + str(+a[0])
+            elif isinstance(a[0], str):
+                return '= ' + a[0]
+            elif isinstance(a[0], StrWithHtml):
+                return a[0]
+            elif (len(a) == 1) or (type(a[0]) == int) or (type(a[0]) == float):
+                return '= ' + str(a[0])
