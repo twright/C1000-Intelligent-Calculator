@@ -13,12 +13,21 @@ def identity_matrix(n):
     for i in range(n):
         a.values[i][i] = Integer(1)
     return a
+    
+def diagonal_matrix(*a):
+    ''' Create a diagonal matrix with elements from arguments '''
+    n = len(a)
+    ans = Matrix(n, n)
+    for i, item in enumerate(a):
+        ans[i][i] = item
+    return ans
 
 class Matrix():
     ''' A class to represent a matrix (2D array) '''
     def __init__(self, *a):
         ''' Initiate the the matrix based on ... '''
-        if len(a) == 2 and isinstance(a[0], int) and isinstance(a[1], int):
+        if len(a) == 2 and isinstance(a[0], int) and isinstance(a[1], int)\
+            and a[0] >= 1 and a[0] >= 1:
             ''' If passed an order create a zero matrix of that order '''
             self.rows, self.cols = a
             self.values = [ [ Integer(0) for j in range(self.cols) ]
@@ -29,18 +38,15 @@ class Matrix():
             self.values = list(a[0])
             self.rows = len(self.values)
             self.cols = len(self.values[0])
+            for row in self.values:
+                if len(row) != self.cols:
+                    raise ValueError('All rows of a matrix must be of equal length')
+        else:
+            raise ValueError()
                 
-#    def __getitem__(self, (col, row)):
-#        return self.values[col][row]
-#        
-#    def __setitem__(self, (col, row), value):
-#        self.values[col][row] = value
-    
-#    def __iter__(self):
-#        for col in range(self.cols):
-#            for row in range(self.rows):
-#                yield (self.values, col, row)
-    
+    def __getitem__(self, i):
+        return self.values[i]
+
     def trace(self):
         return sum(self.values[i][i] for i in range(self.order()[0]))
     
@@ -60,7 +66,7 @@ class Matrix():
         return r
         
     def transpose(self):
-        ''' Return a copy with cols and rowumns swapped. '''
+        ''' Return a copy with rows and columns swapped. '''
         ans = Matrix(self.cols, self.rows)
         for i in range(self.cols):
             for j in range(self.rows):
@@ -95,8 +101,8 @@ class Matrix():
             if self.order() != other.order():
                 return False
             for i in range(self.rows):
-                for j in range(self.rows):
-                    if self.values[i,j] != other.values[i,j]:
+                for j in range(self.cols):
+                    if self[i][j] != other[i][j]:
                         return False
             return True
         else:
@@ -113,11 +119,10 @@ class Matrix():
         return r
         
     def determinant(self, row=0):
-        ''' The determinant of a 2*2 matrix is trivial and those for square matrices
+        ''' The determinant of a 1*1 matrix is trivial and those for square matrices
         can be derived recursively from it. '''
-        if self.rows == self.cols == 2:
-            return (self.values[0][0]*self.values[1][1]
-                - self.values[0][1]*self.values[1][0])
+        if self.rows == self.cols == 1:
+            return self[0][0]
         elif self.rows == self.cols:
             ans = Integer(0)
             i = row;
@@ -125,10 +130,13 @@ class Matrix():
                 ans += Integer(-1) ** j * self.values[i][j] * self.minor(i,j).determinant()
             return ans
         else:
-            return NotImplemented
+            raise ValueError('This matrix is not square')
             
     def adjgate(self):
         # adj(A)ij = (-1)^(i+j)*det[A(j|i)] 
+        if self.rows != self.cols:
+            raise ValueError('This matrix is not square')
+        
         ans = Matrix(*self.order())
         for i in range(self.order()[0]):
             for j in range(self.order()[1]):

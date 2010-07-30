@@ -1,5 +1,9 @@
 #!/usr/bin/env python3.1
-''' This module includes a collection of numerical methods for use in analysis '''
+''' This module includes a collection of numerical methods for use in analysis.
+This module draws from methods at:
+    - http://mathworld.wolfram.com/Newton-CotesFormulas.html
+'''
+__author__ = 'Thomas Wright <tom.tdw@gmail.com>'
             
 def trapezoidal_composite_integral(f,a,b,m):
     ''' order 1 Newton-Cotes aproximation over m strips '''
@@ -18,7 +22,7 @@ def simpson_composite_integral(f,a,b,m):
         + fx(m))
         
 def simpson38_composite_integral(f,a,b,m):
-    ''' order 3 Newton-Cotes over m strips '''
+    ''' order 3 Newton-Cotes aproximation over m strips '''
     m = 3*round(m/3)
     h = (b-a)/m
     x = lambda k: a + k*h
@@ -28,7 +32,7 @@ def simpson38_composite_integral(f,a,b,m):
         + fx(m))
         
 def boole_composite_integral(f,a,b,m):
-    ''' order 4 Newton-Cotes over m strips '''
+    ''' order 4 Newton-Cotes aproximation over m strips '''
     m = 4*round(m/4)
     h = (b-a)/m
     x = lambda k: a + k*h

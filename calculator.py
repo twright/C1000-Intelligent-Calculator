@@ -7,7 +7,7 @@ from copy import copy
 from sys import exit
 
 from cas.core import StrWithHtml, Integer, print_complex, List
-from cas.matrices import Matrix, identity_matrix
+from cas.matrices import Matrix, identity_matrix, diagonal_matrix
 from cas.vectors import Vector
 import cas.univariate as cf
 from dmath import *
@@ -107,7 +107,7 @@ class Calculator():
         'integrate' : lambda *a: a[0].integral() if len(a) == 1 else a[0].integral().limit(a[1],a[2]),
         'romberg' : lambda a,b,c,n=5: a.romberg_integral(b,c,n),
         'trapeziumrule' : lambda a,b,c,n=100: a.trapezoidal_integral(b,c,n),
-        'roots' : lambda a, n=100: List(*a.roots(n)),
+        'solve' : lambda a, n=100: List(*a.roots(n)),
         #a.abscissa + ' = ' + ' or '.join(map(print_complex, a.roots(n))),
         'abscissa' : lambda a: a.abscissa,
         'maxima' : lambda a, n=100: List(*a.maxima(n)),
@@ -118,6 +118,7 @@ class Calculator():
         'order' : lambda a: '{}×{}'.format(*a.order()),
         'eval' : lambda a,b: a.evaluate(b),
         'identity' : identity_matrix,
+        'diag' : diagonal_matrix,
         'inv' : lambda a: a.inverse(),
         'decompose' : lambda a: a.LU_decomposition(),
         'trace' : lambda a: a.trace(),

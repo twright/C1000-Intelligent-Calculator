@@ -11,7 +11,7 @@ from copy import deepcopy
 
 def handle_type (x):
     ''' Takes in a variable a and output it in the most desirable type '''
-    if isinstance(x, Integer) or isinstance(x, Decimal) or isinstance(x, complex):
+    if isinstance(x, Integer) or isinstance(x, Decimal) or isinstance(x,complex):
         return x
     elif isinstance(x, int):
         return Integer(x)
@@ -19,6 +19,11 @@ def handle_type (x):
         return Integer(x)
     elif isinstance(x, float):
         return +Decimal.from_float(x)
+#    elif isinstance(x, complex):
+#        if abs(x.imag) < 0.0001:
+#            return +Decimal.from_float(x.real)
+#        else:
+#            return x
     else:
         return +Decimal(x)
 

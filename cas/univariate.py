@@ -393,6 +393,12 @@ class Polynomial(Function):
         else:
             return ''
     __repr__ = __str__
+    
+    def __eq__(self, other):
+        other = self._convert_other(other)
+        if other == NotImplemented:
+            return other
+        return self.simplify().terms == other.simplify().terms
 
     def map_to_terms(self, f):
         ''' Allows list processing of terms '''

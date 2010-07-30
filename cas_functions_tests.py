@@ -222,22 +222,22 @@ class NumericalMethods(unittest.TestCase):
             for x in y.roots(): 
                 self.assertAlmostEqual(mag(y.evaluate(x)), 0, places=10)
 
-    def test_numerical_integral(self):
-        ''' Numerical integration should produce results close to the true
+    def test_romberg_integral(self):
+        ''' Romberg integration should produce results very close to the true
         value '''
         # TODO: Make harsher when proper numerical integration finished
         a = 3.4; b = 7.5
         reldiff = lambda a, b: abs(a - b) / a
         for y in self.pols:
-            self.assertAlmostEqual(reldiff(float(y.integral().limit(a,b)),
-            y.numerical_integral(a,b)), 0, places = 1)
+            self.assertAlmostEqual(reldiff(y.integral().limit(a,b),
+            y.romberg_integral(a,b)), 0, places = 10)
 
     def test_trapezoidal_integral(self):
         ''' The trapezium rule should give an ok estimate of the integral '''
         a = 3.4; b = 7.5
         reldiff = lambda a, b: abs(a - b) / a
         for y in self.pols:
-            self.assertAlmostEqual(reldiff(float(y.integral().limit(a,b)),
+            self.assertAlmostEqual(reldiff(y.integral().limit(a,b),
             y.trapezoidal_integral(a,b)), 0, places = 2)
 
     def tearDown(self):

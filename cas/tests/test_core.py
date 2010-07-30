@@ -13,6 +13,7 @@ class TestHandleType():
         for x in xs:
             assert isinstance(handle_type(x), Integer)
     
+    @py.test.mark.xfail
     def test_decimal(self):
         xs = [34.2, 0.2, '3.4', 4/5, 3.4+0j, 3+0j]
         for x in xs:
