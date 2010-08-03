@@ -5,14 +5,14 @@ This module draws from methods at:
 '''
 __author__ = 'Thomas Wright <tom.tdw@gmail.com>'
             
-def trapezoidal_composite_integral(f,a,b,m):
+def trapezoidal_composite_integral(f,a,b,m=100):
     ''' order 1 Newton-Cotes aproximation over m strips '''
     h = (b-a)/(m)
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
     return h*( fx(0)/2 + sum(fx(n) for n in range(1,m)) + fx(m)/2 )
     
-def simpson_composite_integral(f,a,b,m):
+def simpson_composite_integral(f,a,b,m=100):
     ''' order 2 Newton-Cotes aproximation over m strips '''
     m = 2*round(m/2)
     h = (b-a)/m
@@ -21,7 +21,7 @@ def simpson_composite_integral(f,a,b,m):
     return (h/3)*(fx(0) + sum(4*fx(n-1) + 2*fx(n) for n in range(2,m,2))
         + fx(m))
         
-def simpson38_composite_integral(f,a,b,m):
+def simpson38_composite_integral(f,a,b,m=100):
     ''' order 3 Newton-Cotes aproximation over m strips '''
     m = 3*round(m/3)
     h = (b-a)/m
@@ -31,7 +31,7 @@ def simpson38_composite_integral(f,a,b,m):
         + sum(3*fx(n-2) + 3*fx(n-1) + 2*fx(n) for n in range(3,m,3))
         + fx(m))
         
-def boole_composite_integral(f,a,b,m):
+def boole_composite_integral(f,a,b,m=100):
     ''' order 4 Newton-Cotes aproximation over m strips '''
     m = 4*round(m/4)
     h = (b-a)/m
@@ -41,10 +41,10 @@ def boole_composite_integral(f,a,b,m):
         * sum(7*fx(n-4) + 32*fx(n-3) + 12*fx(n-2) + 32*fx(n-1) + 7*fx(n)
         for n in range(4,m,4))
         
-def romberg_integral(f,a,b,n,m=-1):
+def romberg_integral(f,a,b,n=7,m=7):
     ''' A recursive implementation of Romberg's method of integration.
     See http://en.wikipedia.org/wiki/Romberg's_method. '''
-    if m == -1: m = n
+  #  if m == -1: m = n
     R = lambda N,M: romberg_integral(f,a,b,N,M)
     h = lambda n: (b-a)/(2**n)
     assert (n >= m)

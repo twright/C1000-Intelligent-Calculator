@@ -4,13 +4,13 @@ in the general form f(x) '''
 
 from copy import deepcopy
 from decimal import Decimal, getcontext, localcontext
-from functools import reduce
+from functools import reduce, partial
 from numbers import Number
 
 from .core import Constant, handle_type, Integer, Algebra, print_complex
 import cas.core as core
 import cas.multivariate as ce
-import numerical_methods as nm
+import cas.numerical_methods as nm
 
 # Set precision for numbers
 # getcontext().prec = 3
@@ -48,18 +48,22 @@ class Function(Algebra):
 #        return boole_composite_integral(lambda x: float(self.evaluate(x)),
 #            float(a),float(b),n)
             
-    def numerical_integral(self, method, a, b, n=100):
+    def numerical_integral(self, method, a, b, *n):
+        print( self, method, a, b, *n )
         f = lambda x: float(self.evaluate(x))
-        return Decimal.from_float(method(f, float(a), float(b), n)).normalize()
+        return Decimal.from_float(method(f, float(a), float(b), *n)).normalize()
 
-    def trapezoidal_integral(self, a, b, n=100):
+    def trapezoidal_integral(self, *a):
         ''' Numerically integrate functions via the Trapezium Rule with n strips '''
-        return self.numerical_integral(nm.trapezoidal_composite_integral, a, b, n)
+        return self.numerical_integral(nm.trapezoidal_composite_integral, *a)
+        
+    def simpson_integral(self, *a):
+        return self.numerical_integral(nm.simpson_composite_integral, *a)
 
-    def romberg_integral(self, a, b, n=5):
+    def romberg_integral(self, *a):
         ''' Numerically integrate functions via the Romberg method comparing n
-            values from interpolating polynomials of order n '''
-        return self.numerical_integral(nm.romberg_integral, a, b, n)
+        values from interpolating polynomials of order n '''
+        return self.numerical_integral(nm.romberg_integral, *a)
 
     def limit(self, lower, upper):
         ''' Calculate the limit of a funtion between 2 points '''
@@ -103,9 +107,16 @@ class Fraction(Function):
 
     def simplify(self):
         def areclose(a,b):
+            ''' Determines whether 2 possibly complex numbers or Polynomials are
+            aproximately equal '''
             r = lambda x: -x.terms[1].coefficient if isinstance(x, Polynomial) else x
             c = complex(r(a)) - complex(r(b))
             return abs(c.real) < 0.01 and abs(c.imag) < 0.01
+            
+        # Simplify a fraction of polynomials by removing the union of their
+        # factors from the numerator and denominator
+        # - should eventially be replaced a combination of greatest common
+        # denominator algorithm and long division
         
         a = self.numerator.factors(); b = self.denominator.factors()
         
@@ -127,6 +138,7 @@ class Fraction(Function):
             return self
         else:       
             return a.simplify() / b.simplify()
+
 #        power = lambda t: t.power
 #        a = Polynomial(self.abscissa); b = Polynomial(self.abscissa)
 #        lowest_power = min(map(power, self.numerator.terms + self.denominator.terms))
@@ -351,6 +363,11 @@ class Term(Function):
         else:
             return NotImplemented
 
+    def __gt__(self, other):
+        if self.power != other.power:
+            return self.power > other.power
+        else:
+            return self.coefficient > other.coefficient
 
     def as_gnuplot_expression(self):
         ''' Convert into the gnuplot format '''
@@ -591,6 +608,7 @@ class Polynomial(Function):
         # Replace ^ with ** for powers
         expr = sub(r'\^', r'**', expr, 100) 
         return expr
+        
 
 if __name__ == '__main__':
     import doctest
