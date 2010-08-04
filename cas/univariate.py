@@ -394,15 +394,17 @@ class Polynomial(Function):
 
     def __str__(self):
         ''' A list comprehension to combine the terms of the polynomial '''
-        # print(list(map(str, self.terms)))
         def term_str(a):
             if isinstance(a.coefficient, complex):
                 if ('i' not in str(a)) and (str(a)[0] == '-'):
                     return '- ' + str(a)[1:]
                 else:
                     return '+ ' + str(a)
+            elif a.coefficient == 0:
+                return ''
             else:
                 return ('+', '-')[a.sign() == -1] + ' ' + str(abs(a))
+
         if len(self.terms) > 1:
             return ' '.join( [str(self.terms[0])] + list(map(term_str, self.terms[1:])) )
         elif len(self.terms) == 1:
