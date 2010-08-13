@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.1
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui, uic
 
 from gui_ui import Ui_Calculator
 from calculator import Calculator
@@ -8,27 +8,28 @@ from cas.core import StrWithHtml
 
 class CalculatorForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
-        super(CalculatorForm,self).__init__(parent)
-        self.ui = Ui_Calculator()
-        self.ui.setupUi(self)
+        super().__init__(parent)
+#        self.ui = Ui_Calculator()
+        uic.loadUi('gui.ui', self)
+    #    self.ui.__init__(self)
         self.calc = Calculator()
 
     @QtCore.pyqtSlot()
     def on_lineEdit_returnPressed(self):
-        self.ui.textEdit.moveCursor(QtGui.QTextCursor.End)
-        self.ui.textEdit.insertHtml('\n<p>\n')
+        self.textEdit.moveCursor(QtGui.QTextCursor.End)
+        self.textEdit.insertHtml('\n<p>\n')
         #try:
-        command = self.ui.lineEdit.text()
+        command = self.lineEdit.text()
         output = self.calc.evaluate(command)
-        self.ui.textEdit.append(command)
+        self.textEdit.append(command)
         if type(output) == StrWithHtml:
-            self.ui.textEdit.insertHtml('\n<br>\n'
+            self.textEdit.insertHtml('\n<br>\n'
                 + output.html + '\n')
         else:
-            self.ui.textEdit.append('   ' + str(output))
+            self.textEdit.append('   ' + str(output))
        # except:
        #     self.textEdit.insertHtml('<br><b style="color : red">Invalid Command!</b><br>\n')self.calc = Calculator()
-        self.ui.textEdit.insertHtml('\n</p>\n')
+        self.textEdit.insertHtml('\n</p>\n')
 
 
 if __name__ == '__main__':
