@@ -1,12 +1,12 @@
 #!/usr/bin/env python3.1
 
 from decimal import Decimal, getcontext, localcontext
-from functools import reduce
+from functools import reduce, partial
 import math
 from copy import copy
 from sys import exit
 
-from cas.core import StrWithHtml, Integer, print_complex, List
+from cas.core import StrWithHtml, Integer, print_complex, List, Complex
 from cas.matrices import Matrix, identity_matrix, diagonal_matrix
 from cas.vectors import Vector
 import cas.univariate as cf
@@ -16,10 +16,11 @@ from pyparsing_py3 import *
 
 # The precision for internal working must be greater that for display
 # to ensure that results are justified
+# TODO: replace with a context manager or something more comprehensive
 PREC_OFFSET = 25
 getcontext().prec = 3 + PREC_OFFSET
 
-def set_precision(a): 
+def set_precision(a):
     assert a >= 0
     getcontext().prec = int(a) + PREC_OFFSET
     return 'Done!'
@@ -130,6 +131,9 @@ class Calculator():
         'det' : lambda a: a.determinant(),
         'normal' : lambda a: a.normal(),
         'eigenvalues' : lambda a: List(*a.eigenvalues()),
+        're' : lambda a: a.real,
+        'im' : lambda a: a.imag,
+        'conj' : lambda a: a.conjugate(),
         'type' : lambda a: str(type(a)),
         'setprecision' : set_precision,
         'about' : lambda: StrWithHtml('Copyright Tom Wright <tom.tdw@gmail.com>',
@@ -165,7 +169,9 @@ class Calculator():
         uint.setParseAction(lambda a: Integer(a[0]))
         ufloat = Word(nums) + '.' + Word(nums)
         ufloat.setParseAction(lambda a: Decimal(''.join(a)))
-        unum = ufloat ^ uint
+        ucomplex = Literal('i') + NotAny(func | const)
+        ucomplex.setParseAction(lambda a: Complex(1j))
+        unum = ufloat ^ uint ^ ucomplex
         sign = Word('+-', max=1)
         num = Optional(sign) + unum
         num.setParseAction(_sign_action)
@@ -194,10 +200,10 @@ class Calculator():
         aabs = Suppress('|') + expr + Suppress('|')
         aabs.setParseAction(lambda a: abs(a[0]))
         atom << (Suppress('(') + expr + Suppress(')') | Suppress('$') + expr
-            | const | vector | matrix | obj | variable | num | aabs | func)
+            | const | vector | matrix | obj | num | variable | aabs | func)
         factor << (atom ^ post_func) + Optional(exp + factor)
         factor.setParseAction(_factor_action)
-        aterm << factor + Optional((mul | FollowedBy(Literal('(') | variable | obj)) + aterm)
+        aterm << factor + Optional((mul | FollowedBy(Literal('(') | Literal('[') | variable | obj)) + aterm)
         aterm.setParseAction(_aterm_action)
         aexpr << aterm + ZeroOrMore(add + aterm)
         aexpr.setParseAction(_expr_action)
@@ -214,12 +220,12 @@ class Calculator():
     def evaluate(self, command):
         # Parse and evaluate command
         a = self.grammar().parseString(command)
-        
+
         # Assign answer variable to expression
         self.objects['ans'] = a[0]
-        
+
         # Set resolution for display and print results
-        with localcontext(): 
+        with localcontext():
             getcontext().prec -= PREC_OFFSET
             if isinstance(a[0], Decimal):
                 return '= ' + str(+a[0])
