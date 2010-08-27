@@ -205,3 +205,6 @@ class TestFraction():
         )
         for fraction, string in sample:
             assert str(fraction) == string
+
+#    def test_mul(self):
+#        F, P, T, I, D = Fraction, Polynomial, Term, Integer, Decimal

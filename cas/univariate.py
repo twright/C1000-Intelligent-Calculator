@@ -76,9 +76,10 @@ class Function(Algebra):
 
 class Fraction(Function):
     def __init__(self, abscissa, numerator, denominator):
-        assert(abscissa == numerator.abscissa == denominator.abscissa)
-        self.numerator = numerator
-        self.denominator = denominator
+    #    assert(abscissa == numerator.abscissa == denominator.abscissa)
+        P = Polynomial(abscissa, 0,0)
+        self.numerator = P._convert_other(numerator)
+        self.denominator = P._convert_other(denominator)
         Function.__init__(self, abscissa)
 
     def __str__(self):
