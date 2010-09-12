@@ -23,6 +23,7 @@ def handle_type (x):
         return +Decimal(repr(x))
     elif isinstance(x, complex):
         if abs(x.imag) < 0.0001:
+        #    print('string:', repr(x.real))
             return +Decimal.from_float(x.real)
         else:
             return Complex(x)
@@ -224,6 +225,9 @@ class Algebra():
             return Integer(1)
         elif other == 1:
             return self
+            
+    def bracketed_str(self):
+        return '(' + str(self) + ')'
 
 class Product(Algebra):
     ''' A representation of the product of n terms '''
@@ -272,9 +276,9 @@ class Constant(Number, Algebra):
     def __add__(self, other):
         return Constant() if other == self else NotImplemented
     __rsub__ = __sub__ = __radd__ = __add__
-    def coefficient(self): return 1
     def evaluate(self, x): return Integer(0)
     def differential(self): return Integer(0)
+    def __pos__(self): return self
 
 class List():
     def __init__(self, *a):

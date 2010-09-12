@@ -4,6 +4,9 @@ This module draws from methods at:
     - http://mathworld.wolfram.com/Newton-CotesFormulas.html
 '''
 __author__ = 'Thomas Wright <tom.tdw@gmail.com>'
+
+from operator import mul
+from functools import reduce
             
 def trapezoidal_composite_integral(f,a,b,m=100):
     ''' order 1 Newton-Cotes aproximation over m strips '''
@@ -56,12 +59,25 @@ def romberg_integral(f,a,b,n=7,m=7):
     else:
         return (4**m * R(n, m-1) - R(n-1, m-1)) / (4**m - 1)
     
+def durand_kerner_roots(f, order, n=100):
+    ''' Numerically locate all roots (real and complex) of Polynomial of
+        leading coefficient 1 using n iterations of the Durand-Kerner method.
+        See: http://en.wikipedia.org/wiki/Durand-Kerner_method '''
+    xs = [ (0.4+0.9j)**n for n in range(order) ]
+    product = lambda ys: reduce(mul, ys, 1)
+    for i in range(n):
+        for i in range(order):
+            xs[i] -= f(xs[i]) / product(xs[i] - y for y in xs if y is not xs[i])
+    return xs
+    
 if __name__ == '__main__':
     from math import *
     g = lambda x: log(5*x)
-    # True value ~= 1.995732273553990993435223576142540775676601622989028201540
+    print ('True value ~= 1.995732273553990993435223576142540775676601622989028201540')
     print ('trapezium rule:', trapezoidal_composite_integral(g, 1,2, 1000))
     print ('simpson\'s rule:', simpson_composite_integral(g, 1,2, 1000))
     print ('simpson\'s 3/8 rule:', simpson38_composite_integral(g, 1,2, 1000))
     print ('boole\'s rule:', boole_composite_integral(g, 1,2, 1000))
     print ('romberg integration: {:.25f}'.format(romberg_integral(g, 1,2, 10,10)))
+    f = lambda x: x**2 - x - 6
+    print ('roots:', durand_kerner_roots(f, 2, 10))

@@ -20,9 +20,20 @@ class CalculatorForm(QtGui.QMainWindow):
 
     def _append(self, a):
         cmd = self._command()
+
         if len(cmd) == 0:
             self.input.setText(a)
-        elif cmd[-1] == ' ':
+        elif re.match(r'[ (]', cmd[-1]):
+            self.input.setText(cmd + a)
+        else:
+            self.input.setText(cmd + ' ' + a)
+            
+    def _append_digit(self, a):
+        cmd = self._command()
+        
+        if len(cmd) == 0:
+            self.input.setText(a)
+        elif re.match(r'[0-9 (]', cmd[-1]):
             self.input.setText(cmd + a)
         else:
             self.input.setText(cmd + ' ' + a)
@@ -38,25 +49,41 @@ class CalculatorForm(QtGui.QMainWindow):
         self.input.setText(output)
 
     @QtCore.pyqtSlot()
-    def on_btn_0_clicked(self): self._append('0')
+    def on_btn_0_clicked(self):
+        self._append_digit('0')
     @QtCore.pyqtSlot()
-    def on_btn_1_clicked(self): self._append('1')
+    def on_btn_1_clicked(self):
+        self._append_digit('1')
     @QtCore.pyqtSlot()
-    def on_btn_2_clicked(self): self._append('2')
+    def on_btn_2_clicked(self):
+        self._append_digit('2')
     @QtCore.pyqtSlot()
-    def on_btn_3_clicked(self): self._append('3')
+    def on_btn_3_clicked(self):
+        self._append_digit('3')
     @QtCore.pyqtSlot()
-    def on_btn_4_clicked(self): self._append('4')
+    def on_btn_4_clicked(self):
+        self._append_digit('4')
     @QtCore.pyqtSlot()
-    def on_btn_5_clicked(self): self._append('5')
+    def on_btn_5_clicked(self):
+        self._append_digit('5')
     @QtCore.pyqtSlot()
-    def on_btn_6_clicked(self): self._append('6')
+    def on_btn_6_clicked(self):
+        self._append_digit('6')
     @QtCore.pyqtSlot()
-    def on_btn_7_clicked(self): self._append('7')
+    def on_btn_7_clicked(self):
+        self._append_digit('7')
     @QtCore.pyqtSlot()
-    def on_btn_8_clicked(self): self._append('8')
+    def on_btn_8_clicked(self):
+        self._append_digit('8')
     @QtCore.pyqtSlot()
-    def on_btn_9_clicked(self): self._append('9')
+    def on_btn_9_clicked(self):
+        self._append_digit('9')
+    @QtCore.pyqtSlot()
+    def on_btn_x_clicked(self):
+        self.append_digit('x')
+    @QtCore.pyqtSlot()
+    def on_btn_i_clicked(self):
+        self._append_digit('i')
     @QtCore.pyqtSlot()
     def on_btn_add_clicked(self): self._append('+')
     @QtCore.pyqtSlot()
@@ -96,8 +123,11 @@ class CalculatorForm(QtGui.QMainWindow):
     @QtCore.pyqtSlot()
     def on_btn_e_clicked(self): self._append('e')
     @QtCore.pyqtSlot()
-    def on_btn_i_clicked(self): self._append('i')
-    
+    def on_btn_clear_clicked(self):
+        self.input.setText('')
+    @QtCore.pyqtSlot()
+    def on_btn_fact_clicked(self):
+        self._append_digit('!')
 
 
 if __name__ == '__main__':

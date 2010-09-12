@@ -172,6 +172,7 @@ class TestProduct():
 class TestList():
     def test_str(self):
         assert str(List(1, 2, 3, 4)) == '1, 2, 3, 4'
+        print(str(List(1, 2+0j, 0+5j, 3-4j)))
         assert str(List(1, 2+0j, 0+5j, 3-4j)) == '1, 2, 5i, 3-4i'
 
 class TestStrWithHtml():

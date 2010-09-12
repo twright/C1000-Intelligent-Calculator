@@ -171,9 +171,9 @@ class Product(Function, core.Product):
         core.Product.__init__(self, *factors)
 
     def __str__(self):
-        bracket = lambda a: ('(%s)' if isinstance(a, Polynomial) else '%s')\
-            % str(a)
-        return ' * '.join(map(bracket, self._factors))
+    #    bracket = lambda a: ('(%s)' if isinstance(a, Polynomial) else '%s')\
+    #        % str(a)
+        return ' * '.join(map(lambda a: a.bracketed_str(), self._factors))
 
 #    def sort_terms(self):
 #        if (isinstance(self.h, Power) ^ isinstance(self.g, Power)):
@@ -183,7 +183,6 @@ class Product(Function, core.Product):
 #    def __mul__(self, other):
 #        return Product(self.abscissa, self.g*other, self.h)
 
-
 class Power(Function):
     def __init__(self, function, power):
         super().__init__(function.abscissa)
@@ -191,7 +190,7 @@ class Power(Function):
         self.power = handle_type(power)
 
     def __str__(self):
-        return '(' + str(self.function) + ')^' + str(self.power)
+        return self.function.bracketed_str() + '^' + str(self.power)
 
     def __mul__(self, other):
         return Product(self.abscissa, self, other)
@@ -241,24 +240,25 @@ class Term(Function):
 
     def __str__(self):
         ''' Output the term nicely via assorted logic '''
-        if self.coefficient == 0: return '0'
+        if self.coefficient == 0 and not isinstance(self.coefficient, Constant):
+            return '0'
         coefficient = (str(+self.coefficient)
             if -1 != self.coefficient != 1 or self.power == 0 else ''
             if self.coefficient != -1 else '-')
         if isinstance(self.coefficient, complex)\
             and self.coefficient.real > 0.001 and self.coefficient.imag > 0.001:
             coefficient = '(' + coefficient + ')'
+        if isinstance(self.coefficient, Constant):
+            coefficient = 'c'
         abscissa = (self.abscissa if self.power != 0 else '')
         indices = ('^' + str(self.power) if 0 != self.power != 1 else '')
         return coefficient + abscissa + indices
+    bracketed_str = __str__
 
     def simplify(self):
         # TODO: Consider returning a more basic type if object is really
         # constant
-        if self.coefficient == 0:
-            return Term(0, self.abscissa, 0)
-        else:
-            return self
+        return Term(0, self.abscissa, 0) if self.coefficient == 0 else self
 
     def sign(self):
         ''' Return 0, 1 or -1 depending on the sign of the coefficient '''
@@ -405,7 +405,9 @@ class Polynomial(Function):
     def __str__(self):
         ''' A list comprehension to combine the terms of the polynomial '''
         def term_str(a):
-            if isinstance(a.coefficient, complex):
+            if isinstance(a.coefficient, Constant):
+                return '+ ' + str(a)
+            elif isinstance(a.coefficient, complex):
                 if (str(a)[0] == '-'):
                     return '- ' + str(a)[1:]
                 else:
@@ -439,16 +441,14 @@ class Polynomial(Function):
     def differential(self):
         ''' Calculate the differential of the expression '''
         f = lambda x: x.differential()
-        return (self.simplify().map_to_terms(f))
+        return self.simplify().map_to_terms(f)
 
     def integral(self):
         ''' Calculate the indefinite integral of the expression
          - Integrate each term
          - Return a polynomial object based on the new terms '''
         f = lambda x: x.integral()
-        a = self.map_to_terms(f)
-        a.terms += [ Constant() ]
-        return (a)
+        return self.map_to_terms(f) + Constant()
 
     def append(self, coefficient, power):
         ''' Add a term to the polynomial '''
@@ -487,28 +487,24 @@ class Polynomial(Function):
     def roots(self, n=100):
         ''' Numerically locate all roots (real and complex) of an equation
         using n iterations of the Durand-Kerner method '''
+        # For order 1 Polynomials there is only 1 trivial root.
         if self.order() == 1:
             return [ - self.terms[1].coefficient / self.terms[0].coefficient ]
 
-        mul = lambda a, b: a * b
+        # Polynomials must be scaled such that the leading coefficient is zero.
         g = deepcopy(self)
-        m = float(g.terms[0].coefficient)
+        m = Complex(g.terms[0].coefficient)
         if m != 1:
             for a in g.terms:
-                a.coefficient = float(a.coefficient) / m
-        roots = [ Complex(0.4+0.9j)**n for n in range(g.order()) ]
-        for i in range(n):
-            for i in range(len(roots)):
-                roots[i] = roots[i] \
-                - (g.evaluate(roots[i]))\
-                / ( reduce(mul, [roots[i]\
-                - a for a in roots if a is not roots[i]]) )
-        return roots
+                a.coefficient = Complex(a.coefficient) / m
+        
+        # The Durand-Kerner method must now be invoked.
+        f = lambda x: Complex(g.evaluate(x))
+        roots = nm.durand_kerner_roots(f, self.order(), n)
+        return map(Complex, roots)
 
     def evaluate(self, x):
-        ''' Return the value of f(x)
-         - Evaluate each term
-         - Sum them '''
+        ''' Return the value of f(x) by summing the evaluated terms '''
         g = lambda a: a.evaluate(x)
         return sum(map(g, self.terms))
 
@@ -523,8 +519,8 @@ class Polynomial(Function):
         self.sort_terms()
         result = Polynomial(self.abscissa)
         result.terms += [ copy(self.terms[0]) ]
-        for i in range(1,len(self.terms)):
-            if self.terms[i] != 0:
+        for i in range(1, len(self.terms)):
+            if self.terms[i] != 0 or isinstance(self.terms[i].coefficient, Constant):
                 if self.terms[i].power != result.terms[-1].power:
                     result.terms += [ copy(self.terms[i]) ]
                 else:
@@ -537,6 +533,10 @@ class Polynomial(Function):
     def _convert_other(self, other):
         if isinstance(other, Polynomial):
             return other
+    #    elif isinstance(other, Constant):
+    #        c = Polynomial(self.abscissa)
+    #        c.terms = [ other ]
+    #        return c
         elif isinstance(other, Term):
             c = Polynomial(other.abscissa)
             c.terms = [ other ]
@@ -622,9 +622,6 @@ class Polynomial(Function):
         # Replace ^ with ** for powers
         expr = sub(r'\^', r'**', expr, 100)
         return expr
-
-
-if __name__ == '__main__':
-    import doctest
-    getcontext().prec = 3
-    doctest.testmod()
+        
+    def bracketed_str(self):
+        return str(self) if len(self.terms) == 1 else super().bracketed_str()

@@ -43,11 +43,12 @@ class TestPolynomial():
             assert self.y.evaluate(a) == b
 
     def test_differential(self):
-        # TODO: Test should directly test equality once possible
-        assert str(self.y.differential()) == '20x^4 + 6x^2 + 1'
+        assert self.y.differential() == Polynomial('x', 20,4, 6,2, 1,0)
 
     def test_integral(self):
         with localcontext():
+            # TODO: Once testing for equality is improved, it should be directly
+            # used.
             getcontext().prec = 3
             assert str(self.y.integral()) == '0.667x^6 + 0.5x^4 + 0.5x^2 + c'
 
@@ -75,10 +76,12 @@ class TestPolynomial():
             assert str(poly) == string
 
     def test_simplify(self):
-        P = Polynomial
+        P, C = Polynomial, Constant
         vals = (
             (P('x', 2,1, 4,1, 2,2), P('x', 2,2, 6,1)),
             (P('x', 3,5, 2,5, 1.1,5, 2,2, 6,5, 3,2), P('x', 12.1,5, 5,2)),
+            (P('x', 4,2, 1,0, C(),0), P('x', 4,2, C(),0)),
+            (P('x', 3,4, C(),4, 5,0, C(),0), P('x', C(),4, C(),0))
         )
 
         for a, b in vals:
@@ -141,7 +144,7 @@ class TestPolynomial():
         assert P('x', 1,0).order() == 0
         assert P('x', 1,1, -2,0).order() == 1
 
-    @py.test.mark.xfail # fails due to gaps in simplification
+    # @py.test.mark.xfail # fails due to gaps in simplification
     def test_division(self):
         # Taken for q5 of question paper
         P = Polynomial
@@ -149,20 +152,27 @@ class TestPolynomial():
         assert P('x', 1,2, -25,0) / P('x', 1,1, -5,0) == P('x', 1,1, 5,0)
         assert P('x', 1,2, -1,1, -6,0) / P('x', 1,2, 1,1, -12,0)\
             == P('x', 1,1, 2,0) / P('x', 1,1, 4,0)
-    #    assert P('x', 1,1, 4,0)**6 * P('x', 1,1, 1,0) / P('x', 1,2, 5,1, 4,0)\
-    #        == P('x', 1,1, 4,0)**5
         assert P('x', 2,1, 6,0) * P('x', 3,2, 8,1, -3,0) / P('x', 3,1, -1,0)\
             == 2 * P('x', 1,1, 3,0)**2
+        # Produces equivilant output - testing not effective
         assert (P('x', 4,1, 8,0) / 3) / (P('x', 1,2, -3,1, -10,0) / 4)\
             == 16 / (3 * P('x', 1,1, -5,0))
+        assert P('x', 1,1, 4,0)**6 * P('x', 1,1, 1,0) / P('x', 1,2, 5,1, 4,0)\
+            == P('x', 1,1, 4,0)**5
+            
+    def test_bracketed_str(self):
+        P = Polynomial
+        assert P('x', 3,2, -1,0).bracketed_str() == '(3x^2 - 1)'
+        assert P('x', 7,2).bracketed_str() == '7x^2'
 
 class TestTerm():
     def setup_method(self, method):
-        T = Term
+        T, C = Term, Constant
         self.sample = (
             (T(4,'x',3), '4x^3'), (T(4,'x',-3), '4x^-3'), (T(-4,'x',3), '-4x^3'),
             (T(0,'x',3), '0'), (T(7,'x',0), '7'), (T(7,'x',1), '7x'),
             (T(1,'x',1), 'x'), (T(2,'t',3), '2t^3'), (T(1,'x',0), '1'),
+            (T(C(),'x',0), 'c')
         )
 
     def test_init(self):
@@ -182,6 +192,7 @@ class TestTerm():
 
     def test_str(self):
         for term, string in self.sample:
+            print('got: {}, expected: {}'.format(str(term), string))
             assert str(term) == string
 
     def test_calculus(self):
@@ -222,8 +233,10 @@ class TestProduct():
     def test_str(self):
         # TODO: Change when some guarentee of order is added
         assert str(Product('x', self.A, self.B)) == '(3x^2 + x - 2) * (2x^4 + 7)'
-        print(Product('x', self.A, self.B, self.C))
         assert str(Product('x', self.A, self.B, self.C))\
             == '(3x^2 + x - 2) * (2x^4 + 7) * 2x^5'
         assert str(Product('x', self.A, self.B, Polynomial('x')._convert_other(self.C)))\
             == '(3x^2 + x - 2) * (2x^4 + 7) * 2x^5'
+            
+class TestPower():
+    pass
