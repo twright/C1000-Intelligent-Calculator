@@ -23,18 +23,19 @@ class TestHandleType():
         for x in xs:
             assert isinstance(handle_type(x), complex)
 
-class TestPrintComplex():
-    def test_samples(self):
-        xs = (
-            (0+0j, '0'), (0.00001+0j, '0'), (-0.00001+0j, '0'), (1+0j, '1'),
-            (1.342+0j, '1.34'), (1-0.01j, '1-0.0100i'), (4.3+0.00003j, '4.30'),
-            (0-2j, '-2i'), (0.00003+0.00002j, '0'), (0.00002-0.00001j, '0'),
-            (4.5+0.00002j, '4.5'), (0.00003-0.2j, '-0.200i')
-        )
-        with localcontext():
-            getcontext().prec = 3
-            for x, string in xs:
-                assert print_complex(x) == string
+# Deprecated with print_complex
+#class TestPrintComplex():
+#    def test_samples(self):
+#        xs = (
+#            (0+0j, '0'), (0.00001+0j, '0'), (-0.00001+0j, '0'), (1+0j, '1'),
+#            (1.342+0j, '1.34'), (1-0.01j, '1-0.0100i'), (4.3+0.00003j, '4.30'),
+#            (0-2j, '-2i'), (0.00003+0.00002j, '0'), (0.00002-0.00001j, '0'),
+#            (4.5+0.00002j, '4.5'), (0.00003-0.2j, '-0.200i')
+#        )
+#        with localcontext():
+#            getcontext().prec = 3
+#            for x, string in xs:
+#                assert print_complex(x) == string
 
 class TestComplex():
     def test_str(self):

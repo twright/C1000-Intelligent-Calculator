@@ -208,3 +208,22 @@ class TestFraction():
 
 #    def test_mul(self):
 #        F, P, T, I, D = Fraction, Polynomial, Term, Integer, Decimal
+
+class TestProduct():
+    def setup_method(self, method):
+        self.A = Polynomial('x', 3,2, 1,1, -2,0)
+        self.B = Polynomial('x', 2,4, 7,0)
+        self.C = Term(2,'x',5)
+        
+    def test_init(self):
+        assert Product('x', self.A, self.B) != None
+        assert Product('x', self.A, self.B, self.C) != None
+        
+    def test_str(self):
+        # TODO: Change when some guarentee of order is added
+        assert str(Product('x', self.A, self.B)) == '(3x^2 + x - 2) * (2x^4 + 7)'
+        print(Product('x', self.A, self.B, self.C))
+        assert str(Product('x', self.A, self.B, self.C))\
+            == '(3x^2 + x - 2) * (2x^4 + 7) * 2x^5'
+        assert str(Product('x', self.A, self.B, Polynomial('x')._convert_other(self.C)))\
+            == '(3x^2 + x - 2) * (2x^4 + 7) * 2x^5'

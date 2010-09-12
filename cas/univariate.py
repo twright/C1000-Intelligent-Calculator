@@ -119,6 +119,7 @@ class Fraction(Function):
         # - should eventially be replaced a combination of greatest common
         # denominator algorithm and long division
         # - no longer takes out common integral fractions
+        # - should require around O(n^2) time
 
         a = self.numerator.factors(); b = self.denominator.factors()
 

@@ -29,13 +29,14 @@ def handle_type (x):
     else:
         return +Decimal(x)
 
-def print_complex(a):
-    ''' Nicely print a complex number '''
-    r, i = +Decimal().from_float(a.real), +Decimal().from_float(a.imag)
-    if abs(r) < Decimal('0.001') and abs(i) < Decimal('0.001'): return '0'
-    elif abs(i) < Decimal('0.001'): return str(r)
-    elif abs(r) < Decimal('0.001'): return str(i) + 'i'
-    else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'i'
+# Deprecated and replaced by Complex class
+#def print_complex(a):
+#    ''' Nicely print a complex number '''
+#    r, i = +Decimal().from_float(a.real), +Decimal().from_float(a.imag)
+#    if abs(r) < Decimal('0.001') and abs(i) < Decimal('0.001'): return '0'
+#    elif abs(i) < Decimal('0.001'): return str(r)
+#    elif abs(r) < Decimal('0.001'): return str(i) + 'i'
+#    else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'i'
 
 class Integer(int):
     ''' An extended integer class, providing better mathematical
@@ -48,6 +49,9 @@ class Integer(int):
                 return Decimal(self) / Decimal(other)
         else:
             return NotImplemented
+        # Exact representation of fractions would probably be preferable in
+        # the long run.
+        # elif isinstance(other, Integer):
         #    return Fraction(a,b)
 
     def __sub__(self, other):
@@ -105,9 +109,10 @@ class Complex(complex):
     ''' A class to provide better handling of complex numbers '''
     def __str__(self):
         r, i = +Decimal().from_float(self.real), +Decimal().from_float(self.imag)
-        if abs(r) < Decimal('0.001') and abs(i) < Decimal('0.001'): return '0'
-        elif abs(i) < Decimal('0.001'): return str(r)
-        elif abs(r) < Decimal('0.001'): return str(i) + 'i'
+        small = Decimal('0.001')
+        if abs(r) < small and abs(i) < small: return '0'
+        elif abs(i) < small: return str(r)
+        elif abs(r) < small: return str(i) + 'i'
         else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'i'
     __repr__ = __str__
 
@@ -160,6 +165,8 @@ class Complex(complex):
         if other == NotImplemented: return other
         return Complex(super().__pow__(other))
 
+    # Due to the limitations of floating point complex numbers, equality
+    # is approximate
     def __eq__(self, other):
         other = self._convert_other(other)
         if other == NotImplemented: return other
@@ -242,7 +249,7 @@ class Product(Algebra):
         return '*'.join(map(str, self._factors))
 
     def __eq__(self, other):
-        # TODO: Add handling for unsimplifyable products
+        # TODO: Add handling for products which may not be simplified
         return self.simplify() == other
 
     def __len__(self):
@@ -271,11 +278,10 @@ class Constant(Number, Algebra):
 
 class List():
     def __init__(self, *a):
-        self.values = list(a)
+        self.values = list(map(handle_type, a))
 
     def __str__(self):
-        p = lambda a: print_complex(a) if isinstance(a, complex) else str(a)
-        return ', '.join(map(p, self.values))
+        return ', '.join(map(str, self.values))
 
 class StrWithHtml():
     ''' An extended string also holding a html version '''

@@ -6,7 +6,7 @@ import math
 from copy import copy
 from sys import exit
 
-from cas.core import StrWithHtml, Integer, print_complex, List, Complex
+from cas.core import StrWithHtml, Integer, List, Complex
 from cas.matrices import Matrix, identity_matrix, diagonal_matrix
 from cas.vectors import Vector
 import cas.univariate as cf
