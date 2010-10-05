@@ -7,6 +7,26 @@ __author__ = 'Thomas Wright <tom.tdw@gmail.com>'
 
 from operator import mul
 from functools import reduce
+from copy import copy
+
+def to_fraction(x, places=50):
+    ''' Convert the decimal x to a fraction, a / b'''
+    # Based upon algorithm at http://homepage.smc.edu/kennedy_john/DEC2FRAC.PDF
+    sign = 1 if x >= 0 else -1
+    z = abs(x)
+    if z == int(z): return (x, 1)
+    
+    a = 0; b = 1; B = 0
+    while True:
+        z = (z - int(z))**(-1)
+        t = copy(b)
+        b = b * int(z) + B
+        a = round(x * b)
+    #    print ('a = {}, b = {}, z = {}'.format(a, b, z))
+        B = copy(t)
+        if abs(float(x) - a/b) < 5*10**(-places) or z == int(z): break
+    
+    return (sign * a, b)
             
 def trapezoidal_composite_integral(f,a,b,m=100):
     ''' order 1 Newton-Cotes aproximation over m strips '''

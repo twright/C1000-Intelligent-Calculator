@@ -6,7 +6,7 @@ import math
 from copy import copy
 from sys import exit
 
-from cas.core import StrWithHtml, Integer, List, Complex
+from cas.core import StrWithHtml, Integer, List, Complex, Real
 from cas.matrices import Matrix, identity_matrix, diagonal_matrix
 from cas.vectors import Vector
 import cas.univariate as cf
@@ -101,6 +101,7 @@ class Calculator():
         'factorial' : factorial,
         'factors' : lambda a: a.factors(),
         'degrees' : degrees,
+        'decimal' : Decimal,
         'nCr' : lambda n,r: factorial(n) / (factorial(n - r) * factorial(r)),
         'nPr' : lambda n,r: factorial(n) / factorial(r),
         'round' : round,
@@ -145,14 +146,14 @@ class Calculator():
 
     post_functions = {
         '!' : factorial,
-        'degs' : radians #lambda a: Decimal.from_float(math.radians(a))
+        'degs' : radians #lambda a: Real.from_float(math.radians(a))
     }
 
     consts = {
-        'pi' : Decimal('3.14159265358979846264338327950288419716939937510582097494'),
-        'g' : Decimal('9.81'),
-        'h' : Decimal('6.62606896e-34'),
-        'F' : Decimal('96485.3399'),
+        'pi' : Real('3.14159265358979846264338327950288419716939937510582097494'),
+        'g' : Real('9.81'),
+        'h' : Real('6.62606896e-34'),
+        'F' : Real('96485.3399'),
         'I' : Integer(1),
         'E' : e(),
     }
@@ -168,7 +169,7 @@ class Calculator():
         uint = Word(nums)
         uint.setParseAction(lambda a: Integer(a[0]))
         ufloat = Word(nums) + '.' + Word(nums)
-        ufloat.setParseAction(lambda a: Decimal(''.join(a)))
+        ufloat.setParseAction(lambda a: Real(''.join(a)))
         ucomplex = Literal('i') + NotAny(func | const)
         ucomplex.setParseAction(lambda a: Complex(1j))
         unum = ufloat ^ uint ^ ucomplex

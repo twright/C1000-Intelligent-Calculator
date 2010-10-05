@@ -7,28 +7,33 @@ from decimal import Decimal
 import re
 from functools import reduce
 from operator import mul
-from copy import deepcopy
+from copy import copy, deepcopy
 from numbers import Number
+
+from dmath import pi
+import cas.numerical_methods as nm
 
 def handle_type (x):
     ''' Takes in a variable a and output it in the most desirable type '''
-    if isinstance(x, Integer) or isinstance(x, Decimal)\
+    if isinstance(x, Integer) or isinstance(x, Real)\
         or isinstance(x,Complex) or isinstance(x, Constant):
         return x
     elif isinstance(x, int):
         return Integer(x)
+    elif isinstance(x, Decimal):
+        return Real(x)
     elif isinstance(x, str) and re.match(r'^[0-9]+$', x):
         return Integer(x)
     elif isinstance(x, float):
-        return +Decimal(repr(x))
+        return +Real(repr(x))
     elif isinstance(x, complex):
         if abs(x.imag) < 0.0001:
         #    print('string:', repr(x.real))
-            return +Decimal.from_float(x.real)
+            return +Real.from_float(x.real)
         else:
             return Complex(x)
     else:
-        return +Decimal(x)
+        return +Real(x)
 
 # Deprecated and replaced by Complex class
 #def print_complex(a):
@@ -47,7 +52,7 @@ class Integer(int):
             if self % other == 0:
                 return Integer(self // other)
             else:
-                return Decimal(self) / Decimal(other)
+                return Real(self) / Real(other)
         else:
             return NotImplemented
         # Exact representation of fractions would probably be preferable in
@@ -86,6 +91,9 @@ class Integer(int):
         else:
             return NotImplemented
     __rmul__ = __mul__
+    
+    def __pos__(self):
+        return self
 
     def _factors(self):
         ''' Naively factorise an integer using trial division. '''
@@ -106,16 +114,116 @@ class Integer(int):
     def factors(self):
         return Product(*self._factors())
 
+    def bracketed_str(self):
+        return str(self)
+
+class Real(Decimal):
+    ''' A class to provide better handling of real numbers '''
+    def __str__(self):
+    
+        # Print integers plainly
+        if self == int(self): return str(int(self))
+        
+        # Show pi in full
+        if self == pi(): return super().__str__()
+    
+        # Display small fractions as such
+        a, b = nm.to_fraction(self)
+        if abs(a) < 100 and b < 100: return '{}/{}'.format(a,b)
+        
+        # Display small fractional coefficients of pi in exact form
+        # TODO: Fix this as it is extremely buggy
+        q = self / pi(); a, b = nm.to_fraction(q, 10);
+        if abs(a) < 100 and b < 100 or True: return '{}pi/{}'.format(a if a != 1 else '',b)
+        
+        # Otherwise display as a decimal
+        return super().__str__()
+        
+    def __repr__(self):
+        return "'" + super().__str__() + "'"
+        
+    def bracketed_str(self):
+        return '(' + str(self) + ')'
+    
+    def __float__(self):
+        return float(super().__str__())
+        
+    def __add__(self, other, context=None):
+        other = self._convert_other(other)
+        if other == NotImplemented: return other
+        return Real(super().__add__(other, context))
+    __radd__ = __add__
+
+    def __sub__(self, other, context=None):
+        other = self._convert_other(other)
+        if other == NotImplemented: return other
+        return Real(super().__sub__(other, context))
+
+    def __rsub__(self, other, context=None):
+        other = self._convert_other(other)
+        if other == NotImplemented: return other
+        return Real(super().__rsub__(other, context))
+
+    def __mul__(self, other, context=None):
+        other = self._convert_other(other)
+        if other == NotImplemented: return other
+        return Real(super().__mul__(other, context))
+    __rmul__ = __mul__
+
+    def __truediv__(self, other, context=None):
+        other = self._convert_other(other)
+        if other == NotImplemented: return other
+        return Real(super().__truediv__(other, context))
+
+    def __rtruediv__(self, other, context=None):
+        other = self._convert_other(other)
+        if other == NotImplemented: return other
+        return Real(super().__truediv__(other, context))
+
+
+    def __pow__(self, other, context=None):
+        other = self._convert_other(other)
+        if other == NotImplemented: return other
+        return Real(super().__pow__(other))
+
+    def __pos__(self, context=None):
+        return Real(super().__pos__(context))
+    
+    def __neg__(self, context=None):
+        return Real(super().__neg__(context))
+        
+    def __deepcopy__(self, memo=None):
+        return Real(eval(repr(self)))
+    __copy__ =  __deepcopy__
+        
+    def _convert_other(self, other):
+        if isinstance(other, Real):
+            return other
+      #  elif isinstance(other, float):
+      #      return 
+        # Might break for Constant
+        elif isinstance(other, Constant):
+            return Real(0)
+        elif isinstance(other, Number):
+            return Real(other)
+        else:
+            return NotImplemented
+
 class Complex(complex):
     ''' A class to provide better handling of complex numbers '''
     def __str__(self):
-        r, i = +Decimal().from_float(self.real), +Decimal().from_float(self.imag)
-        small = Decimal('0.001')
+        r, i = +Real().from_float(self.real), +Real().from_float(self.imag)
+        small = Real('0.001')
         if abs(r) < small and abs(i) < small: return '0'
         elif abs(i) < small: return str(r)
         elif abs(r) < small: return str(i) + 'i'
         else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'i'
     __repr__ = __str__
+    
+    def bracketed_str(self):
+        r, i = +Real().from_float(self.real), +Real().from_float(self.imag)
+        small = Real('0.001')
+        return '(' + str(self) + ')' if abs(r) > small < abs(i) else str(self)
 
     def _convert_other(self, other):
         if isinstance(other, Decimal):
@@ -172,6 +280,7 @@ class Complex(complex):
         other = self._convert_other(other)
         if other == NotImplemented: return other
         # Euclidean normal / magnitude of complex number
+        # TODO: Convert to method
         mag = lambda a: ( a.real**2 + a.imag**2 )**(1/2)
         return mag(self - other) < 0.01
 
@@ -225,9 +334,6 @@ class Algebra():
             return Integer(1)
         elif other == 1:
             return self
-            
-    def bracketed_str(self):
-        return '(' + str(self) + ')'
 
 class Product(Algebra):
     ''' A representation of the product of n terms '''
@@ -271,6 +377,7 @@ class Constant(Number, Algebra):
             or hasattr(other, 'power') and other.power == 0\
             or hasattr(other, 'coefficient') and other.coefficient == 0
     def __str__(self): return self.name
+    bracketed_str = __str__
     def __repr__(self): return 'Constant()'
     def __abs__(self): return self
     def __add__(self, other):

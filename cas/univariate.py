@@ -242,12 +242,15 @@ class Term(Function):
         ''' Output the term nicely via assorted logic '''
         if self.coefficient == 0 and not isinstance(self.coefficient, Constant):
             return '0'
-        coefficient = (str(+self.coefficient)
+        coefficient = ((+self.coefficient).bracketed_str()
             if -1 != self.coefficient != 1 or self.power == 0 else ''
             if self.coefficient != -1 else '-')
-        if isinstance(self.coefficient, complex)\
-            and self.coefficient.real > 0.001 and self.coefficient.imag > 0.001:
-            coefficient = '(' + coefficient + ')'
+        #if isinstance(self.coefficient, complex)\
+        #    and abs(self.coefficient.real) > 0.001 and abs(self.coefficient.imag) > 0.001:
+        #    coefficient = '(' + coefficient + ')'
+        #    coefficient = self.coefficient.bracketed_str()
+        #print('coefficient = {}; re = {}; im = {}'.format(coefficient,
+        #    self.coefficient.real, self.coefficient.imag))
         if isinstance(self.coefficient, Constant):
             coefficient = 'c'
         abscissa = (self.abscissa if self.power != 0 else '')
@@ -405,24 +408,16 @@ class Polynomial(Function):
     def __str__(self):
         ''' A list comprehension to combine the terms of the polynomial '''
         def term_str(a):
-            if isinstance(a.coefficient, Constant):
-                return '+ ' + str(a)
-            elif isinstance(a.coefficient, complex):
-                if (str(a)[0] == '-'):
-                    return '- ' + str(a)[1:]
-                else:
-                    return '+ ' + str(a)
-            elif a.coefficient == 0:
-                return ''
-            else:
-                return ('+', '-')[a.sign() == -1] + ' ' + str(abs(a))
-
+            s = str(a)
+            if a.coefficient == 0: return ''
+            else: return '- ' + s[1:] if s[0] == '-' else '+ ' + s  
+            
+        self.sort_terms();
         if len(self.terms) > 1:
-            return ' '.join( [str(self.terms[0])] + list(map(term_str, self.terms[1:])) )
-        elif len(self.terms) == 1:
-            return str(self.terms[0])
-        else:
-            return ''
+            return ' '.join( [str(self.terms[0])] 
+                + list(map(term_str, self.terms[1:])) )
+        elif len(self.terms) == 1: return str(self.terms[0])
+        else: return ''
     __repr__ = __str__
 
     def __eq__(self, other):
@@ -624,4 +619,4 @@ class Polynomial(Function):
         return expr
         
     def bracketed_str(self):
-        return str(self) if len(self.terms) == 1 else super().bracketed_str()
+        return str(self) if len(self.terms) == 1 else '(' + str(self) + ')'

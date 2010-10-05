@@ -2,7 +2,7 @@
 
 from PyQt4 import QtCore, QtGui, uic
 
-from gui_ui import Ui_Calculator
+# from gui_ui import Ui_Calculator
 from calculator import Calculator
 from cas.core import StrWithHtml
 

@@ -3,7 +3,7 @@
 from PyQt4 import QtCore, QtGui, uic
 import re
 
-from gui_ui import Ui_Calculator
+#from gui_ui import Ui_Calculator
 from calculator import Calculator
 from cas.core import StrWithHtml
 
@@ -23,7 +23,7 @@ class CalculatorForm(QtGui.QMainWindow):
 
         if len(cmd) == 0:
             self.input.setText(a)
-        elif re.match(r'[ (]', cmd[-1]):
+        elif re.match(r'[ ()]', cmd[-1]):
             self.input.setText(cmd + a)
         else:
             self.input.setText(cmd + ' ' + a)
@@ -33,7 +33,7 @@ class CalculatorForm(QtGui.QMainWindow):
         
         if len(cmd) == 0:
             self.input.setText(a)
-        elif re.match(r'[0-9 (]', cmd[-1]):
+        elif re.match(r'^([^a-z][a-z]|.*[0-9\.^ (])$', cmd):
             self.input.setText(cmd + a)
         else:
             self.input.setText(cmd + ' ' + a)
@@ -79,8 +79,11 @@ class CalculatorForm(QtGui.QMainWindow):
     def on_btn_9_clicked(self):
         self._append_digit('9')
     @QtCore.pyqtSlot()
+    def on_btn_mantissa_clicked(self):
+        self._append_digit('.')
+    @QtCore.pyqtSlot()
     def on_btn_x_clicked(self):
-        self.append_digit('x')
+        self._append_digit('x')
     @QtCore.pyqtSlot()
     def on_btn_i_clicked(self):
         self._append_digit('i')
@@ -93,11 +96,11 @@ class CalculatorForm(QtGui.QMainWindow):
     @QtCore.pyqtSlot()
     def on_btn_div_clicked(self): self._append('/')
     @QtCore.pyqtSlot()
-    def on_btn_index_clicked(self): self._append('^')
+    def on_btn_index_clicked(self): self._append_digit('^')
     @QtCore.pyqtSlot()
     def on_btn_left_bracket_clicked(self): self._append('(')
     @QtCore.pyqtSlot()
-    def on_btn_right_bracket_clicked(self): self._append(')')
+    def on_btn_right_bracket_clicked(self): self._append_digit(')')
     @QtCore.pyqtSlot()
     def on_btn_logax_clicked(self): self._append('log(a, x)')
     @QtCore.pyqtSlot()
@@ -128,6 +131,12 @@ class CalculatorForm(QtGui.QMainWindow):
     @QtCore.pyqtSlot()
     def on_btn_fact_clicked(self):
         self._append_digit('!')
+    @QtCore.pyqtSlot()
+    def on_btn_factors_clicked(self):
+        self._append('factors')
+    @QtCore.pyqtSlot()
+    def on_btn_abs_clicked(self):
+        self._append('|')
 
 
 if __name__ == '__main__':

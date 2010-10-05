@@ -77,7 +77,7 @@ def float_to_decimal(f):
 # constants
 #
 
-def pi():
+def pi(context=None):
     """Compute Pi to the current precision."""
     getcontext().prec += 2
     lasts = 0; t = D(3); s = 3; n = 1; na = 0; d = 0; da = 24
@@ -313,6 +313,7 @@ def atan(x, context=None):
     """Return the arctangent of x in radians."""
     if context is None:
         context = getcontext()
+    c = 0
     
     if x == 0:
         return D(0, context=context)
