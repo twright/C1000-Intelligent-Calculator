@@ -14,6 +14,9 @@ if __name__ == '__main__':
     if os.name == 'posix': 
         try: readline.read_history_file()
         except: pass
+        
+    print('Welcome to the C1000 Intelligent Calculator')
+    print('[ If you are stuck, just type help() ]')
 
     while True:
         try:

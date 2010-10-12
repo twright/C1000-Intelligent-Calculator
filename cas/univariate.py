@@ -158,7 +158,7 @@ class Fraction(Function):
         ''' Making use of the quotient rule,
         if f(x) = g(x) / h(x)
         then f'(x) = ( g'(x)*h(x) - h'(x)*g(x) ) / h(x)^2 '''
-        return ((self.numerator.differential()*self.denominator - self.denominator.differential()*self.numerator)
+        return ((self.numerator.differential()*self.denominator - self.denominator.differential()*self.numerator).simplify()
             / self.denominator**2).simplify()
 
     def as_gnuplot_expression(self):
@@ -479,7 +479,7 @@ class Polynomial(Function):
             *(fact( self.terms[0].coefficient )
             + list(map(lambda a: Term(1,'x',1) - a, self.roots()))))
 
-    def roots(self, n=100):
+    def roots(self, n=10):
         ''' Numerically locate all roots (real and complex) of an equation
         using n iterations of the Durand-Kerner method '''
         # For order 1 Polynomials there is only 1 trivial root.
@@ -487,14 +487,14 @@ class Polynomial(Function):
             return [ - self.terms[1].coefficient / self.terms[0].coefficient ]
 
         # Polynomials must be scaled such that the leading coefficient is zero.
-        g = deepcopy(self)
+        g = self.simplify()
         m = Complex(g.terms[0].coefficient)
         if m != 1:
             for a in g.terms:
                 a.coefficient = Complex(a.coefficient) / m
         
         # The Durand-Kerner method must now be invoked.
-        f = lambda x: Complex(g.evaluate(x))
+        f = lambda x: complex(g.evaluate(x))
         roots = nm.durand_kerner_roots(f, self.order(), n)
         return map(Complex, roots)
 

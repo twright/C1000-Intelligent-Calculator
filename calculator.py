@@ -6,24 +6,22 @@ import math
 from copy import copy
 from sys import exit
 
-from cas.core import StrWithHtml, Integer, List, Complex, Real
+from cas.core import StrWithHtml, Integer, List, Complex, Real, handle_type
 from cas.matrices import Matrix, identity_matrix, diagonal_matrix
 from cas.vectors import Vector
+from cas.statistics import nCr, nPr, binomialpdf, binomialcdf, poissonpdf, poissoncdf,\
+    normalcdf, factorial
 import cas.univariate as cf
-from dmath import *
+from dmath import log, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh
 from gnuplot import Gnuplot
 from pyparsing_py3 import *
+import help
 
 # The precision for internal working must be greater that for display
 # to ensure that results are justified
 # TODO: replace with a context manager or something more comprehensive
-PREC_OFFSET = 25
+PREC_OFFSET = 50
 getcontext().prec = 3 + PREC_OFFSET
-
-def set_precision(a):
-    assert a >= 0
-    getcontext().prec = int(a) + PREC_OFFSET
-    return 'Done!'
 
 def plot(f, *between):
     graph = Gnuplot()
@@ -68,97 +66,120 @@ def _expr_action(a):
 
 def _factor_action(a):
     if len(a) == 1: return a[0]
-    elif a[1] == '^': return a[0] ** a[2]
+    else: return a[0] ** a[1]
 
 def _assign_action(vars, a):
     vars[a[0]] = a[1]
-    return 'Done!'
+    return a[1]
 
-def factorial(a):
-    ''' A recursive factorial function '''
-    assert (a >= 0)
-    if a == 1:
-        return 1
-    elif a > 1:
-        return a * factorial(a - 1)
+PI = Real('3.14159265358979323846264338327950288419716939937510582097494')
+radians = lambda x: x*PI/handle_type(180)
+degrees = lambda x: x*handle_type(180)/PI
 
 class Calculator():
-    functions = {
-        'ln' : log,
-        'log' : lambda a, b=10: log(a,b),
-        'sin' : sin,
-        'cos' : cos,
-        'tan' : tan,
-        'arcsin' : asin,
-        'arccos' : acos,
-        'arctan' : atan,
-        'sinh' : sinh,
-        'cosh' : cosh,
-        'tanh' : tanh,
-        'arcsinh' : lambda z: log(z + sqrt(1 + z**2)),
-        'arccosh' : lambda z: log(z + sqrt(z + 1)*sqrt(z - 1)),
-        'arctanh' : lambda z: (log(1 + z) - log(1 - z))/2,
-        'factorial' : factorial,
-        'factors' : lambda a: a.factors(),
-        'degrees' : degrees,
-        'decimal' : Decimal,
-        'nCr' : lambda n,r: factorial(n) / (factorial(n - r) * factorial(r)),
-        'nPr' : lambda n,r: factorial(n) / factorial(r),
-        'round' : round,
-        'differentiate' : lambda a: a.differential(),
-        'integrate' : lambda *a: a[0].integral() if len(a) == 1 else a[0].integral().limit(a[1],a[2]),
-        'romberg' : lambda f,a,b,*n: f.romberg_integral(a,b,*n),
-        'trapeziumrule' : lambda f,a,b,*n: f.trapezoidal_integral(a,b,*n),
-        'simpsonrule' : lambda f,a,b,*n: f.simpson_integral(a,b,*n),
-        'solve' : lambda a, n=100: List(*a.roots(n)),
-        #a.abscissa + ' = ' + ' or '.join(map(print_complex, a.roots(n))),
-        'abscissa' : lambda a: a.abscissa,
-        'maxima' : lambda a, n=100: List(*a.maxima(n)),
-        'minima' : lambda a, n=100: List(*a.minima(n)),
-        'simplify' : lambda expr: expr.simplify(),
-        'plot' : plot,
-        'transpose' : lambda a: a.transpose(),
-        'order' : lambda a: '{}×{}'.format(*a.order()),
-        'eval' : lambda a,b: a.evaluate(b),
-        'identity' : identity_matrix,
-        'diag' : diagonal_matrix,
-        'inv' : lambda a: a.inverse(),
-        'decompose' : lambda a: a.LU_decomposition(),
-        'trace' : lambda a: a.trace(),
-        'poly' : lambda a: a.characteristic_polynomial(),
-        'adj' : lambda a: a.adjgate(),
-        'zero' : Matrix,
-        'minor': lambda a, b, c: a.minor(b, c),
-        'det' : lambda a: a.determinant(),
-        'normal' : lambda a: a.normal(),
-        'eigenvalues' : lambda a: List(*a.eigenvalues()),
-        're' : lambda a: a.real,
-        'im' : lambda a: a.imag,
-        'conj' : lambda a: a.conjugate(),
-        'type' : lambda a: str(type(a)),
-        'setprecision' : set_precision,
-        'about' : lambda: StrWithHtml('Copyright Tom Wright <tom.tdw@gmail.com>',
-            '''<img src="./images/about.png">
-            <br>This program was written by Tom Wright <tom.tdw@gmail.com>'''),
-        'help' : lambda: 'Commands include: solve, diff, integrate',
-        'quit' : exit,
-    }
+    def __init__(self):
+        self.functions = {
+            'ln' : lambda x: handle_type(log(x)),
+            'log' : lambda a, b=10: log(a,b),
+            'sin' : lambda x: handle_type(sin(x)),
+            'cos' : lambda x: handle_type(cos(x)),
+            'tan' : lambda x: handle_type(tan(x)),
+            'arcsin' : lambda x: handle_type(asin(x)),
+            'arccos' : lambda x: handle_type(acos(x)),
+            'arctan' : lambda x: handle_type(atan(x)),
+            'sinh' : lambda x: handle_type(sinh(x)),
+            'cosh' : lambda x: handle_type(cosh(x)),
+            'tanh' : lambda x: handle_type(tanh(x)),
+            'arcsinh' : lambda z: handle_type(log(z + (Integer(1) 
+                + z**Integer(2))**Real('0.5'))),
+            'arccosh' : lambda z: handle_type(log(z + (z + Integer(1))**Real('0.5')
+                * (z - Integer(1))**Real('0.5'))),
+            'arctanh' : lambda z: handle_type(log(Integer(1) + z)
+                - log(Integer(1) - z))/Integer(2),
+            'factorial' : factorial,
+            'factors' : lambda a: a.factors(),
+            'degrees' : lambda x: handle_type(degrees(x)),
+            'decimal' : Decimal,
+            'nCr' : nCr,
+            'nPr' : nPr,
+            'binomialpdf' : binomialpdf,
+            'binomialcdf' : binomialcdf,
+            'poissonpdf' : poissonpdf,
+            'poissoncdf' : poissoncdf,
+            'normalcdf' : normalcdf,
+            'round' : lambda a: handle_type(round),
+            'differentiate' : lambda a: a.differential(),
+            'integrate' : lambda *a: a[0].integral() if len(a) == 1 \
+                else a[0].integral().limit(a[1],a[2]),
+            'romberg' : lambda f,a,b,*n: f.romberg_integral(a,b,*n),
+            'trapeziumrule' : lambda f,a,b,*n: f.trapezoidal_integral(a,b,*n),
+            'simpsonrule' : lambda f,a,b,*n: f.simpson_integral(a,b,*n),
+            'roots' : lambda a, n=100: List(*a.roots(n)),
+            #a.abscissa + ' = ' + ' or '.join(map(print_complex, a.roots(n))),
+            'abscissa' : lambda a: a.abscissa,
+            'maxima' : lambda a, n=100: List(*a.maxima(n)),
+            'minima' : lambda a, n=100: List(*a.minima(n)),
+            'simplify' : lambda expr: expr.simplify(),
+            'plot' : plot,
+            'transpose' : lambda a: a.transpose(),
+            'order' : lambda a: '{}×{}'.format(*a.order()),
+            'eval' : lambda a,b: a.evaluate(b),
+            'identity' : identity_matrix,
+            'diag' : diagonal_matrix,
+            'inv' : lambda a: a.inverse(),
+            'invert' : lambda a: a.inverse(),
+            'decompose' : lambda a: a.LU_decomposition(),
+            'trace' : lambda a: a.trace(),
+            'poly' : lambda a: a.characteristic_polynomial(),
+            'adj' : lambda a: a.adjgate(),
+            'zero' : Matrix,
+            'minor': lambda a, b, c: a.minor(b, c),
+            'det' : lambda a: a.determinant(),
+            'normal' : lambda a: a.normal(),
+            'mean' : lambda a: a.mean(),
+            'variance' : lambda a: a.variance(),
+            'stdev' : lambda a: a.stdev(),
+            'sxx' : lambda a: a.Sxx(),
+            'eigenvalues' : lambda a: List(*a.eigenvalues()),
+            're' : lambda a: a.real,
+            'im' : lambda a: a.imag,
+            'arg' : lambda a: a.argument(),
+            'conj' : lambda a: a.conjugate(),
+            'type' : lambda a: str(type(a)),
+            'setprec' : self.set_precision,
+            'setexact' : self.set_exact,
+            'about' : lambda: StrWithHtml('Copyright Tom Wright <tom.tdw@gmail.com>',
+                '''<img src="./images/about.png">
+                <br>This program was written by Tom Wright <tom.tdw@gmail.com>'''),
+        #    'help' : lambda: 'Commands include: solve, diff, integrate',
+            'help' : help.help,
+            'quit' : exit,
+        }
+        
+        self.post_functions = {
+            '!' : factorial,
+            'degs' : radians #lambda a: Real.from_float(math.radians(a))
+        }
+        
+        self.consts = {
+            'pi' : PI,
+            'g' : Real('9.81'),
+            'h' : Real('6.62606896e-34'),
+            'F' : Real('96485.3399'),
+            'I' : Integer(1),
+        #    'E' : e(),
+        }
+        
+        self.objects = { 'ans' : Integer(0) }
 
-    post_functions = {
-        '!' : factorial,
-        'degs' : radians #lambda a: Real.from_float(math.radians(a))
-    }
-
-    consts = {
-        'pi' : Real('3.14159265358979846264338327950288419716939937510582097494'),
-        'g' : Real('9.81'),
-        'h' : Real('6.62606896e-34'),
-        'F' : Real('96485.3399'),
-        'I' : Integer(1),
-        'E' : e(),
-    }
-
-    objects = { 'ans' : Integer(0) }
+    def set_exact(self):
+        Real.exact_form = not Real.exact_form
+        return self.objects['ans']
+        
+    def set_precision(self, a):
+        assert a >= 0
+        getcontext().prec = int(a) + PREC_OFFSET
+        return self.objects['ans']
 
     def grammar(self):
         # Start of BFN for parser
@@ -170,7 +191,7 @@ class Calculator():
         uint.setParseAction(lambda a: Integer(a[0]))
         ufloat = Word(nums) + '.' + Word(nums)
         ufloat.setParseAction(lambda a: Real(''.join(a)))
-        ucomplex = Literal('i') + NotAny(func | const)
+        ucomplex = (Literal('i') | Literal('j')) + NotAny(func | const)
         ucomplex.setParseAction(lambda a: Complex(1j))
         unum = ufloat ^ uint ^ ucomplex
         sign = Word('+-', max=1)
@@ -189,7 +210,7 @@ class Calculator():
         equality = aexpr + Suppress('=') + aexpr
         equality.setParseAction(lambda a: cf.Equality(*a))
 
-        exp = Literal("^")
+        exp = Literal("^") | Literal("**")
         mul = Literal("*") | Literal("/")
         add = Literal("+") | Literal("-")
         func << Word(srange('[a-zA-Z]')) + (atom | Suppress('(') + Optional(delimitedList(expr)) + Suppress(')'))
@@ -202,7 +223,7 @@ class Calculator():
         aabs.setParseAction(lambda a: abs(a[0]))
         atom << (Suppress('(') + expr + Suppress(')') | Suppress('$') + expr
             | const | vector | matrix | obj | num | variable | aabs | func)
-        factor << (atom ^ post_func) + Optional(exp + factor)
+        factor << (atom ^ post_func) + Optional(Suppress(exp) + factor)
         factor.setParseAction(_factor_action)
         aterm << factor + Optional((mul | FollowedBy(Literal('(') | Literal('[') | variable | obj)) + aterm)
         aterm.setParseAction(_aterm_action)
@@ -226,13 +247,12 @@ class Calculator():
         self.objects['ans'] = a[0]
 
         # Set resolution for display and print results
-        with localcontext():
-            getcontext().prec -= PREC_OFFSET
-            if isinstance(a[0], Decimal):
-                return '= ' + str(+a[0])
-            elif isinstance(a[0], str):
-                return '= ' + a[0]
-            elif isinstance(a[0], StrWithHtml):
-                return a[0]
-            elif (len(a) == 1) or (type(a[0]) == int) or (type(a[0]) == float):
-                return '= ' + str(a[0])
+        Real.prec_offset = PREC_OFFSET
+        if isinstance(a[0], Decimal):
+            return '= ' + str(+a[0])
+        elif isinstance(a[0], str):
+            return '= ' + a[0]
+        elif isinstance(a[0], StrWithHtml):
+            return a[0]
+        elif (len(a) == 1) or (type(a[0]) == int) or (type(a[0]) == float):
+            return '= ' + str(a[0])

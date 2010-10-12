@@ -8,8 +8,9 @@ __author__ = 'Thomas Wright <tom.tdw@gmail.com>'
 from operator import mul
 from functools import reduce
 from copy import copy
+from decimal import Decimal, getcontext
 
-def to_fraction(x, places=50):
+def to_fraction(x, places=10):
     ''' Convert the decimal x to a fraction, a / b'''
     # Based upon algorithm at http://homepage.smc.edu/kennedy_john/DEC2FRAC.PDF
     sign = 1 if x >= 0 else -1
@@ -21,13 +22,25 @@ def to_fraction(x, places=50):
         z = (z - int(z))**(-1)
         t = copy(b)
         b = b * int(z) + B
-        a = round(x * b)
-    #    print ('a = {}, b = {}, z = {}'.format(a, b, z))
+        a = round(abs(x) * b)
+        # print ('a = {}, b = {}, z = {}, diff = {}'.format(a, b, z, abs(x - Decimal(a)/Decimal(b))))
         B = copy(t)
-        if abs(float(x) - a/b) < 5*10**(-places) or z == int(z): break
-    
-    return (sign * a, b)
+        if abs(x - x.__class__(a)/x.__class__(b)) < 5*x.__class__(10)**(-places) or z == int(z):
+            break
             
+    return (sign * a, b)
+
+#    rs = sorted([x, 1]); xs = [1,0]; ys = [0,1]; qs = [0,int(rs[1]/rs[0])]
+#    while float(abs(xs[1]/ys[1] - x)) > 5*10**(-places):
+#        print('{}/{}'.format(xs[1],ys[1]))
+#        rs += [ xs[1] / ys[1] ]
+#        qs += [ int(rs[1]/rs[0]) ]
+#        xs += [ xs[0] - qs[2] * xs[1] ]
+#        ys += [ ys[0] - qs[2] * ys[1] ]
+#        del rs[0]; del xs[0]; del ys[0]; del qs[0]
+#        
+#    return (xs[1], ys[1])
+        
 def trapezoidal_composite_integral(f,a,b,m=100):
     ''' order 1 Newton-Cotes aproximation over m strips '''
     h = (b-a)/(m)

@@ -8,8 +8,7 @@ random.seed()
 def gen_file_name():
     ''' Generates a random file name in tmp '''
     return re.sub(r'\\', r'/',
-        (gettempdir() + '\\plot-%s.svg' % str(random.randint(1000,9999)))
-        [2 if os.name == 'nt' else None:], 100)
+        (gettempdir() + '\\plot-%s.svg' % str(random.randint(1000,9999))), 100)
 
 class Gnuplot:
     def __init__(self, *f):

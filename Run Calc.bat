@@ -1,1 +1,0 @@
-start Python\pythonw.exe gui.pyw

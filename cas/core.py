@@ -3,7 +3,7 @@
 System representing simple objects such as Integers and Constants
 whilst providing functions to allocate types. '''
 
-from decimal import Decimal
+from decimal import Decimal, getcontext, localcontext
 import re
 from functools import reduce
 from operator import mul
@@ -28,21 +28,17 @@ def handle_type (x):
         return +Real(repr(x))
     elif isinstance(x, complex):
         if abs(x.imag) < 0.0001:
-        #    print('string:', repr(x.real))
             return +Real.from_float(x.real)
         else:
             return Complex(x)
     else:
         return +Real(x)
-
-# Deprecated and replaced by Complex class
-#def print_complex(a):
-#    ''' Nicely print a complex number '''
-#    r, i = +Decimal().from_float(a.real), +Decimal().from_float(a.imag)
-#    if abs(r) < Decimal('0.001') and abs(i) < Decimal('0.001'): return '0'
-#    elif abs(i) < Decimal('0.001'): return str(r)
-#    elif abs(r) < Decimal('0.001'): return str(i) + 'i'
-#    else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'i'
+        
+def _pow(a, b):
+    if a > 0 or b == int(b):
+        return handle_type(super(type(a),a).__pow__(b))
+    else:
+        return handle_type(handle_type(1j) * super(type(a),abs(a)).__pow__(b))
 
 class Integer(int):
     ''' An extended integer class, providing better mathematical
@@ -55,10 +51,6 @@ class Integer(int):
                 return Real(self) / Real(other)
         else:
             return NotImplemented
-        # Exact representation of fractions would probably be preferable in
-        # the long run.
-        # elif isinstance(other, Integer):
-        #    return Fraction(a,b)
 
     def __sub__(self, other):
         if isinstance(other, int):
@@ -66,14 +58,18 @@ class Integer(int):
         else:
             return NotImplemented
 
-    def __pow__(self,other):
+    def __pow__(self, other):
         if isinstance(other, int):
-            return Integer(int(self)**int(other))
-    #    if isinstance(other, Decimal):
-    #        return Decimal(int(self)**other)
+            return _pow(self, other)
         else:
             return NotImplemented
-
+            
+    def __rpow__(self, other):
+        if isinstance(other, int):
+            return _pow(other, self)
+        else:
+            return NotImplemented 
+            
     def __rsub__(self, other):
         if isinstance(other, int):
             return Integer(int(other) - int(self))
@@ -119,25 +115,40 @@ class Integer(int):
 
 class Real(Decimal):
     ''' A class to provide better handling of real numbers '''
+    prec_offset = 0 # Print this fewer signficant figures than are used intenally
+    exact_form = True # Print fractions as fractions including pi and square roots
+    
     def __str__(self):
-    
         # Print integers plainly
-        if self == int(self): return str(int(self))
+        if abs(float(self) - int(self)) < 5 * 10**(-5):
+            return str(int(self))
         
-        # Show pi in full
-        if self == pi(): return super().__str__()
-    
-        # Display small fractions as such
-        a, b = nm.to_fraction(self)
-        if abs(a) < 100 and b < 100: return '{}/{}'.format(a,b)
+        if self.__class__.exact_form:
+            # Show pi in full
+            if self == pi(): return super().__str__()
         
-        # Display small fractional coefficients of pi in exact form
-        # TODO: Fix this as it is extremely buggy
-        q = self / pi(); a, b = nm.to_fraction(q, 10);
-        if abs(a) < 100 and b < 100 or True: return '{}pi/{}'.format(a if a != 1 else '',b)
+            # Display small fractions as such
+            a, b = nm.to_fraction(self)
+            if b < 50: return '{}/{}'.format(a,b) if b != 1 else str(a)
+            
+            # Display small fractional coefficients of pi in exact form
+            q = self / pi(); a, b = nm.to_fraction(q);
+            if b <= 12: 
+                return (str(a) if a != 1 else '') + 'pi'\
+                        + ('/' + str(b) if b != 1 else '')
+            
+            # Sort out square roots
+            for n in [2,3,5,7,11,13]:
+                q = self / handle_type(n) ** Real('0.5')
+                a, b = nm.to_fraction(q)
+                if b <= 100:
+                    return (str(a) + '*' if a != 1 else '') + str(n) + '^(1/2)'\
+                        + ('/' + str(b) if b != 1 else '')
         
         # Otherwise display as a decimal
-        return super().__str__()
+        with localcontext():
+            getcontext().prec -= self.__class__.prec_offset
+            return str(+Decimal(self))
         
     def __repr__(self):
         return "'" + super().__str__() + "'"
@@ -178,13 +189,18 @@ class Real(Decimal):
     def __rtruediv__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Real(super().__truediv__(other, context))
+        return Real(super().__rtruediv__(other, context))
 
 
     def __pow__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Real(super().__pow__(other))
+        return _pow(self, other)
+        
+    def __rpow__(self, other, context=None):
+        other = self._convert_other(other)
+        if other == NotImplemented: return other
+        return _pow(other, self)
 
     def __pos__(self, context=None):
         return Real(super().__pos__(context))
@@ -199,12 +215,12 @@ class Real(Decimal):
     def _convert_other(self, other):
         if isinstance(other, Real):
             return other
-      #  elif isinstance(other, float):
-      #      return 
+        elif isinstance(other, float):
+            return Real(self.from_float(other)) 
         # Might break for Constant
         elif isinstance(other, Constant):
             return Real(0)
-        elif isinstance(other, Number):
+        elif isinstance(other, Number) and not isinstance(other, complex):
             return Real(other)
         else:
             return NotImplemented
@@ -213,12 +229,23 @@ class Complex(complex):
     ''' A class to provide better handling of complex numbers '''
     def __str__(self):
         r, i = +Real().from_float(self.real), +Real().from_float(self.imag)
+        R = str(r)
+        I = ('-' if i < 0 else '+' if i != 1 else '') + (str(abs(i)) if abs(i) != 1 else '') + 'i'
         small = Real('0.001')
         if abs(r) < small and abs(i) < small: return '0'
-        elif abs(i) < small: return str(r)
-        elif abs(r) < small: return str(i) + 'i'
-        else: return str(r) + ('-' if i < 0 else '+') + str(abs(i)) + 'i'
+        elif abs(i) < small: return R
+        elif abs(r) < small: return I
+        else: return R + I
     __repr__ = __str__
+    
+    def argument(self):
+        from math import pi, atan
+        r, i = abs(self.real), abs(self.imag)
+        a = atan(i/r)
+        if self.real >= 0 and self.imag >= 0: return handle_type(a)
+        if self.real <= 0 and self.imag >= 0: return handle_type(pi - a)
+        if self.real >= 0 and self.imag <= 0: return handle_type(-a)
+        if self.real <= 0 and self.imag <= 0: return handle_type(a - pi)
     
     def bracketed_str(self):
         r, i = +Real().from_float(self.real), +Real().from_float(self.imag)
@@ -351,7 +378,7 @@ class Product(Algebra):
     def __getitem__(self, i):
         return self._factors[i]
 
-    def __mul__(self):
+    def __mul__(self, other):
         if isinstance(other, Product):
             return Product(self.factors, other.factors)
 
@@ -367,6 +394,40 @@ class Product(Algebra):
 
     def as_gnuplot_expression(self):
         return '*'.join(map(lambda a: a.as_gnuplot_expression(), self._factors))
+
+class Sum(Algebra):
+    ''' A representation of the sum of n terms '''
+    def __init__(self, *a):
+        ''' Initialise factors from a list of arguments '''
+        self._items = list(a)
+        super().__init__()
+
+    def _simplify_add(self):
+        return reduce(add, self._factors, Integer(0))
+
+    def simplify(self):
+        return self._simplify_add()
+
+    def __getitem__(self, i):
+        return self._items[i]
+
+    def __mul__(self, other):
+        if isinstance(other, Sum):
+            return self.__class__(map(mul, self._factors, other._factors))
+    __rmul__ = __mul__
+
+    def __str__(self):
+        return ' + '.join(map(lambda a: a.bracketed_str, self._factors))
+
+    def __eq__(self, other):
+        # TODO: Add handling for products which may not be simplified
+        return self.simplify() == other
+
+    def __len__(self):
+        return len(self._factors)
+
+    def as_gnuplot_expression(self):
+        return ' + '.join(map(lambda a: a.as_gnuplot_expression(), self._factors))
 
 class Constant(Number, Algebra):
     ''' A class to represent an unknown constant term '''

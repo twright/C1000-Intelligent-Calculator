@@ -295,7 +295,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>abs</string>
+          <string>|</string>
          </property>
         </widget>
        </item>
@@ -568,7 +568,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>fact</string>
+          <string>factors</string>
          </property>
         </widget>
        </item>
