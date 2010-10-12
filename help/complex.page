@@ -1,0 +1,18 @@
+<page xmlns="http://projectmallard.org/1.0/"
+    type="guide" id="complex">
+    <info><link type="guide" xref="index"/></info>
+    <title>Complex Numbers (FP1,FP2)</title>
+<p>The calculator supports Complex Numbers as well as real. This means that when
+attempting to take the square root of a negative number, a correct imaginary
+result will be given rather than an error message.</p>
+<code>
+>>> (-1)^(1/2)
+= i
+</code>
+
+<p>We can do more with complex numbers than just finding them. We can calculate
+some common properties of complex numbers such as their arguments:</p>
+<code>
+</code>
+
+</page>

@@ -1,0 +1,68 @@
+<page xmlns="http://projectmallard.org/1.0/"
+    type="guide" id="trig">
+    <info><link type="guide" xref="index"/></info>
+    <title>Trigonometry (GCSE,C2,FP2)</title>
+<p>The calculator will allow you to calculate all of the common trigonometric
+functions:</p>
+<code>
+>>> sin 1
+= 0.841
+>>> cos 1
+= 0.540
+>>> tan 1
+= 1.56
+</code>
+<p>However you must be aware that if you enter an angle without units, <em>it 
+will be taken as radians</em>. To specific an angle is in degrees, just write 
+<code>degs</code> after it:</p>
+<code>
+>>> sin (5 degs)
+= 0.0872
+</code>
+<p>Note that whenever, exact answers will be given:</p>
+<code>
+>>> sin (pi/6)
+= 1/2
+>>> cos (pi/6)
+= 3^(1/2)/2
+>>> tan (pi/6)
+= 3^(1/2)/3
+</code>
+
+<p>You may also use inverse trigonometric functions:</p>
+<code>
+>>> arcsin 1
+= pi/2
+>>> arccos 1
+= 0
+>>> arctan 1
+= pi/4
+</code>
+<p>The values of these functions are also <em>given in radians</em>. To get them
+in degrees, you can use the <code>degrees</code> function:</p>
+<code>
+>>> degrees (arcsin 1)
+= 90
+>>> degrees (arccos 1)
+= 0
+>>> degrees (arctan 1)
+= 45
+</code>
+
+<p>Hyperbolic trigonometric functions are also supported:</p>
+<code>
+>>> sinh 1
+= 1.18
+>>> cosh 1
+= 1.54
+>>> tanh 1
+= 0.762
+</code>
+<p>along with their inverses:</p>
+<code>
+>>> arcsinh 1
+= 0.881
+>>> arccosh 1
+= 0
+</code>
+</page>

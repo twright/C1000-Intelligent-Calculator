@@ -1,0 +1,7 @@
+<cache xmlns="http://projectmallard.org/1.0/";>
+<page href='basics.page'/>
+<page href='index.page'/>
+<page href='matrices.page'/>
+<page href='stats.page'/>
+<page href='trig.page'/>
+</cache>
