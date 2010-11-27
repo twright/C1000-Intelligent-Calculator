@@ -482,6 +482,7 @@ class Polynomial(Function):
     def roots(self, n=10):
         ''' Numerically locate all roots (real and complex) of an equation
         using n iterations of the Durand-Kerner method '''
+        self.sort_terms()
         # For order 1 Polynomials there is only 1 trivial root.
         if self.order() == 1:
             return [ - self.terms[1].coefficient / self.terms[0].coefficient ]
@@ -505,7 +506,8 @@ class Polynomial(Function):
 
     def sort_terms(self):
         ''' Sort terms in order of descending power '''
-        power = lambda a: (a.power if a.coefficient != 0 else 0)\
+        # TODO: Think about cases in which this may break
+        power = lambda a: (a.power if a.coefficient != 0 else -1)\
             if isinstance(a, Term) else 0
         self.terms.sort(key=power, reverse=True)
 

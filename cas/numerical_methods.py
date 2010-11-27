@@ -16,7 +16,6 @@ def to_fraction(x, places=10):
     sign = 1 if x >= 0 else -1
     z = abs(x)
     if z == int(z): return (x, 1)
-    
     a = 0; b = 1; B = 0
     while True:
         z = (z - int(z))**(-1)

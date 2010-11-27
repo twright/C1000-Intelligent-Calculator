@@ -114,7 +114,7 @@ class Calculator():
             'romberg' : lambda f,a,b,*n: f.romberg_integral(a,b,*n),
             'trapeziumrule' : lambda f,a,b,*n: f.trapezoidal_integral(a,b,*n),
             'simpsonrule' : lambda f,a,b,*n: f.simpson_integral(a,b,*n),
-            'roots' : lambda a, n=100: List(*a.roots(n)),
+            'roots' : lambda a, n=50: List(*a.roots(n)),
             #a.abscissa + ' = ' + ' or '.join(map(print_complex, a.roots(n))),
             'abscissa' : lambda a: a.abscissa,
             'maxima' : lambda a, n=100: List(*a.maxima(n)),

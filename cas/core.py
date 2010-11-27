@@ -123,7 +123,7 @@ class Real(Decimal):
         if abs(float(self) - int(self)) < 5 * 10**(-5):
             return str(int(self))
         
-        if self.__class__.exact_form:
+        if self.__class__.exact_form and abs(self) > Real('0.0001'):
             # Show pi in full
             if self == pi(): return super().__str__()
         
