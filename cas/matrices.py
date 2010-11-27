@@ -4,8 +4,9 @@ from functools import reduce
 from copy import deepcopy
 from decimal import Decimal
 
-from .core import Integer, Product
-import cas.univariate as cf
+from .core import Product
+from .numeric import Integer
+#import cas.univariate as cf
 
 def identity_matrix(n):
     ''' Create an n*n identity matrix I(n) e.g. [[1,0],[0,1]] '''

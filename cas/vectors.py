@@ -3,7 +3,8 @@ from functools import reduce
 from copy import deepcopy
 from operator import add
 
-from .core import Integer, Product
+from cas.core import Product
+from cas.numeric import Integer
 from cas.core import handle_type as ht
 
 class Vector(tuple):

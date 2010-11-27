@@ -6,12 +6,12 @@ import math
 from copy import copy
 from sys import exit
 
-from cas.core import StrWithHtml, Integer, List, Complex, Real, handle_type
+from cas.core import StrWithHtml, List, handle_type, Symbol, partial_differential
+from cas.numeric import Integer, Complex, Real
 from cas.matrices import Matrix, identity_matrix, diagonal_matrix
 from cas.vectors import Vector
 from cas.statistics import nCr, nPr, binomialpdf, binomialcdf, poissonpdf, poissoncdf,\
     normalcdf, factorial
-import cas.univariate as cf
 from dmath import log, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh
 from gnuplot import Gnuplot
 from pyparsing_py3 import *
@@ -33,14 +33,15 @@ def plot(f, *between):
         r'<img src="' + file_name + '">'
         )
 
-def _full_term_action(a):
-    ''' Generates a term from the parse output '''
-    # term (n)x(^m)
-    n = a[0] if type(a[0]) != str else 1
-    m = a[-1] if type(a[-1]) != str else 1
-    for t in a:
-        if isinstance(t,str): abscissa = t
-    return cf.Term(n, abscissa, m)
+
+#def _full_term_action(a):
+#    ''' Generates a term from the parse output '''
+#    # term (n)x(^m)
+#    n = a[0] if type(a[0]) != str else 1
+#    m = a[-1] if type(a[-1]) != str else 1
+#    for t in a:
+#        if isinstance(t,str): abscissa = t
+#    return cf.Term(n, abscissa, m)
     # return Polynomial('x',n,m)
 
 def _sign_action(a):
@@ -108,7 +109,7 @@ class Calculator():
             'poissoncdf' : poissoncdf,
             'normalcdf' : normalcdf,
             'round' : lambda a: handle_type(round),
-            'differentiate' : lambda a: a.differential(),
+            'differentiate' : lambda a,b='x': partial_differential(a,b),
             'integrate' : lambda *a: a[0].integral() if len(a) == 1 \
                 else a[0].integral().limit(a[1],a[2]),
             'romberg' : lambda f,a,b,*n: f.romberg_integral(a,b,*n),
@@ -123,7 +124,7 @@ class Calculator():
             'plot' : plot,
             'transpose' : lambda a: a.transpose(),
             'order' : lambda a: '{}×{}'.format(*a.order()),
-            'eval' : lambda a,b: a.evaluate(b),
+            'eval' : lambda a,b: a(b),
             'identity' : identity_matrix,
             'diag' : diagonal_matrix,
             'inv' : lambda a: a.inverse(),
@@ -199,7 +200,7 @@ class Calculator():
         num.setParseAction(_sign_action)
         variable = reduce(lambda a,b: a | b, map(Literal, srange('[a-z]'))) \
         + NotAny(func | const)
-        variable.setParseAction(lambda a: cf.Term(1, a[0], 1))
+        variable.setParseAction(lambda a: Symbol(a[0]))
         obj = 'ans' | Word(srange('[A-Z]'), max=1)
         obj.setParseAction(lambda a: self.objects[a[0]])
         vector = Suppress('[') + delimitedList(NotAny('[') + atom) + Suppress(']')
@@ -208,7 +209,7 @@ class Calculator():
         matrix.setParseAction(lambda a: Matrix(list(map(list,a))))
 
         equality = aexpr + Suppress('=') + aexpr
-        equality.setParseAction(lambda a: cf.Equality(*a))
+#        equality.setParseAction(lambda a: cf.Equality(*a))
 
         exp = Literal("^") | Literal("**")
         mul = Literal("*") | Literal("/")
