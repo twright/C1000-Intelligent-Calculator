@@ -101,7 +101,7 @@ def _real_str(y, exact_form, prec_offset):
 
     if exact_form and abs(x) > small:
         # Show pi in full
-        if abs(x - float(pi())) < small: return (str(x), False)
+        if abs(x - float(pi())) < small: return ('pi', False)
     
         # Display small fractions as such
         a, b = nm.to_fraction(x)
