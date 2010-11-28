@@ -5,14 +5,16 @@ from functools import reduce, partial
 import math
 from copy import copy
 from sys import exit
+import dmath
 
-from cas.core import StrWithHtml, List, handle_type, Symbol, partial_differential
+from cas.core import StrWithHtml, List, handle_type, Symbol, partial_differential,\
+    partial_integral, expand, Ln, Algebra
 from cas.numeric import Integer, Complex, Real
 from cas.matrices import Matrix, identity_matrix, diagonal_matrix
 from cas.vectors import Vector
 from cas.statistics import nCr, nPr, binomialpdf, binomialcdf, poissonpdf, poissoncdf,\
     normalcdf, factorial
-from dmath import log, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh
+#from dmath import log, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh
 from gnuplot import Gnuplot
 from pyparsing_py3 import *
 import help
@@ -32,17 +34,6 @@ def plot(f, *between):
         'Image saved to %s' % file_name,
         r'<img src="' + file_name + '">'
         )
-
-
-#def _full_term_action(a):
-#    ''' Generates a term from the parse output '''
-#    # term (n)x(^m)
-#    n = a[0] if type(a[0]) != str else 1
-#    m = a[-1] if type(a[-1]) != str else 1
-#    for t in a:
-#        if isinstance(t,str): abscissa = t
-#    return cf.Term(n, abscissa, m)
-    # return Polynomial('x',n,m)
 
 def _sign_action(a):
     ''' Generates a number based on an optional sign and number '''
@@ -73,15 +64,18 @@ def _assign_action(vars, a):
     vars[a[0]] = a[1]
     return a[1]
 
-PI = Real('3.14159265358979323846264338327950288419716939937510582097494')
+PI = Real('3.14159265358979323846264338327950288419716939937510582097494459')
 radians = lambda x: x*PI/handle_type(180)
 degrees = lambda x: x*handle_type(180)/PI
+ln = lambda x: Ln(x) if isinstance(x, Algebra) else handle_type(dmath.log(x))
 
 class Calculator():
     def __init__(self):
         self.functions = {
-            'ln' : lambda x: handle_type(log(x)),
-            'log' : lambda a, b=10: log(a,b),
+        # Logaritms
+            'ln' : ln,
+            'log' : lambda a, b=10: dmath.log(a,b),
+        # Trianometric Functions
             'sin' : lambda x: handle_type(sin(x)),
             'cos' : lambda x: handle_type(cos(x)),
             'tan' : lambda x: handle_type(tan(x)),
@@ -97,10 +91,12 @@ class Calculator():
                 * (z - Integer(1))**Real('0.5'))),
             'arctanh' : lambda z: handle_type(log(Integer(1) + z)
                 - log(Integer(1) - z))/Integer(2),
+            'degrees' : lambda x: handle_type(degrees(x)),
             'factorial' : factorial,
             'factors' : lambda a: a.factors(),
-            'degrees' : lambda x: handle_type(degrees(x)),
-            'decimal' : Decimal,
+            'decimal' : lambda a: Decimal(a) if not isinstance(a, List) else List(*list(map(Decimal, a))),
+            'complex' : lambda a: complex(a) if not isinstance(a, List) else List(*list(map(complex, a))),
+        # Statistics
             'nCr' : nCr,
             'nPr' : nPr,
             'binomialpdf' : binomialpdf,
@@ -108,23 +104,27 @@ class Calculator():
             'poissonpdf' : poissonpdf,
             'poissoncdf' : poissoncdf,
             'normalcdf' : normalcdf,
-            'round' : lambda a: handle_type(round),
-            'differentiate' : lambda a,b='x': partial_differential(a,b),
-            'integrate' : lambda *a: a[0].integral() if len(a) == 1 \
-                else a[0].integral().limit(a[1],a[2]),
+            'mean' : lambda a: a.mean(),
+            'variance' : lambda a: a.variance(),
+        # Manipulation of functions
+            'expand' : expand,
+            'differentiate' : lambda a,b=Symbol('x'): partial_differential(a,b),
+            'integrate' : lambda a, *l, b=Symbol('x'): partial_integral(a,b) if len(l) == 0 \
+                else partial_integral(a,b).limit(l[0],l[1], variable=b),
             'romberg' : lambda f,a,b,*n: f.romberg_integral(a,b,*n),
             'trapeziumrule' : lambda f,a,b,*n: f.trapezoidal_integral(a,b,*n),
             'simpsonrule' : lambda f,a,b,*n: f.simpson_integral(a,b,*n),
-            'roots' : lambda a, n=50: List(*a.roots(n)),
+            'roots' : lambda a, n=1000: List(*list(a.roots(n))),
             #a.abscissa + ' = ' + ' or '.join(map(print_complex, a.roots(n))),
             'abscissa' : lambda a: a.abscissa,
             'maxima' : lambda a, n=100: List(*a.maxima(n)),
             'minima' : lambda a, n=100: List(*a.minima(n)),
-            'simplify' : lambda expr: expr.simplify(),
-            'plot' : plot,
+        # Vectors
+            'normal' : lambda a: a.normal(),
+        # Matrices
             'transpose' : lambda a: a.transpose(),
             'order' : lambda a: '{}×{}'.format(*a.order()),
-            'eval' : lambda a,b: a(b),
+            'eval' : lambda a,b,c=None: a(b,variable=c),
             'identity' : identity_matrix,
             'diag' : diagonal_matrix,
             'inv' : lambda a: a.inverse(),
@@ -136,9 +136,6 @@ class Calculator():
             'zero' : Matrix,
             'minor': lambda a, b, c: a.minor(b, c),
             'det' : lambda a: a.determinant(),
-            'normal' : lambda a: a.normal(),
-            'mean' : lambda a: a.mean(),
-            'variance' : lambda a: a.variance(),
             'stdev' : lambda a: a.stdev(),
             'sxx' : lambda a: a.Sxx(),
             'eigenvalues' : lambda a: List(*a.eigenvalues()),
@@ -146,6 +143,10 @@ class Calculator():
             'im' : lambda a: a.imag,
             'arg' : lambda a: a.argument(),
             'conj' : lambda a: a.conjugate(),
+        # Misc
+            'round' : lambda a: handle_type(round),
+            'list' : lambda a: str(list(a)),
+            'plot' : plot,
             'type' : lambda a: str(type(a)),
             'setprec' : self.set_precision,
             'setexact' : self.set_exact,

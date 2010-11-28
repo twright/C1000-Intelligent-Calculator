@@ -6,6 +6,7 @@ import py.test
 from decimal import Decimal, getcontext, localcontext
 
 from cas.core import *
+from cas.numeric import Integer
 
 class TestHandleType():
     def test_int(self):
@@ -22,110 +23,6 @@ class TestHandleType():
         xs = [1j, 2j, -1j, 2+3j, 3-2.2j]
         for x in xs:
             assert isinstance(handle_type(x), complex)
-
-# Deprecated with print_complex
-#class TestPrintComplex():
-#    def test_samples(self):
-#        xs = (
-#            (0+0j, '0'), (0.00001+0j, '0'), (-0.00001+0j, '0'), (1+0j, '1'),
-#            (1.342+0j, '1.34'), (1-0.01j, '1-0.0100i'), (4.3+0.00003j, '4.30'),
-#            (0-2j, '-2i'), (0.00003+0.00002j, '0'), (0.00002-0.00001j, '0'),
-#            (4.5+0.00002j, '4.5'), (0.00003-0.2j, '-0.200i')
-#        )
-#        with localcontext():
-#            getcontext().prec = 3
-#            for x, string in xs:
-#                assert print_complex(x) == string
-
-class TestComplex():
-    def test_str(self):
-        xs = (
-            (0+0j, '0'), (0.00001+0j, '0'), (-0.00001+0j, '0'), (1+0j, '1'),
-            (1.342+0j, '1.34'), (1-0.01j, '1-0.0100i'), (4.3+0.00003j, '4.30'),
-            (0-2j, '-2i'), (0.00003+0.00002j, '0'), (0.00002-0.00001j, '0'),
-            (4.5+0.00002j, '4.5'), (0.00003-0.2j, '-0.200i')
-        )
-        with localcontext():
-            getcontext().prec = 3
-            for x, string in xs:
-                assert str(Complex(x)) == string
-
-    def test_addition(self):
-        assert isinstance(Complex(3+2j) + Complex(-1,5j), Complex)
-
-class TestConstant():
-    def setup_class(self):
-        self.c = Constant()
-
-    def test_equality(self):
-        from cas.univariate import Term
-        equals = (Constant(), Integer(0), Integer(-1), Decimal('3.4'), 3+4j,
-                  Term(1,'x',0), Term(0,'x',3))
-        notequals = (Term(1,'x',1),)
-        for x in equals:
-            assert self.c == x
-        for x in notequals:
-            assert self.c != x
-
-    def test_str(self):
-        assert str(self.c) == 'c'
-        assert repr(self.c) == 'Constant()'
-
-    def test_subtraction(self):
-        assert 3 - self.c == Constant()
-        assert self.c - self.c == self.c
-
-    def test_evaluation(self):
-        assert self.c.evaluate(3) == 0
-        assert self.c.evaluate(Decimal('3.4')) == 0
-
-    def test_differential(self):
-        assert self.c.differential() == 0
-
-class TestInteger():
-    def test_init(self):
-        assert Integer(3) == 3
-
-    def test_division(self):
-        assert Integer(4) / Integer(2) == Integer(2)
-        assert Integer(3) / Integer(2) == Decimal('1.5')
-        assert abs(Integer(2) / Decimal('1.1') - Decimal('1.82'))\
-            < Decimal('0.01')
-        with py.test.raises(ZeroDivisionError):
-            Integer(3) / Integer(0)
-
-    def test_addition(self):
-        assert isinstance(Integer(3) + Integer(2), Integer)
-        assert isinstance(Integer(3) + 2, Integer)
-        assert Integer(3) + Integer(2) == 5
-        assert Integer(2) + Decimal('0.01') == Decimal('2.01')
-
-    def test_subtraction(self):
-        assert isinstance(Integer(3) - Integer(2), Integer)
-        assert isinstance(Integer(3) - 2, Integer)
-        assert isinstance(3 - Integer(2), Integer)
-        assert 3 - Integer(2) == 1
-        assert Integer(3) - Integer(2) == 1
-        assert Integer(2) - Decimal('0.01') == Decimal('1.99')
-
-    def test_powers(self):
-        assert isinstance(Integer(2) ** Integer(4), Integer)
-        assert Integer(2) ** Integer(4) == 16
-        assert Integer(4) ** Decimal('0.5') == Decimal('2')
-
-    def test_multiplication(self):
-        assert isinstance(Integer(3) * Integer(2), Integer)
-        assert isinstance(Integer(3) * 2, Integer)
-        assert isinstance(2 * Integer(3), Integer)
-        assert Integer(3) * Integer(2) == 6
-
-    def test_factors(self):
-        xs = (
-            (2, [2]), (4, [2,2]), (10, [2,5]), (-10, [-1,2,5]),
-        )
-        for x, facts in xs:
-            assert x == Integer(x).factors().simplify()
-            assert Integer(x).factors() == Product(*facts)
 
 class TestAlgebra():
     def setup_class(self):
@@ -152,22 +49,25 @@ class TestAlgebra():
         assert self.a ** 1 == self.a
 
 class TestProduct():
+    def setup_class(self):
+        self.a, self.b, self.c, self.d = Symbol('a'), Symbol('b'), Symbol('c'),\
+            Symbol('d')
+        self.xs = Product(self.a, self.b, self.c, self.d)
+
     def test_equality(self):
         assert Product(2, 3) == Product(2, 3)
         assert Product(2, 3) == Product(3, 2)
         assert Product(3, 7) == 21
+        assert Product(self.a,self.c) == Product(self.a,self.c)
+        assert Product(self.b,self.d) == Product(self.d,self.b)
 
     def test_str(self):
-        assert str(Product(1, 2, 3, 4)) == '1*2*3*4'
-
-    def test_simplify(self):
-        assert Product(1, 2, 3, 4).simplify() == 24
+        assert str(Product(2, self.a, self.b, self.c, self.d)) == '2abcd'
 
     def test_iteration(self):
-        xs = Product(1, 2, 3, 4)
-        assert xs[1] == 2
-        for x in xs: assert x is not None
-        assert len(xs) == 4
+        assert self.xs[1] == self.b
+        for x in self.xs: assert x is not None
+        assert len(self.xs) == 4
 
 class TestList():
     def test_str(self):

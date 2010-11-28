@@ -93,16 +93,17 @@ class TestMatrix():
             Matrix([[1,2,3],[4,5,6],[7,8,9]]).inverse()
             
     def test_charactoristic_polynomial(self):
-        from cas.univariate import Polynomial
+        from cas.core import Symbol
+        x = Symbol('x')
         assert Matrix([[1,2],[3,4]]).characteristic_polynomial()\
-            == Polynomial('x', 1,2, -5,1, -2,0)
+            == x**2 - 5*x - 2
         assert Matrix([[1,3,2],[4,5,2],[2,3,1]]).characteristic_polynomial()\
-            == Polynomial('x', -1,3, 7,2, 11,1, 3,0)
+            == -x**3 + 7*x**2 + 11*x + 3
             
     def test_eigenvalues(self):
         xs = (5.372, -0.372)
         for a, b in zip(Matrix([[1,2],[3,4]]).eigenvalues(), xs):
-            assert abs(a - b) < 0.01
+            assert abs(a - b) < a.__class__('0.001')
             
     def test_transpose(self):
         assert Matrix([[1,2],[3,4]]).transpose() == Matrix([[1,3],[2,4]])

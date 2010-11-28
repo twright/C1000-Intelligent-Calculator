@@ -13,11 +13,12 @@ from decimal import Decimal, getcontext
 def to_fraction(x, places=10):
     ''' Convert the decimal x to a fraction, a / b'''
     # Based upon algorithm at http://homepage.smc.edu/kennedy_john/DEC2FRAC.PDF
+    max_runs = 50; i = 0
     sign = 1 if x >= 0 else -1
     z = abs(x)
     if z == int(z): return (x, 1)
     a = 0; b = 1; B = 0
-    while True:
+    while i < max_runs:
         z = (z - int(z))**(-1)
         t = copy(b)
         b = b * int(z) + B
@@ -26,19 +27,9 @@ def to_fraction(x, places=10):
         B = copy(t)
         if abs(x - x.__class__(a)/x.__class__(b)) < 5*x.__class__(10)**(-places) or z == int(z):
             break
+        i += 1
             
     return (sign * a, b)
-
-#    rs = sorted([x, 1]); xs = [1,0]; ys = [0,1]; qs = [0,int(rs[1]/rs[0])]
-#    while float(abs(xs[1]/ys[1] - x)) > 5*10**(-places):
-#        print('{}/{}'.format(xs[1],ys[1]))
-#        rs += [ xs[1] / ys[1] ]
-#        qs += [ int(rs[1]/rs[0]) ]
-#        xs += [ xs[0] - qs[2] * xs[1] ]
-#        ys += [ ys[0] - qs[2] * ys[1] ]
-#        del rs[0]; del xs[0]; del ys[0]; del qs[0]
-#        
-#    return (xs[1], ys[1])
         
 def trapezoidal_composite_integral(f,a,b,m=100):
     ''' order 1 Newton-Cotes aproximation over m strips '''
@@ -54,7 +45,7 @@ def simpson_composite_integral(f,a,b,m=100):
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
     return (h/3)*(fx(0) + sum(4*fx(n-1) + 2*fx(n) for n in range(2,m,2))
-        + fx(m))
+        + 4*fx(m-1) + fx(m))
         
 def simpson38_composite_integral(f,a,b,m=100):
     ''' order 3 Newton-Cotes aproximation over m strips '''

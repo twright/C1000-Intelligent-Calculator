@@ -35,8 +35,6 @@ class TestNumericalMethods():
             assert almost_equal(trapezoidal_composite_integral(f, a, b),
                 integral, 1)
             
-    # Higher order Newton-Cotes approximations much to inaccurate
-    @py.test.mark.xfail
     def test_simpson_rule(self):
         for f, a, b, integral in self.data:
             assert almost_equal(simpson_composite_integral(f, a, b, 100),

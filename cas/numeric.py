@@ -8,14 +8,15 @@ from copy import copy, deepcopy
 from numbers import Number
 
 from dmath import pi
-from cas.core import handle_type
+from cas.cache import lru_cache
+from cas.core import handle_type, a_str, m_str
 import cas.numerical_methods as nm
         
-def _pow(a, b):
-    if a > 0 or b == int(b):
-        return handle_type(super(type(a),a).__pow__(b))
-    else:
-        return handle_type(handle_type(1j) * super(type(a),abs(a)).__pow__(b))
+#def _pow(a, b):
+#    if a > 0 or b == int(b):
+#        return handle_type(super(a.__class__,a) ** b)
+#    else:
+#        return handle_type(handle_type(1j) * super(type(a),abs(a)).__pow__(b))
 
 class Integer(int):
     ''' An extended integer class, providing better mathematical
@@ -37,13 +38,13 @@ class Integer(int):
 
     def __pow__(self, other):
         if isinstance(other, int):
-            return _pow(self, other)
+            return self.__class__(int(self) ** other)
         else:
             return NotImplemented
             
     def __rpow__(self, other):
         if isinstance(other, int):
-            return _pow(other, self)
+            return Integer(other ** int(self))
         else:
             return NotImplemented 
             
@@ -85,47 +86,58 @@ class Integer(int):
                 i += 1
 
     def factors(self):
-        return Product(*self._factors())
+        from cas.core import List
+        return List(*self._factors())
 
-    def bracketed_str(self):
-        return str(self)
+@lru_cache(maxsize=1000)
+def _real_str(y, exact_form, prec_offset):
+    ''' Convert a Real number to a string, with nice display.
+    Returns a tuple containing the string an a bool indicating whether changes
+    have been made. The function works in floats and is cached for speed. '''
+    small = 5 * 10**(-5)
+    x = float(y)
+    if abs(x - int(x)) < small:
+        return (str(int(x)), False)
+
+    if exact_form and abs(x) > small:
+        # Show pi in full
+        if abs(x - float(pi())) < small: return (str(x), False)
+    
+        # Display small fractions as such
+        a, b = nm.to_fraction(x)
+        if b < 50: return ('{}/{}'.format(a,b), True) if b != 1 else (str(a), False)
+        
+        # Display small fractional coefficients of pi in exact form
+        q = x / float(pi()); a, b = nm.to_fraction(q);
+        if b <= 12: 
+            return ((str(a) if a != 1 else '') + 'pi'\
+                    + ('/' + str(b) if b != 1 else ''), True)
+        
+        # Sort out square roots
+        for n in [2,3,5,7,11,13]:
+            q = x / n ** 0.5
+            a, b = nm.to_fraction(q)
+            if b <= 100:
+                return ((str(a) + '*' if a != 1 else '') + str(n) + '^(1/2)'\
+                    + ('/' + str(b) if b != 1 else ''), True)
+    
+    # Otherwise display as a decimal
+    with localcontext():
+        getcontext().prec -= prec_offset
+        return (str(+Decimal(y)), False)
 
 class Real(Decimal):
     ''' A class to provide better handling of real numbers '''
     prec_offset = 0 # Print this fewer signficant figures than are used intenally
     exact_form = True # Print fractions as fractions including pi and square roots
     
+    def __init__(self, x='0'):
+        self.__string, a = _real_str(x, self.__class__.exact_form, self.__class__.prec_offset)
+        self._brackets = {'m':1,'f':1,'p':1,'a':0} if a else {'m':0,'f':0,'p':0,'a':0}
+            
+    
     def __str__(self):
-        # Print integers plainly
-        if abs(float(self) - int(self)) < 5 * 10**(-5):
-            return str(int(self))
-        
-        if self.__class__.exact_form and abs(self) > Real('0.0001'):
-            # Show pi in full
-            if self == pi(): return super().__str__()
-        
-            # Display small fractions as such
-            a, b = nm.to_fraction(self)
-            if b < 50: return '{}/{}'.format(a,b) if b != 1 else str(a)
-            
-            # Display small fractional coefficients of pi in exact form
-            q = self / pi(); a, b = nm.to_fraction(q);
-            if b <= 12: 
-                return (str(a) if a != 1 else '') + 'pi'\
-                        + ('/' + str(b) if b != 1 else '')
-            
-            # Sort out square roots
-            for n in [2,3,5,7,11,13]:
-                q = self / handle_type(n) ** Real('0.5')
-                a, b = nm.to_fraction(q)
-                if b <= 100:
-                    return (str(a) + '*' if a != 1 else '') + str(n) + '^(1/2)'\
-                        + ('/' + str(b) if b != 1 else '')
-        
-        # Otherwise display as a decimal
-        with localcontext():
-            getcontext().prec -= self.__class__.prec_offset
-            return str(+Decimal(self))
+        return self.__string
         
     def __repr__(self):
         return "'" + super().__str__() + "'"
@@ -172,12 +184,12 @@ class Real(Decimal):
     def __pow__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return _pow(self, other)
+        return self.__class__(Decimal(self) ** other)
         
     def __rpow__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return _pow(other, self)
+        return self.__class__(Decimal(other) ** Decimal(self))
 
     def __pos__(self, context=None):
         return Real(super().__pos__(context))
@@ -204,16 +216,28 @@ class Real(Decimal):
 
 class Complex(complex):
     ''' A class to provide better handling of complex numbers '''
-    def __str__(self):
+    def __new__(self, x):
+        small = 0.00001
+        if abs(x.real) < small and abs(x.imag) < small:
+            return Integer(0)
+        elif abs(x.imag) < small:
+            return handle_type(x.real)
+        else:
+            a = super().__new__(self, x)
+            if abs(x.real) < small: a._brackets = {'d':0,'m':0,'p':0,'a':1}
+            else: a._brackets = {'d':1,'m':1,'p':1,'a':1}
+            return a
+    
+    def __repr__(self):
         r, i = +Real().from_float(self.real), +Real().from_float(self.imag)
-        R = str(r)
-        I = ('-' if i < 0 else '+' if i != 1 else '') + (str(abs(i)) if abs(i) != 1 else '') + 'i'
-        small = Real('0.001')
-        if abs(r) < small and abs(i) < small: return '0'
-        elif abs(i) < small: return R
-        elif abs(r) < small: return I
-        else: return R + I
-    __repr__ = __str__
+        small = Real('0.00001')
+#        if abs(self.imag) > small and abs(self.real) > small:
+#            return 
+        R = a_str(r)
+        I = (m_str(abs(i)) if -1 != i != 1 else '') + 'i'
+        if abs(r) < small: return ('-' if i < 0 else '') + I
+        else: return R + ('-' if i < 0 else '+') + I
+    __str__ = __repr__
     
     def argument(self):
         from math import pi, atan
@@ -223,20 +247,12 @@ class Complex(complex):
         if self.real <= 0 and self.imag >= 0: return handle_type(pi - a)
         if self.real >= 0 and self.imag <= 0: return handle_type(-a)
         if self.real <= 0 and self.imag <= 0: return handle_type(a - pi)
-    
-    def bracketed_str(self):
-        r, i = +Real().from_float(self.real), +Real().from_float(self.imag)
-        small = Real('0.001')
-        return '(' + str(self) + ')' if abs(r) > small < abs(i) else str(self)
 
     def _convert_other(self, other):
-        if isinstance(other, Decimal):
-            return Complex(float(other))
-        elif isinstance(other, Complex):
+        if isinstance(other, complex):
             return other
-        # Might break for Constant
-        elif isinstance(other, Number):
-            return Complex(other)
+        if isinstance(other, Number):
+            return complex(float(other))
         else:
             return NotImplemented
 
@@ -254,7 +270,7 @@ class Complex(complex):
     def __rsub__(self, other):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Complex(super().__rsub__(other))
+        return Complex(other - complex(self))
 
     def __mul__(self, other):
         other = self._convert_other(other)

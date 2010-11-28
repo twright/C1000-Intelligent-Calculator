@@ -4,9 +4,8 @@ from functools import reduce
 from copy import deepcopy
 from decimal import Decimal
 
-from .core import Product
-from .numeric import Integer
-#import cas.univariate as cf
+from cas.core import Product, Symbol, expand
+from cas.numeric import Integer
 
 def identity_matrix(n):
     ''' Create an n*n identity matrix I(n) e.g. [[1,0],[0,1]] '''
@@ -213,8 +212,7 @@ class Matrix():
         # Note that some define the characteristic polynomial of a matrix as
         # the determinant of the product of abscissa and identity matrix 
         # minus the matrix i.e. the inverse of this form
-        return (self - cf.Term(1,'x',1) * identity_matrix(self.order()[0])
-            ).determinant()
+        return expand((self - Symbol('x') * identity_matrix(self.order()[0])).determinant())
             
     def inverse(self):
         ''' Calculate the matrix inverse using Gauss-Jordan elimination. '''
