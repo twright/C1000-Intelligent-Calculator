@@ -8,7 +8,7 @@ from sys import exit
 import dmath
 
 from cas.core import StrWithHtml, List, handle_type, Symbol, partial_differential,\
-    partial_integral, expand, Ln, Algebra
+    partial_integral, expand, Ln, Sin, Cos, Tan, Algebra
 from cas.numeric import Integer, Complex, Real
 from cas.matrices import Matrix, identity_matrix, diagonal_matrix
 from cas.vectors import Vector
@@ -67,7 +67,13 @@ def _assign_action(vars, a):
 PI = Real('3.14159265358979323846264338327950288419716939937510582097494459')
 radians = lambda x: x*PI/handle_type(180)
 degrees = lambda x: x*handle_type(180)/PI
-ln = lambda x: Ln(x) if isinstance(x, Algebra) else handle_type(dmath.log(x))
+wrapped_f = lambda f, g, x: f(x) if isinstance(x, Algebra) else handle_type(g(x))
+ln = partial(wrapped_f, Ln, dmath.log)
+sin = partial(wrapped_f, Sin, dmath.sin)
+cos = partial(wrapped_f, Cos, dmath.cos)
+tan = partial(wrapped_f, Tan, dmath.tan)
+
+#ln = lambda x: Ln(x) if isinstance(x, Algebra) else handle_type(dmath.log(x))
 
 class Calculator():
     def __init__(self):
@@ -85,7 +91,7 @@ class Calculator():
             'sinh' : lambda x: handle_type(sinh(x)),
             'cosh' : lambda x: handle_type(cosh(x)),
             'tanh' : lambda x: handle_type(tanh(x)),
-            'arcsinh' : lambda z: handle_type(log(z + (Integer(1) 
+            'arcsinh' : lambda z: handle_type(log(z + (Integer(1)
                 + z**Integer(2))**Real('0.5'))),
             'arccosh' : lambda z: handle_type(log(z + (z + Integer(1))**Real('0.5')
                 * (z - Integer(1))**Real('0.5'))),
@@ -157,12 +163,12 @@ class Calculator():
             'help' : help.help,
             'quit' : exit,
         }
-        
+
         self.post_functions = {
             '!' : factorial,
             'degs' : radians #lambda a: Real.from_float(math.radians(a))
         }
-        
+
         self.consts = {
             'pi' : PI,
             'g' : Real('9.81'),
@@ -171,13 +177,13 @@ class Calculator():
             'I' : Integer(1),
         #    'E' : e(),
         }
-        
+
         self.objects = { 'ans' : Integer(0) }
 
     def set_exact(self):
         Real.exact_form = not Real.exact_form
         return self.objects['ans']
-        
+
     def set_precision(self, a):
         assert a >= 0
         getcontext().prec = int(a) + PREC_OFFSET
@@ -258,3 +264,4 @@ class Calculator():
             return a[0]
         elif (len(a) == 1) or (type(a[0]) == int) or (type(a[0]) == float):
             return '= ' + str(a[0])
+
