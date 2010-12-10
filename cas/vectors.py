@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.1
 from functools import reduce
 from copy import deepcopy
-from operator import add
+from operator import add, mul
 
 from cas.core import Product
 from cas.numeric import Integer
@@ -14,7 +14,7 @@ class Vector(tuple):
         return '[' + ', '.join(list(map(s, self))) + ']'
         
     def normal(self):
-        ''' Return the normal of a vector '''
+        ''' Return the Euclidian Normal of a vector '''
         square = lambda a: a ** 2
         return ( sum(map(square, self)) )**( ht(1)/ht(2) )
     
@@ -32,3 +32,20 @@ class Vector(tuple):
     
     def stdev(self):
         return self.variance() ** (ht(1)/ht(2))
+
+# TODO: Check these actually work.
+
+    def product(self):
+        return reduce(mul, self, l)
+
+    def median(self):
+        xs = sorted(self)
+        return xs[round(len(xs)/2)]
+
+    def mode(self):
+        counts = {}
+
+        for x in self:
+            counts[x] = counts[x] + 1 if x in counts else 1
+
+        return max(counts)
