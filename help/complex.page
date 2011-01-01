@@ -6,13 +6,39 @@
 attempting to take the square root of a negative number, a correct imaginary
 result will be given rather than an error message.</p>
 <code>
->>> (-1)^(1/2)
+(-1)^(1/2)
 = i
 </code>
 
 <p>We can do more with complex numbers than just finding them. We can calculate
 some common properties of complex numbers such as their arguments:</p>
 <code>
+arg(2 + 3i)
+   = 0.983
 </code>
-
+<p>moduli:</p>
+<code>
+|2 + 3i|
+   = 3.60555127546
+</code>
+<p>As well as performing many of the same calculations as with real numbers:</p>
+<code>
+A := 2 + 3i
+   = 2+3i
+B := -2 + 7i
+   = -2+7i
+A + B
+   = 10i
+A - B
+   = 4-4i
+A * B
+   = -25+8i
+A / B
+   = 0.321-0.377i
+A^2
+   = -5+12i
+A^(1/2)
+   = 1.67+0.896i
+</code>
 </page>
+

@@ -6,49 +6,50 @@
 
 <p>We can use basic functions such as <code>nCr</code>:</p>
 <code>
->>> nCr (5,2)
+nCr (5,2)
 = 10
 </code>
 <p>and <code>nPr</code>:</p>
 <code>
->>> nPr (5,2)
+nPr (5,2)
 = 60
 </code>
 
 <p>We can also calculate probabilities from various distributions.</p>
 <p>To calculate P(X = 3) where X ~ B(20, 0.3):</p>
 <code>
->>> binomialpdf(20, 0.3, 3)
+binomialpdf(20, 0.3, 3)
 = 0.0716
 </code>
 <p>for P(X &lt;= 3):</p>
 <code>
->>> binomialcdf(20, 0.3, 3)
+binomialcdf(20, 0.3, 3)
 = 0.107
 </code>
 <p>and for P(X >= 3):</p>
 <code>
->>> 1 - binomialcdf(20, 0.3, 2)
+1 - binomialcdf(20, 0.3, 2)
 = 0.965
 </code>
 <p>To calculate P(X = 3) where X ~ P(6):</p>
 <code>
->>> poissonpdf(6, 3)
+poissonpdf(6, 3)
 = 0.0892
 </code>
 <p>for P(X &lt;= 3):</p>
 <code>
->>> poissoncdf(6, 3)
+poissoncdf(6, 3)
 = 0.151
 </code>
 <p>and for P(X >= 3)</p>
 <code>
->>> 1 - poissoncdf(6, 2)
+1 - poissoncdf(6, 2)
 = 0.938
 </code>
 <p>For standardised normal cumulative probabilities such as P(X &lt; 2):</p>
 <code>
->>> normalcdf(2)
+normalcdf(2)
 = 0.977
 </code>
 </page>
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module cas.numerical_methods</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="cas.html"><font color="#ffffff">cas</font></a>.numerical_methods</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/tom/Ubuntu One/Computing/Project/Calculator/cas/numerical_methods.py">/home/tom/Ubuntu One/Computing/Project/Calculator/cas/numerical_methods.py</a></font></td></tr></table>
+    <p><tt>This&nbsp;module&nbsp;includes&nbsp;a&nbsp;collection&nbsp;of&nbsp;numerical&nbsp;methods&nbsp;for&nbsp;use&nbsp;in&nbsp;analysis.<br>
+This&nbsp;module&nbsp;draws&nbsp;from&nbsp;methods&nbsp;at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<a href="http://mathworld.wolfram.com/Newton-CotesFormulas.html">http://mathworld.wolfram.com/Newton-CotesFormulas.html</a></tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-boole_composite_integral"><strong>boole_composite_integral</strong></a>(f, a, b, m<font color="#909090">=100</font>)</dt><dd><tt>Order&nbsp;4&nbsp;Newton-Cotes&nbsp;aproximation&nbsp;over&nbsp;m&nbsp;strips.</tt></dd></dl>
+ <dl><dt><a name="-durand_kerner_roots"><strong>durand_kerner_roots</strong></a>(f, order, n<font color="#909090">=100</font>)</dt><dd><tt>Numerically&nbsp;locate&nbsp;all&nbsp;roots&nbsp;(real&nbsp;and&nbsp;complex)&nbsp;of&nbsp;Polynomial&nbsp;of<br>
+leading&nbsp;coefficient&nbsp;1&nbsp;using&nbsp;n&nbsp;iterations&nbsp;of&nbsp;the&nbsp;Durand-Kerner&nbsp;method.<br>
+See:&nbsp;<a href="http://en.wikipedia.org/wiki/Durand-Kerner_method">http://en.wikipedia.org/wiki/Durand-Kerner_method</a></tt></dd></dl>
+ <dl><dt><a name="-mul"><strong>mul</strong></a>(...)</dt><dd><tt><a href="#-mul">mul</a>(a,&nbsp;b)&nbsp;--&nbsp;Same&nbsp;as&nbsp;a&nbsp;*&nbsp;b.</tt></dd></dl>
+ <dl><dt><a name="-pi"><strong>pi</strong></a>(n<font color="#909090">=None</font>)</dt><dd><tt>Estimate&nbsp;pi&nbsp;using&nbsp;n&nbsp;terms&nbsp;of&nbsp;the&nbsp;Chudnovsky&nbsp;brothers'&nbsp;formula.&nbsp;By&nbsp;default<br>
+this&nbsp;will&nbsp;attempt&nbsp;to&nbsp;calculate&nbsp;it&nbsp;to&nbsp;the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;digits&nbsp;storable<br>
+in&nbsp;a&nbsp;decimal&nbsp;number.</tt></dd></dl>
+ <dl><dt><a name="-reduce"><strong>reduce</strong></a>(...)</dt><dd><tt><a href="#-reduce">reduce</a>(function,&nbsp;sequence[,&nbsp;initial])&nbsp;-&gt;&nbsp;value<br>
+&nbsp;<br>
+Apply&nbsp;a&nbsp;function&nbsp;of&nbsp;two&nbsp;arguments&nbsp;cumulatively&nbsp;to&nbsp;the&nbsp;items&nbsp;of&nbsp;a&nbsp;sequence,<br>
+from&nbsp;left&nbsp;to&nbsp;right,&nbsp;so&nbsp;as&nbsp;to&nbsp;reduce&nbsp;the&nbsp;sequence&nbsp;to&nbsp;a&nbsp;single&nbsp;value.<br>
+For&nbsp;example,&nbsp;<a href="#-reduce">reduce</a>(lambda&nbsp;x,&nbsp;y:&nbsp;x+y,&nbsp;[1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5])&nbsp;calculates<br>
+((((1+2)+3)+4)+5).&nbsp;&nbsp;If&nbsp;initial&nbsp;is&nbsp;present,&nbsp;it&nbsp;is&nbsp;placed&nbsp;before&nbsp;the&nbsp;items<br>
+of&nbsp;the&nbsp;sequence&nbsp;in&nbsp;the&nbsp;calculation,&nbsp;and&nbsp;serves&nbsp;as&nbsp;a&nbsp;default&nbsp;when&nbsp;the<br>
+sequence&nbsp;is&nbsp;empty.</tt></dd></dl>
+ <dl><dt><a name="-romberg_integral"><strong>romberg_integral</strong></a>(f, a, b, n<font color="#909090">=7</font>, m<font color="#909090">=7</font>)</dt><dd><tt>A&nbsp;recursive&nbsp;implementation&nbsp;of&nbsp;Romberg's&nbsp;method&nbsp;of&nbsp;integration.<br>
+See&nbsp;<a href="http://en.wikipedia.org/wiki/Romberg's_method">http://en.wikipedia.org/wiki/Romberg's_method</a>.</tt></dd></dl>
+ <dl><dt><a name="-simpson38_composite_integral"><strong>simpson38_composite_integral</strong></a>(f, a, b, m<font color="#909090">=100</font>)</dt><dd><tt>Order&nbsp;3&nbsp;Newton-Cotes&nbsp;aproximation&nbsp;over&nbsp;m&nbsp;strips.</tt></dd></dl>
+ <dl><dt><a name="-simpson_composite_integral"><strong>simpson_composite_integral</strong></a>(f, a, b, m<font color="#909090">=100</font>)</dt><dd><tt>Order&nbsp;2&nbsp;Newton-Cotes&nbsp;aproximation&nbsp;over&nbsp;m&nbsp;strips.</tt></dd></dl>
+ <dl><dt><a name="-to_fraction"><strong>to_fraction</strong></a>(x, places<font color="#909090">=10</font>)</dt><dd><tt>Convert&nbsp;the&nbsp;decimal&nbsp;x&nbsp;to&nbsp;a&nbsp;fraction,&nbsp;a&nbsp;/&nbsp;b</tt></dd></dl>
+ <dl><dt><a name="-trapezoidal_composite_integral"><strong>trapezoidal_composite_integral</strong></a>(f, a, b, m<font color="#909090">=100</font>)</dt><dd><tt>Order&nbsp;1&nbsp;Newton-Cotes&nbsp;aproximation&nbsp;over&nbsp;m&nbsp;strips.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#7799ee">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Author</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#7799ee"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Thomas&nbsp;Wright&nbsp;&lt;tom.tdw@gmail.com&gt;</td></tr></table>
+</body></html>

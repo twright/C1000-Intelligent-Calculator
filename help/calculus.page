@@ -1,0 +1,41 @@
+<page xmlns="http://projectmallard.org/1.0/"
+    type="guide" id="calculus">
+    <info><link type="guide" xref="index"/></info>
+    <title>Calculus (C2,C3,C4,NM,FP2)</title>
+<p>The calculator allows you to find the differential (rate of change) and integral
+ (the area between the curve and the x-axis) of most functions.</p>
+<p> We may find the differential of polynomials:</p>
+<code>
+differentiate (3x^3 - 4.5x^2 + 6x - 2)
+   = 9x^2 - 9x + 6
+</code>
+<p>trigonometric functions:</p>
+<code>
+
+</code>
+<p>and logarithms:</p>
+<code>
+differentiate (ln x)
+   = x^-1
+</code>
+<p>as well as the integral of polynomials:</p>
+<code>
+integrate (x^3 - 4.5x^2 + 6x - 2)
+   = (1/4)x^4 - (3/2)x^3 + 3x^2 - 2x + c
+</code>
+<p>the exact definite integral between 2 limits:</p>
+<code>
+integrate (x^3 - 4.5x^2 + 6x - 2, 2, 3)
+   = 3/4
+</code>
+<p>and the same result via a variety of numerical methods:</p>
+<code>
+trapeziumrule (x^3 - 4.5x^2 + 6x - 2, 2, 3)
+   = 0.75004999999999999449329379785922355949878692626953125
+simpsonrule (x^3 - 4.5x^2 + 6x - 2, 2, 3)
+   = 0.75000000000000011102230246251565404236316680908203125
+romberg (x^3 - 4.5x^2 + 6x - 2, 2, 3)
+   = 0.75
+</code>
+</page>
+

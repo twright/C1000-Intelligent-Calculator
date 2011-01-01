@@ -1,0 +1,740 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module cas.numeric</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="cas.html"><font color="#ffffff">cas</font></a>.numeric</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/tom/Ubuntu One/Computing/Project/Calculator/cas/numeric.py">/home/tom/Ubuntu One/Computing/Project/Calculator/cas/numeric.py</a></font></td></tr></table>
+    <p><tt>Numeric&nbsp;types&nbsp;such&nbsp;as&nbsp;integer,&nbsp;reals&nbsp;and&nbsp;<a href="builtins.html#complex">complex</a>&nbsp;numbers.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cas.numerical_methods.html">cas.numerical_methods</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#complex">builtins.complex</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="cas.numeric.html#Complex">Complex</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="builtins.html#int">builtins.int</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="cas.numeric.html#Integer">Integer</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="decimal.html#Decimal">decimal.Decimal</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="cas.numeric.html#Real">Real</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Complex">class <strong>Complex</strong></a>(<a href="builtins.html#complex">builtins.complex</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;class&nbsp;to&nbsp;provide&nbsp;better&nbsp;handling&nbsp;of&nbsp;<a href="builtins.html#complex">complex</a>&nbsp;numbers<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="cas.numeric.html#Complex">Complex</a></dd>
+<dd><a href="builtins.html#complex">builtins.complex</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Complex-__add__"><strong>__add__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Complex-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>#&nbsp;Due&nbsp;to&nbsp;the&nbsp;limitations&nbsp;of&nbsp;floating&nbsp;point&nbsp;<a href="builtins.html#complex">complex</a>&nbsp;numbers,&nbsp;equality&nbsp;is<br>
+#&nbsp;approximate</tt></dd></dl>
+
+<dl><dt><a name="Complex-__mul__"><strong>__mul__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Complex-__neg__"><strong>__neg__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Complex-__pos__"><strong>__pos__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Complex-__pow__"><strong>__pow__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Complex-__radd__"><strong>__radd__</strong></a> = <a href="#Complex-__add__">__add__</a>(self, other)</dt></dl>
+
+<dl><dt><a name="Complex-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Complex-__rmul__"><strong>__rmul__</strong></a> = <a href="#Complex-__mul__">__mul__</a>(self, other)</dt></dl>
+
+<dl><dt><a name="Complex-__rsub__"><strong>__rsub__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Complex-__rtruediv__"><strong>__rtruediv__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Complex-__str__"><strong>__str__</strong></a> = <a href="#Complex-__repr__">__repr__</a>(self)</dt></dl>
+
+<dl><dt><a name="Complex-__sub__"><strong>__sub__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Complex-__truediv__"><strong>__truediv__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Complex-argument"><strong>argument</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;<a href="builtins.html#complex">complex</a>&nbsp;argument&nbsp;of&nbsp;a&nbsp;number.</tt></dd></dl>
+
+<dl><dt><a name="Complex-conjugate"><strong>conjugate</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;<a href="builtins.html#complex">complex</a>&nbsp;conjugate.</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="Complex-__new__"><strong>__new__</strong></a>(self, x)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<hr>
+Methods inherited from <a href="builtins.html#complex">builtins.complex</a>:<br>
+<dl><dt><a name="Complex-__abs__"><strong>__abs__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__abs__">__abs__</a>()&nbsp;&lt;==&gt;&nbsp;abs(x)</tt></dd></dl>
+
+<dl><dt><a name="Complex-__bool__"><strong>__bool__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__bool__">__bool__</a>()&nbsp;&lt;==&gt;&nbsp;x&nbsp;!=&nbsp;0</tt></dd></dl>
+
+<dl><dt><a name="Complex-__divmod__"><strong>__divmod__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__divmod__">__divmod__</a>(y)&nbsp;&lt;==&gt;&nbsp;divmod(x,&nbsp;y)</tt></dd></dl>
+
+<dl><dt><a name="Complex-__float__"><strong>__float__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__float__">__float__</a>()&nbsp;&lt;==&gt;&nbsp;float(x)</tt></dd></dl>
+
+<dl><dt><a name="Complex-__floordiv__"><strong>__floordiv__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__floordiv__">__floordiv__</a>(y)&nbsp;&lt;==&gt;&nbsp;x//y</tt></dd></dl>
+
+<dl><dt><a name="Complex-__format__"><strong>__format__</strong></a>(...)</dt><dd><tt><a href="builtins.html#complex">complex</a>.<a href="#Complex-__format__">__format__</a>()&nbsp;-&gt;&nbsp;str<br>
+&nbsp;<br>
+Converts&nbsp;to&nbsp;a&nbsp;string&nbsp;according&nbsp;to&nbsp;format_spec.</tt></dd></dl>
+
+<dl><dt><a name="Complex-__ge__"><strong>__ge__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__ge__">__ge__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;=y</tt></dd></dl>
+
+<dl><dt><a name="Complex-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="Complex-__getnewargs__"><strong>__getnewargs__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Complex-__gt__"><strong>__gt__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__gt__">__gt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;y</tt></dd></dl>
+
+<dl><dt><a name="Complex-__int__"><strong>__int__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__int__">__int__</a>()&nbsp;&lt;==&gt;&nbsp;<a href="builtins.html#int">int</a>(x)</tt></dd></dl>
+
+<dl><dt><a name="Complex-__le__"><strong>__le__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__le__">__le__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;=y</tt></dd></dl>
+
+<dl><dt><a name="Complex-__lt__"><strong>__lt__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__lt__">__lt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;y</tt></dd></dl>
+
+<dl><dt><a name="Complex-__mod__"><strong>__mod__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__mod__">__mod__</a>(y)&nbsp;&lt;==&gt;&nbsp;x%y</tt></dd></dl>
+
+<dl><dt><a name="Complex-__ne__"><strong>__ne__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__ne__">__ne__</a>(y)&nbsp;&lt;==&gt;&nbsp;x!=y</tt></dd></dl>
+
+<dl><dt><a name="Complex-__rdivmod__"><strong>__rdivmod__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__rdivmod__">__rdivmod__</a>(y)&nbsp;&lt;==&gt;&nbsp;divmod(y,&nbsp;x)</tt></dd></dl>
+
+<dl><dt><a name="Complex-__rfloordiv__"><strong>__rfloordiv__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__rfloordiv__">__rfloordiv__</a>(y)&nbsp;&lt;==&gt;&nbsp;y//x</tt></dd></dl>
+
+<dl><dt><a name="Complex-__rmod__"><strong>__rmod__</strong></a>(...)</dt><dd><tt>x.<a href="#Complex-__rmod__">__rmod__</a>(y)&nbsp;&lt;==&gt;&nbsp;y%x</tt></dd></dl>
+
+<dl><dt><a name="Complex-__rpow__"><strong>__rpow__</strong></a>(...)</dt><dd><tt>y.<a href="#Complex-__rpow__">__rpow__</a>(x[,&nbsp;z])&nbsp;&lt;==&gt;&nbsp;pow(x,&nbsp;y[,&nbsp;z])</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="builtins.html#complex">builtins.complex</a>:<br>
+<dl><dt><strong>imag</strong></dt>
+<dd><tt>the&nbsp;imaginary&nbsp;part&nbsp;of&nbsp;a&nbsp;complex&nbsp;number</tt></dd>
+</dl>
+<dl><dt><strong>real</strong></dt>
+<dd><tt>the&nbsp;real&nbsp;part&nbsp;of&nbsp;a&nbsp;complex&nbsp;number</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Integer">class <strong>Integer</strong></a>(<a href="builtins.html#int">builtins.int</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>An&nbsp;extended&nbsp;integer&nbsp;class,&nbsp;providing&nbsp;better&nbsp;mathematical<br>
+handling&nbsp;of&nbsp;integers<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="cas.numeric.html#Integer">Integer</a></dd>
+<dd><a href="builtins.html#int">builtins.int</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Integer-__add__"><strong>__add__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__mul__"><strong>__mul__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__pos__"><strong>__pos__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Integer-__pow__"><strong>__pow__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__radd__"><strong>__radd__</strong></a> = <a href="#Integer-__add__">__add__</a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__rmul__"><strong>__rmul__</strong></a> = <a href="#Integer-__mul__">__mul__</a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__rpow__"><strong>__rpow__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__rsub__"><strong>__rsub__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__sub__"><strong>__sub__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-__truediv__"><strong>__truediv__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Integer-factors"><strong>factors</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Methods inherited from <a href="builtins.html#int">builtins.int</a>:<br>
+<dl><dt><a name="Integer-__abs__"><strong>__abs__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__abs__">__abs__</a>()&nbsp;&lt;==&gt;&nbsp;abs(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__and__"><strong>__and__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__and__">__and__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&amp;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__bool__"><strong>__bool__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__bool__">__bool__</a>()&nbsp;&lt;==&gt;&nbsp;x&nbsp;!=&nbsp;0</tt></dd></dl>
+
+<dl><dt><a name="Integer-__ceil__"><strong>__ceil__</strong></a>(...)</dt><dd><tt>Ceiling&nbsp;of&nbsp;an&nbsp;Integral&nbsp;returns&nbsp;itself.</tt></dd></dl>
+
+<dl><dt><a name="Integer-__divmod__"><strong>__divmod__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__divmod__">__divmod__</a>(y)&nbsp;&lt;==&gt;&nbsp;divmod(x,&nbsp;y)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__eq__"><strong>__eq__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__eq__">__eq__</a>(y)&nbsp;&lt;==&gt;&nbsp;x==y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__float__"><strong>__float__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__float__">__float__</a>()&nbsp;&lt;==&gt;&nbsp;float(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__floor__"><strong>__floor__</strong></a>(...)</dt><dd><tt>Flooring&nbsp;an&nbsp;Integral&nbsp;returns&nbsp;itself.</tt></dd></dl>
+
+<dl><dt><a name="Integer-__floordiv__"><strong>__floordiv__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__floordiv__">__floordiv__</a>(y)&nbsp;&lt;==&gt;&nbsp;x//y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__format__"><strong>__format__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Integer-__ge__"><strong>__ge__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__ge__">__ge__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;=y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="Integer-__getnewargs__"><strong>__getnewargs__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Integer-__gt__"><strong>__gt__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__gt__">__gt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__hash__"><strong>__hash__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__index__"><strong>__index__</strong></a>(...)</dt><dd><tt>x[y:z]&nbsp;&lt;==&gt;&nbsp;x[y.<a href="#Integer-__index__">__index__</a>():z.<a href="#Integer-__index__">__index__</a>()]</tt></dd></dl>
+
+<dl><dt><a name="Integer-__int__"><strong>__int__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__int__">__int__</a>()&nbsp;&lt;==&gt;&nbsp;<a href="builtins.html#int">int</a>(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__invert__"><strong>__invert__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__invert__">__invert__</a>()&nbsp;&lt;==&gt;&nbsp;~x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__le__"><strong>__le__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__le__">__le__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;=y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__lshift__"><strong>__lshift__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__lshift__">__lshift__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;&lt;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__lt__"><strong>__lt__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__lt__">__lt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__mod__"><strong>__mod__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__mod__">__mod__</a>(y)&nbsp;&lt;==&gt;&nbsp;x%y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__ne__"><strong>__ne__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__ne__">__ne__</a>(y)&nbsp;&lt;==&gt;&nbsp;x!=y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__neg__"><strong>__neg__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__neg__">__neg__</a>()&nbsp;&lt;==&gt;&nbsp;-x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__or__"><strong>__or__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__or__">__or__</a>(y)&nbsp;&lt;==&gt;&nbsp;x|y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rand__"><strong>__rand__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rand__">__rand__</a>(y)&nbsp;&lt;==&gt;&nbsp;y&amp;x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rdivmod__"><strong>__rdivmod__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rdivmod__">__rdivmod__</a>(y)&nbsp;&lt;==&gt;&nbsp;divmod(y,&nbsp;x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rfloordiv__"><strong>__rfloordiv__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rfloordiv__">__rfloordiv__</a>(y)&nbsp;&lt;==&gt;&nbsp;y//x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rlshift__"><strong>__rlshift__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rlshift__">__rlshift__</a>(y)&nbsp;&lt;==&gt;&nbsp;y&lt;&lt;x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rmod__"><strong>__rmod__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rmod__">__rmod__</a>(y)&nbsp;&lt;==&gt;&nbsp;y%x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__ror__"><strong>__ror__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__ror__">__ror__</a>(y)&nbsp;&lt;==&gt;&nbsp;y|x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__round__"><strong>__round__</strong></a>(...)</dt><dd><tt>Rounding&nbsp;an&nbsp;Integral&nbsp;returns&nbsp;itself.<br>
+Rounding&nbsp;with&nbsp;an&nbsp;ndigits&nbsp;argument&nbsp;also&nbsp;returns&nbsp;an&nbsp;integer.</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rrshift__"><strong>__rrshift__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rrshift__">__rrshift__</a>(y)&nbsp;&lt;==&gt;&nbsp;y&gt;&gt;x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rshift__"><strong>__rshift__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rshift__">__rshift__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;&gt;y</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rtruediv__"><strong>__rtruediv__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rtruediv__">__rtruediv__</a>(y)&nbsp;&lt;==&gt;&nbsp;y/x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__rxor__"><strong>__rxor__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__rxor__">__rxor__</a>(y)&nbsp;&lt;==&gt;&nbsp;y^x</tt></dd></dl>
+
+<dl><dt><a name="Integer-__sizeof__"><strong>__sizeof__</strong></a>(...)</dt><dd><tt>Returns&nbsp;size&nbsp;in&nbsp;memory,&nbsp;in&nbsp;bytes</tt></dd></dl>
+
+<dl><dt><a name="Integer-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="Integer-__trunc__"><strong>__trunc__</strong></a>(...)</dt><dd><tt>Truncating&nbsp;an&nbsp;Integral&nbsp;returns&nbsp;itself.</tt></dd></dl>
+
+<dl><dt><a name="Integer-__xor__"><strong>__xor__</strong></a>(...)</dt><dd><tt>x.<a href="#Integer-__xor__">__xor__</a>(y)&nbsp;&lt;==&gt;&nbsp;x^y</tt></dd></dl>
+
+<dl><dt><a name="Integer-bit_length"><strong>bit_length</strong></a>(...)</dt><dd><tt><a href="builtins.html#int">int</a>.<a href="#Integer-bit_length">bit_length</a>()&nbsp;-&gt;&nbsp;<a href="builtins.html#int">int</a><br>
+&nbsp;<br>
+Number&nbsp;of&nbsp;bits&nbsp;necessary&nbsp;to&nbsp;represent&nbsp;self&nbsp;in&nbsp;binary.<br>
+&gt;&gt;&gt;&nbsp;bin(37)<br>
+'0b100101'<br>
+&gt;&gt;&gt;&nbsp;(37).<a href="#Integer-bit_length">bit_length</a>()<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="Integer-conjugate"><strong>conjugate</strong></a>(...)</dt><dd><tt>Returns&nbsp;self,&nbsp;the&nbsp;<a href="builtins.html#complex">complex</a>&nbsp;conjugate&nbsp;of&nbsp;any&nbsp;<a href="builtins.html#int">int</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="builtins.html#int">builtins.int</a>:<br>
+<dl><dt><strong>denominator</strong></dt>
+<dd><tt>the&nbsp;denominator&nbsp;of&nbsp;a&nbsp;rational&nbsp;number&nbsp;in&nbsp;lowest&nbsp;terms</tt></dd>
+</dl>
+<dl><dt><strong>imag</strong></dt>
+<dd><tt>the&nbsp;imaginary&nbsp;part&nbsp;of&nbsp;a&nbsp;complex&nbsp;number</tt></dd>
+</dl>
+<dl><dt><strong>numerator</strong></dt>
+<dd><tt>the&nbsp;numerator&nbsp;of&nbsp;a&nbsp;rational&nbsp;number&nbsp;in&nbsp;lowest&nbsp;terms</tt></dd>
+</dl>
+<dl><dt><strong>real</strong></dt>
+<dd><tt>the&nbsp;real&nbsp;part&nbsp;of&nbsp;a&nbsp;complex&nbsp;number</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="builtins.html#int">builtins.int</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#Integer-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Real">class <strong>Real</strong></a>(<a href="decimal.html#Decimal">decimal.Decimal</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;class&nbsp;to&nbsp;provide&nbsp;better&nbsp;handling&nbsp;of&nbsp;real&nbsp;numbers<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="cas.numeric.html#Real">Real</a></dd>
+<dd><a href="decimal.html#Decimal">decimal.Decimal</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Real-__add__"><strong>__add__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__copy__"><strong>__copy__</strong></a> = <a href="#Real-__deepcopy__">__deepcopy__</a>(self, memo<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__deepcopy__"><strong>__deepcopy__</strong></a>(self, memo<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__float__"><strong>__float__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Real-__init__"><strong>__init__</strong></a>(self, x<font color="#909090">='0'</font>)</dt></dl>
+
+<dl><dt><a name="Real-__mul__"><strong>__mul__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__neg__"><strong>__neg__</strong></a>(self, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__pos__"><strong>__pos__</strong></a>(self, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__pow__"><strong>__pow__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__radd__"><strong>__radd__</strong></a> = <a href="#Real-__add__">__add__</a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Real-__rmul__"><strong>__rmul__</strong></a> = <a href="#Real-__mul__">__mul__</a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__rpow__"><strong>__rpow__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__rsub__"><strong>__rsub__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__rtruediv__"><strong>__rtruediv__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Real-__sub__"><strong>__sub__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__truediv__"><strong>__truediv__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>exact_form</strong> = True</dl>
+
+<dl><dt><strong>prec_offset</strong> = 0</dl>
+
+<hr>
+Methods inherited from <a href="decimal.html#Decimal">decimal.Decimal</a>:<br>
+<dl><dt><a name="Real-__abs__"><strong>__abs__</strong></a>(self, round<font color="#909090">=True</font>, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;absolute&nbsp;value&nbsp;of&nbsp;self.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;keyword&nbsp;argument&nbsp;'round'&nbsp;is&nbsp;false,&nbsp;do&nbsp;not&nbsp;round.&nbsp;&nbsp;The<br>
+expression&nbsp;<a href="#Real-__abs__">__abs__</a>(round=False)&nbsp;is&nbsp;equivalent&nbsp;to<br>
+<a href="#Real-copy_abs">copy_abs</a>().</tt></dd></dl>
+
+<dl><dt><a name="Real-__bool__"><strong>__bool__</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;nonzero;&nbsp;otherwise&nbsp;return&nbsp;False.<br>
+&nbsp;<br>
+NaNs&nbsp;and&nbsp;infinities&nbsp;are&nbsp;considered&nbsp;nonzero.</tt></dd></dl>
+
+<dl><dt><a name="Real-__ceil__"><strong>__ceil__</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;ceiling&nbsp;of&nbsp;self,&nbsp;as&nbsp;an&nbsp;integer.<br>
+&nbsp;<br>
+For&nbsp;a&nbsp;finite&nbsp;<a href="decimal.html#Decimal">Decimal</a>&nbsp;instance&nbsp;self,&nbsp;return&nbsp;the&nbsp;least&nbsp;integer&nbsp;n<br>
+such&nbsp;that&nbsp;n&nbsp;&gt;=&nbsp;self.&nbsp;&nbsp;If&nbsp;self&nbsp;is&nbsp;infinite&nbsp;or&nbsp;a&nbsp;NaN&nbsp;then&nbsp;a<br>
+Python&nbsp;exception&nbsp;is&nbsp;raised.</tt></dd></dl>
+
+<dl><dt><a name="Real-__complex__"><strong>__complex__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Real-__divmod__"><strong>__divmod__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Return&nbsp;(self&nbsp;//&nbsp;other,&nbsp;self&nbsp;%&nbsp;other)</tt></dd></dl>
+
+<dl><dt><a name="Real-__eq__"><strong>__eq__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Real-__floor__"><strong>__floor__</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;floor&nbsp;of&nbsp;self,&nbsp;as&nbsp;an&nbsp;integer.<br>
+&nbsp;<br>
+For&nbsp;a&nbsp;finite&nbsp;<a href="decimal.html#Decimal">Decimal</a>&nbsp;instance&nbsp;self,&nbsp;return&nbsp;the&nbsp;greatest<br>
+integer&nbsp;n&nbsp;such&nbsp;that&nbsp;n&nbsp;&lt;=&nbsp;self.&nbsp;&nbsp;If&nbsp;self&nbsp;is&nbsp;infinite&nbsp;or&nbsp;a&nbsp;NaN<br>
+then&nbsp;a&nbsp;Python&nbsp;exception&nbsp;is&nbsp;raised.</tt></dd></dl>
+
+<dl><dt><a name="Real-__floordiv__"><strong>__floordiv__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>self&nbsp;//&nbsp;other</tt></dd></dl>
+
+<dl><dt><a name="Real-__format__"><strong>__format__</strong></a>(self, specifier, context<font color="#909090">=None</font>, _localeconv<font color="#909090">=None</font>)</dt><dd><tt>Format&nbsp;a&nbsp;<a href="decimal.html#Decimal">Decimal</a>&nbsp;instance&nbsp;according&nbsp;to&nbsp;the&nbsp;given&nbsp;specifier.<br>
+&nbsp;<br>
+The&nbsp;specifier&nbsp;should&nbsp;be&nbsp;a&nbsp;standard&nbsp;format&nbsp;specifier,&nbsp;with&nbsp;the<br>
+form&nbsp;described&nbsp;in&nbsp;<a href="http://www.python.org/dev/peps/pep-3101/">PEP&nbsp;3101</a>.&nbsp;&nbsp;Formatting&nbsp;types&nbsp;'e',&nbsp;'E',&nbsp;'f',<br>
+'F',&nbsp;'g',&nbsp;'G',&nbsp;'n'&nbsp;and&nbsp;'%'&nbsp;are&nbsp;supported.&nbsp;&nbsp;If&nbsp;the&nbsp;formatting<br>
+type&nbsp;is&nbsp;omitted&nbsp;it&nbsp;defaults&nbsp;to&nbsp;'g'&nbsp;or&nbsp;'G',&nbsp;depending&nbsp;on&nbsp;the<br>
+value&nbsp;of&nbsp;context.capitals.</tt></dd></dl>
+
+<dl><dt><a name="Real-__ge__"><strong>__ge__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__gt__"><strong>__gt__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__hash__"><strong>__hash__</strong></a>(self)</dt><dd><tt>x.<a href="#Real-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
+
+<dl><dt><a name="Real-__int__"><strong>__int__</strong></a>(self)</dt><dd><tt>Converts&nbsp;self&nbsp;to&nbsp;an&nbsp;<a href="builtins.html#int">int</a>,&nbsp;truncating&nbsp;if&nbsp;necessary.</tt></dd></dl>
+
+<dl><dt><a name="Real-__le__"><strong>__le__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__lt__"><strong>__lt__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="Real-__mod__"><strong>__mod__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>self&nbsp;%&nbsp;other</tt></dd></dl>
+
+<dl><dt><a name="Real-__ne__"><strong>__ne__</strong></a>(self, other)</dt></dl>
+
+<dl><dt><a name="Real-__rdivmod__"><strong>__rdivmod__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Swaps&nbsp;self/other&nbsp;and&nbsp;returns&nbsp;__divmod__.</tt></dd></dl>
+
+<dl><dt><a name="Real-__reduce__"><strong>__reduce__</strong></a>(self)</dt><dd><tt>#&nbsp;Support&nbsp;for&nbsp;pickling,&nbsp;copy,&nbsp;and&nbsp;deepcopy</tt></dd></dl>
+
+<dl><dt><a name="Real-__rfloordiv__"><strong>__rfloordiv__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Swaps&nbsp;self/other&nbsp;and&nbsp;returns&nbsp;__floordiv__.</tt></dd></dl>
+
+<dl><dt><a name="Real-__rmod__"><strong>__rmod__</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Swaps&nbsp;self/other&nbsp;and&nbsp;returns&nbsp;__mod__.</tt></dd></dl>
+
+<dl><dt><a name="Real-__round__"><strong>__round__</strong></a>(self, n<font color="#909090">=None</font>)</dt><dd><tt>Round&nbsp;self&nbsp;to&nbsp;the&nbsp;nearest&nbsp;integer,&nbsp;or&nbsp;to&nbsp;a&nbsp;given&nbsp;precision.<br>
+&nbsp;<br>
+If&nbsp;only&nbsp;one&nbsp;argument&nbsp;is&nbsp;supplied,&nbsp;round&nbsp;a&nbsp;finite&nbsp;<a href="decimal.html#Decimal">Decimal</a><br>
+instance&nbsp;self&nbsp;to&nbsp;the&nbsp;nearest&nbsp;integer.&nbsp;&nbsp;If&nbsp;self&nbsp;is&nbsp;infinite&nbsp;or<br>
+a&nbsp;NaN&nbsp;then&nbsp;a&nbsp;Python&nbsp;exception&nbsp;is&nbsp;raised.&nbsp;&nbsp;If&nbsp;self&nbsp;is&nbsp;finite<br>
+and&nbsp;lies&nbsp;exactly&nbsp;halfway&nbsp;between&nbsp;two&nbsp;integers&nbsp;then&nbsp;it&nbsp;is<br>
+rounded&nbsp;to&nbsp;the&nbsp;integer&nbsp;with&nbsp;even&nbsp;last&nbsp;digit.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('123.456'))<br>
+123<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('-456.789'))<br>
+-457<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('-3.0'))<br>
+-3<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('2.5'))<br>
+2<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('3.5'))<br>
+4<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('Inf'))<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;...<br>
+OverflowError:&nbsp;cannot&nbsp;round&nbsp;an&nbsp;infinity<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('NaN'))<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;...<br>
+ValueError:&nbsp;cannot&nbsp;round&nbsp;a&nbsp;NaN<br>
+&nbsp;<br>
+If&nbsp;a&nbsp;second&nbsp;argument&nbsp;n&nbsp;is&nbsp;supplied,&nbsp;self&nbsp;is&nbsp;rounded&nbsp;to&nbsp;n<br>
+decimal&nbsp;places&nbsp;using&nbsp;the&nbsp;rounding&nbsp;mode&nbsp;for&nbsp;the&nbsp;current<br>
+context.<br>
+&nbsp;<br>
+For&nbsp;an&nbsp;integer&nbsp;n,&nbsp;round(self,&nbsp;-n)&nbsp;is&nbsp;exactly&nbsp;equivalent&nbsp;to<br>
+<a href="#Real-quantize">quantize</a>(<a href="decimal.html#Decimal">Decimal</a>('1En')).<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('123.456'),&nbsp;0)<br>
+<a href="decimal.html#Decimal">Decimal</a>('123')<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('123.456'),&nbsp;2)<br>
+<a href="decimal.html#Decimal">Decimal</a>('123.46')<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('123.456'),&nbsp;-2)<br>
+<a href="decimal.html#Decimal">Decimal</a>('1E+2')<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('-Infinity'),&nbsp;37)<br>
+<a href="decimal.html#Decimal">Decimal</a>('NaN')<br>
+&gt;&gt;&gt;&nbsp;round(<a href="decimal.html#Decimal">Decimal</a>('sNaN123'),&nbsp;0)<br>
+<a href="decimal.html#Decimal">Decimal</a>('NaN123')</tt></dd></dl>
+
+<dl><dt><a name="Real-__trunc__"><strong>__trunc__</strong></a> = __int__(self)</dt><dd><tt>Converts&nbsp;self&nbsp;to&nbsp;an&nbsp;<a href="builtins.html#int">int</a>,&nbsp;truncating&nbsp;if&nbsp;necessary.</tt></dd></dl>
+
+<dl><dt><a name="Real-adjusted"><strong>adjusted</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;adjusted&nbsp;exponent&nbsp;of&nbsp;self</tt></dd></dl>
+
+<dl><dt><a name="Real-as_tuple"><strong>as_tuple</strong></a>(self)</dt><dd><tt>Represents&nbsp;the&nbsp;number&nbsp;as&nbsp;a&nbsp;triple&nbsp;tuple.<br>
+&nbsp;<br>
+To&nbsp;show&nbsp;the&nbsp;internals&nbsp;exactly&nbsp;as&nbsp;they&nbsp;are.</tt></dd></dl>
+
+<dl><dt><a name="Real-canonical"><strong>canonical</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;same&nbsp;<a href="decimal.html#Decimal">Decimal</a>&nbsp;object.<br>
+&nbsp;<br>
+As&nbsp;we&nbsp;do&nbsp;not&nbsp;have&nbsp;different&nbsp;encodings&nbsp;for&nbsp;the&nbsp;same&nbsp;number,&nbsp;the<br>
+received&nbsp;object&nbsp;already&nbsp;is&nbsp;in&nbsp;its&nbsp;canonical&nbsp;form.</tt></dd></dl>
+
+<dl><dt><a name="Real-compare"><strong>compare</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Compares&nbsp;one&nbsp;to&nbsp;another.<br>
+&nbsp;<br>
+-1&nbsp;=&gt;&nbsp;a&nbsp;&lt;&nbsp;b<br>
+0&nbsp;&nbsp;=&gt;&nbsp;a&nbsp;=&nbsp;b<br>
+1&nbsp;&nbsp;=&gt;&nbsp;a&nbsp;&gt;&nbsp;b<br>
+NaN&nbsp;=&gt;&nbsp;one&nbsp;is&nbsp;NaN<br>
+Like&nbsp;__cmp__,&nbsp;but&nbsp;returns&nbsp;<a href="decimal.html#Decimal">Decimal</a>&nbsp;instances.</tt></dd></dl>
+
+<dl><dt><a name="Real-compare_signal"><strong>compare_signal</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Compares&nbsp;self&nbsp;to&nbsp;the&nbsp;other&nbsp;operand&nbsp;numerically.<br>
+&nbsp;<br>
+It's&nbsp;pretty&nbsp;much&nbsp;like&nbsp;<a href="#Real-compare">compare</a>(),&nbsp;but&nbsp;all&nbsp;NaNs&nbsp;signal,&nbsp;with&nbsp;signaling<br>
+NaNs&nbsp;taking&nbsp;precedence&nbsp;over&nbsp;quiet&nbsp;NaNs.</tt></dd></dl>
+
+<dl><dt><a name="Real-compare_total"><strong>compare_total</strong></a>(self, other)</dt><dd><tt>Compares&nbsp;self&nbsp;to&nbsp;other&nbsp;using&nbsp;the&nbsp;abstract&nbsp;representations.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;not&nbsp;like&nbsp;the&nbsp;standard&nbsp;compare,&nbsp;which&nbsp;use&nbsp;their&nbsp;numerical<br>
+value.&nbsp;Note&nbsp;that&nbsp;a&nbsp;total&nbsp;ordering&nbsp;is&nbsp;defined&nbsp;for&nbsp;all&nbsp;possible&nbsp;abstract<br>
+representations.</tt></dd></dl>
+
+<dl><dt><a name="Real-compare_total_mag"><strong>compare_total_mag</strong></a>(self, other)</dt><dd><tt>Compares&nbsp;self&nbsp;to&nbsp;other&nbsp;using&nbsp;abstract&nbsp;repr.,&nbsp;ignoring&nbsp;sign.<br>
+&nbsp;<br>
+Like&nbsp;compare_total,&nbsp;but&nbsp;with&nbsp;operand's&nbsp;sign&nbsp;ignored&nbsp;and&nbsp;assumed&nbsp;to&nbsp;be&nbsp;0.</tt></dd></dl>
+
+<dl><dt><a name="Real-conjugate"><strong>conjugate</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Real-copy_abs"><strong>copy_abs</strong></a>(self)</dt><dd><tt>Returns&nbsp;a&nbsp;copy&nbsp;with&nbsp;the&nbsp;sign&nbsp;set&nbsp;to&nbsp;0.</tt></dd></dl>
+
+<dl><dt><a name="Real-copy_negate"><strong>copy_negate</strong></a>(self)</dt><dd><tt>Returns&nbsp;a&nbsp;copy&nbsp;with&nbsp;the&nbsp;sign&nbsp;inverted.</tt></dd></dl>
+
+<dl><dt><a name="Real-copy_sign"><strong>copy_sign</strong></a>(self, other)</dt><dd><tt>Returns&nbsp;self&nbsp;with&nbsp;the&nbsp;sign&nbsp;of&nbsp;other.</tt></dd></dl>
+
+<dl><dt><a name="Real-exp"><strong>exp</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;e&nbsp;**&nbsp;self.</tt></dd></dl>
+
+<dl><dt><a name="Real-fma"><strong>fma</strong></a>(self, other, third, context<font color="#909090">=None</font>)</dt><dd><tt>Fused&nbsp;multiply-add.<br>
+&nbsp;<br>
+Returns&nbsp;self*other+third&nbsp;with&nbsp;no&nbsp;rounding&nbsp;of&nbsp;the&nbsp;intermediate<br>
+product&nbsp;self*other.<br>
+&nbsp;<br>
+self&nbsp;and&nbsp;other&nbsp;are&nbsp;multiplied&nbsp;together,&nbsp;with&nbsp;no&nbsp;rounding&nbsp;of<br>
+the&nbsp;result.&nbsp;&nbsp;The&nbsp;third&nbsp;operand&nbsp;is&nbsp;then&nbsp;added&nbsp;to&nbsp;the&nbsp;result,<br>
+and&nbsp;a&nbsp;single&nbsp;final&nbsp;rounding&nbsp;is&nbsp;performed.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_canonical"><strong>is_canonical</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;canonical;&nbsp;otherwise&nbsp;return&nbsp;False.<br>
+&nbsp;<br>
+Currently,&nbsp;the&nbsp;encoding&nbsp;of&nbsp;a&nbsp;<a href="decimal.html#Decimal">Decimal</a>&nbsp;instance&nbsp;is&nbsp;always<br>
+canonical,&nbsp;so&nbsp;this&nbsp;method&nbsp;returns&nbsp;True&nbsp;for&nbsp;any&nbsp;<a href="decimal.html#Decimal">Decimal</a>.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_finite"><strong>is_finite</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;finite;&nbsp;otherwise&nbsp;return&nbsp;False.<br>
+&nbsp;<br>
+A&nbsp;<a href="decimal.html#Decimal">Decimal</a>&nbsp;instance&nbsp;is&nbsp;considered&nbsp;finite&nbsp;if&nbsp;it&nbsp;is&nbsp;neither<br>
+infinite&nbsp;nor&nbsp;a&nbsp;NaN.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_infinite"><strong>is_infinite</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;infinite;&nbsp;otherwise&nbsp;return&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_nan"><strong>is_nan</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;a&nbsp;qNaN&nbsp;or&nbsp;sNaN;&nbsp;otherwise&nbsp;return&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_normal"><strong>is_normal</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;a&nbsp;normal&nbsp;number;&nbsp;otherwise&nbsp;return&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_qnan"><strong>is_qnan</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;a&nbsp;quiet&nbsp;NaN;&nbsp;otherwise&nbsp;return&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_signed"><strong>is_signed</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;negative;&nbsp;otherwise&nbsp;return&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_snan"><strong>is_snan</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;a&nbsp;signaling&nbsp;NaN;&nbsp;otherwise&nbsp;return&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_subnormal"><strong>is_subnormal</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;subnormal;&nbsp;otherwise&nbsp;return&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Real-is_zero"><strong>is_zero</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;is&nbsp;a&nbsp;zero;&nbsp;otherwise&nbsp;return&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Real-ln"><strong>ln</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;natural&nbsp;(base&nbsp;e)&nbsp;logarithm&nbsp;of&nbsp;self.</tt></dd></dl>
+
+<dl><dt><a name="Real-log10"><strong>log10</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;base&nbsp;10&nbsp;logarithm&nbsp;of&nbsp;self.</tt></dd></dl>
+
+<dl><dt><a name="Real-logb"><strong>logb</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;exponent&nbsp;of&nbsp;the&nbsp;magnitude&nbsp;of&nbsp;self's&nbsp;MSD.<br>
+&nbsp;<br>
+The&nbsp;result&nbsp;is&nbsp;the&nbsp;integer&nbsp;which&nbsp;is&nbsp;the&nbsp;exponent&nbsp;of&nbsp;the&nbsp;magnitude<br>
+of&nbsp;the&nbsp;most&nbsp;significant&nbsp;digit&nbsp;of&nbsp;self&nbsp;(as&nbsp;though&nbsp;it&nbsp;were&nbsp;truncated<br>
+to&nbsp;a&nbsp;single&nbsp;digit&nbsp;while&nbsp;maintaining&nbsp;the&nbsp;value&nbsp;of&nbsp;that&nbsp;digit&nbsp;and<br>
+without&nbsp;limiting&nbsp;the&nbsp;resulting&nbsp;exponent).</tt></dd></dl>
+
+<dl><dt><a name="Real-logical_and"><strong>logical_and</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Applies&nbsp;an&nbsp;'and'&nbsp;operation&nbsp;between&nbsp;self&nbsp;and&nbsp;other's&nbsp;digits.</tt></dd></dl>
+
+<dl><dt><a name="Real-logical_invert"><strong>logical_invert</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Invert&nbsp;all&nbsp;its&nbsp;digits.</tt></dd></dl>
+
+<dl><dt><a name="Real-logical_or"><strong>logical_or</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Applies&nbsp;an&nbsp;'or'&nbsp;operation&nbsp;between&nbsp;self&nbsp;and&nbsp;other's&nbsp;digits.</tt></dd></dl>
+
+<dl><dt><a name="Real-logical_xor"><strong>logical_xor</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Applies&nbsp;an&nbsp;'xor'&nbsp;operation&nbsp;between&nbsp;self&nbsp;and&nbsp;other's&nbsp;digits.</tt></dd></dl>
+
+<dl><dt><a name="Real-max"><strong>max</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;larger&nbsp;value.<br>
+&nbsp;<br>
+Like&nbsp;<a href="#Real-max">max</a>(self,&nbsp;other)&nbsp;except&nbsp;if&nbsp;one&nbsp;is&nbsp;not&nbsp;a&nbsp;number,&nbsp;returns<br>
+NaN&nbsp;(and&nbsp;signals&nbsp;if&nbsp;one&nbsp;is&nbsp;sNaN).&nbsp;&nbsp;Also&nbsp;rounds.</tt></dd></dl>
+
+<dl><dt><a name="Real-max_mag"><strong>max_mag</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Compares&nbsp;the&nbsp;values&nbsp;numerically&nbsp;with&nbsp;their&nbsp;sign&nbsp;ignored.</tt></dd></dl>
+
+<dl><dt><a name="Real-min"><strong>min</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;smaller&nbsp;value.<br>
+&nbsp;<br>
+Like&nbsp;<a href="#Real-min">min</a>(self,&nbsp;other)&nbsp;except&nbsp;if&nbsp;one&nbsp;is&nbsp;not&nbsp;a&nbsp;number,&nbsp;returns<br>
+NaN&nbsp;(and&nbsp;signals&nbsp;if&nbsp;one&nbsp;is&nbsp;sNaN).&nbsp;&nbsp;Also&nbsp;rounds.</tt></dd></dl>
+
+<dl><dt><a name="Real-min_mag"><strong>min_mag</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Compares&nbsp;the&nbsp;values&nbsp;numerically&nbsp;with&nbsp;their&nbsp;sign&nbsp;ignored.</tt></dd></dl>
+
+<dl><dt><a name="Real-next_minus"><strong>next_minus</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;largest&nbsp;representable&nbsp;number&nbsp;smaller&nbsp;than&nbsp;itself.</tt></dd></dl>
+
+<dl><dt><a name="Real-next_plus"><strong>next_plus</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;smallest&nbsp;representable&nbsp;number&nbsp;larger&nbsp;than&nbsp;itself.</tt></dd></dl>
+
+<dl><dt><a name="Real-next_toward"><strong>next_toward</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;the&nbsp;number&nbsp;closest&nbsp;to&nbsp;self,&nbsp;in&nbsp;the&nbsp;direction&nbsp;towards&nbsp;other.<br>
+&nbsp;<br>
+The&nbsp;result&nbsp;is&nbsp;the&nbsp;closest&nbsp;representable&nbsp;number&nbsp;to&nbsp;self<br>
+(excluding&nbsp;self)&nbsp;that&nbsp;is&nbsp;in&nbsp;the&nbsp;direction&nbsp;towards&nbsp;other,<br>
+unless&nbsp;both&nbsp;have&nbsp;the&nbsp;same&nbsp;value.&nbsp;&nbsp;If&nbsp;the&nbsp;two&nbsp;operands&nbsp;are<br>
+numerically&nbsp;equal,&nbsp;then&nbsp;the&nbsp;result&nbsp;is&nbsp;a&nbsp;copy&nbsp;of&nbsp;self&nbsp;with&nbsp;the<br>
+sign&nbsp;set&nbsp;to&nbsp;be&nbsp;the&nbsp;same&nbsp;as&nbsp;the&nbsp;sign&nbsp;of&nbsp;other.</tt></dd></dl>
+
+<dl><dt><a name="Real-normalize"><strong>normalize</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Normalize-&nbsp;strip&nbsp;trailing&nbsp;0s,&nbsp;change&nbsp;anything&nbsp;equal&nbsp;to&nbsp;0&nbsp;to&nbsp;0e0</tt></dd></dl>
+
+<dl><dt><a name="Real-number_class"><strong>number_class</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;an&nbsp;indication&nbsp;of&nbsp;the&nbsp;class&nbsp;of&nbsp;self.<br>
+&nbsp;<br>
+The&nbsp;class&nbsp;is&nbsp;one&nbsp;of&nbsp;the&nbsp;following&nbsp;strings:<br>
+&nbsp;&nbsp;sNaN<br>
+&nbsp;&nbsp;NaN<br>
+&nbsp;&nbsp;-Infinity<br>
+&nbsp;&nbsp;-Normal<br>
+&nbsp;&nbsp;-Subnormal<br>
+&nbsp;&nbsp;-Zero<br>
+&nbsp;&nbsp;+Zero<br>
+&nbsp;&nbsp;+Subnormal<br>
+&nbsp;&nbsp;+Normal<br>
+&nbsp;&nbsp;+Infinity</tt></dd></dl>
+
+<dl><dt><a name="Real-quantize"><strong>quantize</strong></a>(self, exp, rounding<font color="#909090">=None</font>, context<font color="#909090">=None</font>, watchexp<font color="#909090">=True</font>)</dt><dd><tt>Quantize&nbsp;self&nbsp;so&nbsp;its&nbsp;exponent&nbsp;is&nbsp;the&nbsp;same&nbsp;as&nbsp;that&nbsp;of&nbsp;exp.<br>
+&nbsp;<br>
+Similar&nbsp;to&nbsp;_rescale(exp._exp)&nbsp;but&nbsp;with&nbsp;error&nbsp;checking.</tt></dd></dl>
+
+<dl><dt><a name="Real-radix"><strong>radix</strong></a>(self)</dt><dd><tt>Just&nbsp;returns&nbsp;10,&nbsp;as&nbsp;this&nbsp;is&nbsp;<a href="decimal.html#Decimal">Decimal</a>,&nbsp;:)</tt></dd></dl>
+
+<dl><dt><a name="Real-remainder_near"><strong>remainder_near</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Remainder&nbsp;nearest&nbsp;to&nbsp;0-&nbsp;&nbsp;abs(remainder-near)&nbsp;&lt;=&nbsp;other/2</tt></dd></dl>
+
+<dl><dt><a name="Real-rotate"><strong>rotate</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;a&nbsp;rotated&nbsp;copy&nbsp;of&nbsp;self,&nbsp;value-of-other&nbsp;times.</tt></dd></dl>
+
+<dl><dt><a name="Real-same_quantum"><strong>same_quantum</strong></a>(self, other)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;self&nbsp;and&nbsp;other&nbsp;have&nbsp;the&nbsp;same&nbsp;exponent;&nbsp;otherwise<br>
+return&nbsp;False.<br>
+&nbsp;<br>
+If&nbsp;either&nbsp;operand&nbsp;is&nbsp;a&nbsp;special&nbsp;value,&nbsp;the&nbsp;following&nbsp;rules&nbsp;are&nbsp;used:<br>
+&nbsp;&nbsp;&nbsp;*&nbsp;return&nbsp;True&nbsp;if&nbsp;both&nbsp;operands&nbsp;are&nbsp;infinities<br>
+&nbsp;&nbsp;&nbsp;*&nbsp;return&nbsp;True&nbsp;if&nbsp;both&nbsp;operands&nbsp;are&nbsp;NaNs<br>
+&nbsp;&nbsp;&nbsp;*&nbsp;otherwise,&nbsp;return&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Real-scaleb"><strong>scaleb</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;self&nbsp;operand&nbsp;after&nbsp;adding&nbsp;the&nbsp;second&nbsp;value&nbsp;to&nbsp;its&nbsp;exp.</tt></dd></dl>
+
+<dl><dt><a name="Real-shift"><strong>shift</strong></a>(self, other, context<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;a&nbsp;shifted&nbsp;copy&nbsp;of&nbsp;self,&nbsp;value-of-other&nbsp;times.</tt></dd></dl>
+
+<dl><dt><a name="Real-sqrt"><strong>sqrt</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Return&nbsp;the&nbsp;square&nbsp;root&nbsp;of&nbsp;self.</tt></dd></dl>
+
+<dl><dt><a name="Real-to_eng_string"><strong>to_eng_string</strong></a>(self, context<font color="#909090">=None</font>)</dt><dd><tt>Convert&nbsp;to&nbsp;engineering-type&nbsp;string.<br>
+&nbsp;<br>
+Engineering&nbsp;notation&nbsp;has&nbsp;an&nbsp;exponent&nbsp;which&nbsp;is&nbsp;a&nbsp;multiple&nbsp;of&nbsp;3,&nbsp;so&nbsp;there<br>
+are&nbsp;up&nbsp;to&nbsp;3&nbsp;digits&nbsp;left&nbsp;of&nbsp;the&nbsp;decimal&nbsp;place.<br>
+&nbsp;<br>
+Same&nbsp;rules&nbsp;for&nbsp;when&nbsp;in&nbsp;exponential&nbsp;and&nbsp;when&nbsp;as&nbsp;a&nbsp;value&nbsp;as&nbsp;in&nbsp;__str__.</tt></dd></dl>
+
+<dl><dt><a name="Real-to_integral"><strong>to_integral</strong></a> = to_integral_value(self, rounding<font color="#909090">=None</font>, context<font color="#909090">=None</font>)</dt><dd><tt>Rounds&nbsp;to&nbsp;the&nbsp;nearest&nbsp;integer,&nbsp;without&nbsp;raising&nbsp;inexact,&nbsp;rounded.</tt></dd></dl>
+
+<dl><dt><a name="Real-to_integral_exact"><strong>to_integral_exact</strong></a>(self, rounding<font color="#909090">=None</font>, context<font color="#909090">=None</font>)</dt><dd><tt>Rounds&nbsp;to&nbsp;a&nbsp;nearby&nbsp;integer.<br>
+&nbsp;<br>
+If&nbsp;no&nbsp;rounding&nbsp;mode&nbsp;is&nbsp;specified,&nbsp;take&nbsp;the&nbsp;rounding&nbsp;mode&nbsp;from<br>
+the&nbsp;context.&nbsp;&nbsp;This&nbsp;method&nbsp;raises&nbsp;the&nbsp;Rounded&nbsp;and&nbsp;Inexact&nbsp;flags<br>
+when&nbsp;appropriate.<br>
+&nbsp;<br>
+See&nbsp;also:&nbsp;to_integral_value,&nbsp;which&nbsp;does&nbsp;exactly&nbsp;the&nbsp;same&nbsp;as<br>
+this&nbsp;method&nbsp;except&nbsp;that&nbsp;it&nbsp;doesn't&nbsp;raise&nbsp;Inexact&nbsp;or&nbsp;Rounded.</tt></dd></dl>
+
+<dl><dt><a name="Real-to_integral_value"><strong>to_integral_value</strong></a>(self, rounding<font color="#909090">=None</font>, context<font color="#909090">=None</font>)</dt><dd><tt>Rounds&nbsp;to&nbsp;the&nbsp;nearest&nbsp;integer,&nbsp;without&nbsp;raising&nbsp;inexact,&nbsp;rounded.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="decimal.html#Decimal">decimal.Decimal</a>:<br>
+<dl><dt><a name="Real-from_float"><strong>from_float</strong></a>(cls, f)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Converts&nbsp;a&nbsp;float&nbsp;to&nbsp;a&nbsp;decimal&nbsp;number,&nbsp;exactly.<br>
+&nbsp;<br>
+Note&nbsp;that&nbsp;<a href="decimal.html#Decimal">Decimal</a>.<a href="#Real-from_float">from_float</a>(0.1)&nbsp;is&nbsp;not&nbsp;the&nbsp;same&nbsp;as&nbsp;<a href="decimal.html#Decimal">Decimal</a>('0.1').<br>
+Since&nbsp;0.1&nbsp;is&nbsp;not&nbsp;exactly&nbsp;representable&nbsp;in&nbsp;binary&nbsp;floating&nbsp;point,&nbsp;the<br>
+value&nbsp;is&nbsp;stored&nbsp;as&nbsp;the&nbsp;nearest&nbsp;representable&nbsp;value&nbsp;which&nbsp;is<br>
+0x1.999999999999ap-4.&nbsp;&nbsp;The&nbsp;exact&nbsp;equivalent&nbsp;of&nbsp;the&nbsp;value&nbsp;in&nbsp;decimal<br>
+is&nbsp;0.1000000000000000055511151231257827021181583404541015625.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>.<a href="#Real-from_float">from_float</a>(0.1)<br>
+<a href="decimal.html#Decimal">Decimal</a>('0.1000000000000000055511151231257827021181583404541015625')<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>.<a href="#Real-from_float">from_float</a>(float('nan'))<br>
+<a href="decimal.html#Decimal">Decimal</a>('NaN')<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>.<a href="#Real-from_float">from_float</a>(float('inf'))<br>
+<a href="decimal.html#Decimal">Decimal</a>('Infinity')<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>.<a href="#Real-from_float">from_float</a>(-float('inf'))<br>
+<a href="decimal.html#Decimal">Decimal</a>('-Infinity')<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>.<a href="#Real-from_float">from_float</a>(-0.0)<br>
+<a href="decimal.html#Decimal">Decimal</a>('-0')</tt></dd></dl>
+
+<hr>
+Static methods inherited from <a href="decimal.html#Decimal">decimal.Decimal</a>:<br>
+<dl><dt><a name="Real-__new__"><strong>__new__</strong></a>(cls, value<font color="#909090">='0'</font>, context<font color="#909090">=None</font>)</dt><dd><tt>Create&nbsp;a&nbsp;decimal&nbsp;point&nbsp;instance.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>('3.14')&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;string&nbsp;input<br>
+<a href="decimal.html#Decimal">Decimal</a>('3.14')<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>((0,&nbsp;(3,&nbsp;1,&nbsp;4),&nbsp;-2))&nbsp;&nbsp;#&nbsp;tuple&nbsp;(sign,&nbsp;digit_tuple,&nbsp;exponent)<br>
+<a href="decimal.html#Decimal">Decimal</a>('3.14')<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>(314)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;<a href="builtins.html#int">int</a><br>
+<a href="decimal.html#Decimal">Decimal</a>('314')<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>(<a href="decimal.html#Decimal">Decimal</a>(314))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;another&nbsp;decimal&nbsp;instance<br>
+<a href="decimal.html#Decimal">Decimal</a>('314')<br>
+&gt;&gt;&gt;&nbsp;<a href="decimal.html#Decimal">Decimal</a>('&nbsp;&nbsp;3.14&nbsp;&nbsp;\n')&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;leading&nbsp;and&nbsp;trailing&nbsp;whitespace&nbsp;okay<br>
+<a href="decimal.html#Decimal">Decimal</a>('3.14')</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="decimal.html#Decimal">decimal.Decimal</a>:<br>
+<dl><dt><strong>imag</strong></dt>
+</dl>
+<dl><dt><strong>real</strong></dt>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-mul"><strong>mul</strong></a>(...)</dt><dd><tt><a href="#-mul">mul</a>(a,&nbsp;b)&nbsp;--&nbsp;Same&nbsp;as&nbsp;a&nbsp;*&nbsp;b.</tt></dd></dl>
+ <dl><dt><a name="-reduce"><strong>reduce</strong></a>(...)</dt><dd><tt><a href="#-reduce">reduce</a>(function,&nbsp;sequence[,&nbsp;initial])&nbsp;-&gt;&nbsp;value<br>
+&nbsp;<br>
+Apply&nbsp;a&nbsp;function&nbsp;of&nbsp;two&nbsp;arguments&nbsp;cumulatively&nbsp;to&nbsp;the&nbsp;items&nbsp;of&nbsp;a&nbsp;sequence,<br>
+from&nbsp;left&nbsp;to&nbsp;right,&nbsp;so&nbsp;as&nbsp;to&nbsp;reduce&nbsp;the&nbsp;sequence&nbsp;to&nbsp;a&nbsp;single&nbsp;value.<br>
+For&nbsp;example,&nbsp;<a href="#-reduce">reduce</a>(lambda&nbsp;x,&nbsp;y:&nbsp;x+y,&nbsp;[1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5])&nbsp;calculates<br>
+((((1+2)+3)+4)+5).&nbsp;&nbsp;If&nbsp;initial&nbsp;is&nbsp;present,&nbsp;it&nbsp;is&nbsp;placed&nbsp;before&nbsp;the&nbsp;items<br>
+of&nbsp;the&nbsp;sequence&nbsp;in&nbsp;the&nbsp;calculation,&nbsp;and&nbsp;serves&nbsp;as&nbsp;a&nbsp;default&nbsp;when&nbsp;the<br>
+sequence&nbsp;is&nbsp;empty.</tt></dd></dl>
+</td></tr></table>
+</body></html>

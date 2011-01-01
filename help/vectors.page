@@ -1,0 +1,32 @@
+<page xmlns="http://projectmallard.org/1.0/"
+    type="guide" id="vectors">
+    <info><link type="guide" xref="index"/></info>
+    <title>Vectors (C4)</title>
+    <p>The Calculator allows the manipulation of vectors.</p>
+    <p>We may add vectors:</p>
+<code>
+[1,2,3] + [4,5,6]
+   = [5, 7, 9]
+</code>
+    <p>and subtract:</p>
+<code>
+[2,-1,6] - [2,1,3]
+   = [0, -2, 3]
+</code>
+    <p>we may also multiply vectors by scalars:</p>
+<code>
+3 * [1,2,3]
+   = [3, 6, 9]
+</code>
+    <p>find the dot-product of two vectors:</p>
+<code>
+[1,2,3] * [4,5,6]
+   = 32
+</code>
+    <p>and find the Eclidian Norm (length) of a vector:</p>
+<code>
+|| [1,2,3] ||
+   = 3.74
+</code>
+</page>
+
