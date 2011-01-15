@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.1
+__author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 from PyQt4 import QtCore, QtGui, uic
 import re
@@ -6,6 +7,7 @@ import re
 #from gui_ui import Ui_Calculator
 from calculator import Calculator
 from cas.core import StrWithHtml
+import help
 
 class CalculatorForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -27,16 +29,20 @@ class CalculatorForm(QtGui.QMainWindow):
             self.input.setText(cmd + a)
         else:
             self.input.setText(cmd + ' ' + a)
-            
+
     def _append_digit(self, a):
         cmd = self._command()
-        
+
         if len(cmd) == 0:
             self.input.setText(a)
         elif re.match(r'^([^a-z][a-z]|.*[0-9\.^ (])$', cmd):
             self.input.setText(cmd + a)
         else:
             self.input.setText(cmd + ' ' + a)
+
+    @QtCore.pyqtSlot()
+    def on_btn_help_clicked(self):
+        help.help()
 
     @QtCore.pyqtSlot()
     def on_input_returnPressed(self):
@@ -146,3 +152,4 @@ if __name__ == '__main__':
     calculator = CalculatorForm()
     calculator.show()
     sys.exit(app.exec_())
+

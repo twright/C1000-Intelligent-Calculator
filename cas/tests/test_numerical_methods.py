@@ -24,30 +24,31 @@ class TestNumericalMethods():
             (lambda x: x**2 * log(x), 2, 4, 21.503665000),
         #    (lambda x: x**4 * cos(2*x), -pi, pi, None),
         )
-        
+
     def test_romberg(self):
         for f, a, b, integral in self.data:
             assert almost_equal(romberg_integral(f, a, b, 7, 4),
                 integral, 0.0000005)
-            
+
     def test_trapezoid_rule(self):
         for f, a, b, integral in self.data:
             assert almost_equal(trapezoidal_composite_integral(f, a, b),
                 integral, 1)
-            
+
     def test_simpson_rule(self):
         for f, a, b, integral in self.data:
             assert almost_equal(simpson_composite_integral(f, a, b, 100),
                 integral, 1)
-                
+
     @py.test.mark.xfail
     def test_simpson38_rule(self):
         for f, a, b, integral in self.data:
             assert almost_equal(simpson38_composite_integral(f, a, b),
                 integral, 10)
-                
+
     @py.test.mark.xfail
     def test_boyle_rule(self):
         for f, a, b, integral in self.data:
             assert almost_equal(boyle_composite_integral(f, a, b),
                 integral, 10)
+

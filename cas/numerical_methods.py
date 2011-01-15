@@ -8,7 +8,20 @@ __author__ = 'Thomas Wright <tom.tdw@gmail.com>'
 from operator import mul
 from functools import reduce
 from copy import copy
-from decimal import Decimal, getcontext
+from decimal import Decimal, getcontext, localcontext
+
+def pi(n=None):
+    ''' Estimate pi using n terms of the Chudnovsky brothers' formula. By default
+    this will attempt to calculate it to the maximum number of digits storable
+    in a decimal number. '''
+    from math import factorial
+    D = Decimal
+    if n == None: n = round(getcontext().prec/D(14)) + 10
+    with localcontext():
+        getcontext().prec += 5
+        f = lambda k: factorial(6*k)*D(13591409 + 545140134*k)\
+            / (factorial(3*k)*factorial(k)**3*D(-640320)**(3*k))
+        return 426880*D(10005)**D('0.5') / sum([f(k) for k in range (100)])
 
 def to_fraction(x, places=10):
     ''' Convert the decimal x to a fraction, a / b'''
@@ -23,7 +36,6 @@ def to_fraction(x, places=10):
         t = copy(b)
         b = b * int(z) + B
         a = round(abs(x) * b)
-        # print ('a = {}, b = {}, z = {}, diff = {}'.format(a, b, z, abs(x - Decimal(a)/Decimal(b))))
         B = copy(t)
         if abs(x - x.__class__(a)/x.__class__(b)) < 5*x.__class__(10)**(-places) or z == int(z):
             break
@@ -32,14 +44,14 @@ def to_fraction(x, places=10):
     return (sign * a, b)
 
 def trapezoidal_composite_integral(f,a,b,m=100):
-    ''' order 1 Newton-Cotes aproximation over m strips '''
+    ''' Order 1 Newton-Cotes aproximation over m strips. '''
     h = (b-a)/(m)
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
     return h*( fx(0)/2 + sum(fx(n) for n in range(1,m)) + fx(m)/2 )
 
 def simpson_composite_integral(f,a,b,m=100):
-    ''' order 2 Newton-Cotes aproximation over m strips '''
+    ''' Order 2 Newton-Cotes aproximation over m strips. '''
     m = 2*round(m/2)
     h = (b-a)/m
     x = lambda k: a + k*h
@@ -48,7 +60,7 @@ def simpson_composite_integral(f,a,b,m=100):
         + 4*fx(m-1) + fx(m))
 
 def simpson38_composite_integral(f,a,b,m=100):
-    ''' order 3 Newton-Cotes aproximation over m strips '''
+    ''' Order 3 Newton-Cotes aproximation over m strips. '''
     m = 3*round(m/3)
     h = (b-a)/m
     x = lambda k: a + k*h
@@ -58,7 +70,7 @@ def simpson38_composite_integral(f,a,b,m=100):
         + fx(m))
 
 def boole_composite_integral(f,a,b,m=100):
-    ''' order 4 Newton-Cotes aproximation over m strips '''
+    ''' Order 4 Newton-Cotes aproximation over m strips. '''
     m = 4*round(m/4)
     h = (b-a)/m
     x = lambda k: a + k*h
@@ -92,16 +104,4 @@ def durand_kerner_roots(f, order, n=100):
         for i in range(order):
             xs[i] -= f(xs[i]) / product(xs[i] - y for y in xs if y is not xs[i])
     return xs
-
-if __name__ == '__main__':
-    from math import *
-    g = lambda x: log(5*x)
-    print ('True value ~= 1.995732273553990993435223576142540775676601622989028201540')
-    print ('trapezium rule:', trapezoidal_composite_integral(g, 1,2, 1000))
-    print ('simpson\'s rule:', simpson_composite_integral(g, 1,2, 1000))
-    print ('simpson\'s 3/8 rule:', simpson38_composite_integral(g, 1,2, 1000))
-    print ('boole\'s rule:', boole_composite_integral(g, 1,2, 1000))
-    print ('romberg integration: {:.25f}'.format(romberg_integral(g, 1,2, 10,10)))
-    f = lambda x: x**2 - x - 6
-    print ('roots:', durand_kerner_roots(f, 2, 10))
 

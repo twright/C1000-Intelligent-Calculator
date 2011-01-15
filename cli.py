@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.1
 ''' A commandline interface. '''
+__author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 import os
 from pyparsing_py3 import ParseException
@@ -10,11 +11,11 @@ from calculator import Calculator
 calc = Calculator()
 
 if __name__ == '__main__':
-    # Read any existing history file 
-    if os.name == 'posix': 
+    # Read any existing history file
+    if os.name == 'posix':
         try: readline.read_history_file()
         except: pass
-        
+
     print('Welcome to the C1000 Intelligent Calculator')
     print('[ If you are stuck, just type help() ]')
 
@@ -22,7 +23,7 @@ if __name__ == '__main__':
         try:
             # Input, evaluate and print command
             print(calc.evaluate(input('>>> ')))
-            
+
             # Write command history
             if os.name == 'posix': readline.write_history_file()
         except SystemExit:
@@ -38,3 +39,4 @@ if __name__ == '__main__':
             print('Command cancelled.')
   #      except:
   #          print('Invalid operation!')
+

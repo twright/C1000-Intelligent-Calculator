@@ -24,6 +24,19 @@ class TestHandleType():
         for x in xs:
             assert isinstance(handle_type(x), complex)
 
+class TestIsPoly():
+    def setup_class(self):
+        self.x = Symbol('x')
+
+    def test_polynomials(self):
+        xs = [1, self.x, 3*self.x, self.x**2, 3*self.x**3,
+            4*self.x**3 - 2*self.x**2 + self.x - 7]
+        for x in xs: assert is_poly(x)
+
+    def test_non_polynomials(self):
+        xs = [Sin(self.x), Cos(self.x), Tan(self.x), Ln(self.x)]
+        for x in xs: assert not is_poly(x)
+
 class TestAlgebra():
     def setup_class(self):
         self.a = Algebra()
@@ -81,3 +94,4 @@ class TestStrWithHtml():
 
     def test_str(self):
         assert str(StrWithHtml('test', '<b>test</b>')) == 'test'
+

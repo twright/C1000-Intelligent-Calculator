@@ -1,25 +1,24 @@
 #!/usr/bin/env python3.1
+__author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 from PyQt4 import QtCore, QtGui, uic
 
-# from gui_ui import Ui_Calculator
 from calculator import Calculator
 from cas.core import StrWithHtml
+import help
 
 class CalculatorForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-#        self.ui = Ui_Calculator()
         uic.loadUi('gui.ui', self)
-    #    self.ui.__init__(self)
         self.calc = Calculator()
 
     @QtCore.pyqtSlot()
-    def on_lineEdit_returnPressed(self):
+    def on_input_returnPressed(self):
         self.textEdit.moveCursor(QtGui.QTextCursor.End)
         self.textEdit.insertHtml('\n<p>\n')
         #try:
-        command = self.lineEdit.text()
+        command = self.input.text()
         output = self.calc.evaluate(command)
         self.textEdit.append(command)
         if type(output) == StrWithHtml:
@@ -31,6 +30,10 @@ class CalculatorForm(QtGui.QMainWindow):
        #     self.textEdit.insertHtml('<br><b style="color : red">Invalid Command!</b><br>\n')self.calc = Calculator()
         self.textEdit.insertHtml('\n</p>\n')
 
+    @QtCore.pyqtSlot()
+    def on_btn_help_clicked(self):
+        help.help()
+
 
 if __name__ == '__main__':
     import sys
@@ -39,3 +42,4 @@ if __name__ == '__main__':
     calculator = CalculatorForm()
     calculator.show()
     sys.exit(app.exec_())
+

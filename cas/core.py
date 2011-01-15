@@ -2,6 +2,7 @@
 ''' Provides core types/classes from use throughout the Computer Algebra
 System representing simple objects such as Symbol, Products, Sums and Fractions
 whilst providing functions to allocate types. '''
+__author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 import re
 from decimal import Decimal
@@ -15,20 +16,24 @@ import cas.numerical_methods as nm
 #from cas.matrices import Matrix
 
 # Convert object to strings based on their precedence
-m_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_brackets') and a._brackets['m'] else ('*' if isinstance(a, Function) else '') + str(a)
-d_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_brackets') and a._brackets['d'] else str(a)
-p_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_brackets') and a._brackets['p'] else str(a)
-a_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_brackets') and a._brackets['a'] else str(a)
+#m_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_brackets') and a._brackets['m'] else ('*' if isinstance(a, Function) else '') + str(a)
+m_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'm' in a._hints else str(a)
+m_str.__doc__ = ''' Convert an object to a string within the context of a product '''
+d_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'd' in a._hints else str(a)
+d_str.__doc__ = ''' Convert an object to a string within the context of a fraction '''
+p_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'p' in a._hints else str(a)
+p_str.__doc__ = ''' Convert an object to a string within the context of indices '''
+a_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'a' in a._hints else str(a)
+a_str.__doc__ = ''' Convert an object to a string within the context of a sum '''
 order = lambda a: a.order() if hasattr(a, 'order') else 0
 order.__doc__ = ''' Return the order of an equation '''
 evaluate = lambda y, x, variable=None: y(x, variable) if hasattr(y, '__call__') else y
 evaluate.__doc__ = ''' Evaluate y at x '''
 
 def handle_type (x):
-    ''' Takes in a variable a and output it in the most desirable type '''
+    ''' Takes in a variable (x) and output it in the most desirable type '''
     from cas.numeric import Integer, Complex, Real
-    if isinstance(x, Integer) or isinstance(x, Real)\
-        or isinstance(x,Complex):
+    if isinstance(x, Integer) or isinstance(x, Real) or isinstance(x,Complex):
         return x
     elif isinstance(x, int):
         return Integer(x)
@@ -47,6 +52,7 @@ def handle_type (x):
             return Complex(x)
     else:
         return x
+ht = handle_type
 
 def expand(a):
     ''' Fully expand an equation '''
@@ -77,43 +83,38 @@ def partial_differential(y, x):
     pd = partial(partial_differential, x=x)
     if isinstance(y,Number):
         return 0
-    elif isinstance(y,Symbol):
-        return 1 if y == x else y
-    elif isinstance(y,Sum):
-        return reduce(add, map(pd, y), 0)
-    elif isinstance(y,Product) and is_poly(y):
-        return y[0] * pd(y[1])
-    elif isinstance(y,Power) and is_poly(y):
-        return y.b() * pd(y.a()) * (y.a() ** (y.b() + (-1)))
+    elif hasattr(y, 'partial_differential'):
+        return y.partial_differential(x)
     elif isinstance(y,Ln):
         return pd(y.x()) / y.x()
+    elif isinstance(y,Sin):
+        return pd(y.x()) * Cos(y.x())
+    elif isinstance(y,Cos):
+        return pd(y.x()) * -Sin(y.x())
+    elif isinstance(y,Tan):
+        return pd(y.x()) / Cos(y.x())**2
     else:
         return NotImplemented
 
-def partial_integral(y, x):
-    ''' Return the partial integral of y with respect to x '''
-    def _partial_integral(y, x):
+def _partial_integral(y, x):
+        ''' A recursive function to perform the actual integration'''
         ht = handle_type
-        pi = partial(_partial_integral, x=x)
         assert isinstance(x, Symbol)
         if isinstance(y,Number):
             return y*x
-        elif isinstance(y,Symbol):
-            return (ht(1)/ht(2)) * (x ** ht(2))
-        elif isinstance(y,Sum):
-            return reduce(add, map(pi, y), ht(0))
-        elif isinstance(y,Product) and is_poly(y):
-            return y[0] * pi(y[1])
-        elif isinstance(y,Power) and is_poly(y):
-            return ( ht(1) / (y.b() + ht(1)) ) * (y.a()) ** (y.b() + ht(1))
+        elif hasattr(y, 'partial_integral'):
+            return y.partial_integral(x)
         else:
             return NotImplemented
 
+def partial_integral(y, x):
+    ''' Return the partial integral of y with respect to x '''
+    # Expand the expression and add + c
     I = expand(_partial_integral(y,x))
     return I + Symbol('c') if I != NotImplemented else NotImplemented
 
 class Algebra:
-    ''' A class to hold arbitrary algebraic expression; the superclass of all
+    ''' A class to hold an arbitrary algebraic expression; the superclass of all
     algebraic classes '''
     def __add__(self, other):
         return self if other == 0 else 2 * self if self == other else Sum(self, other)
@@ -165,6 +166,20 @@ class Algebra:
         ''' Take the limit between a and b '''
         return expand(self(b, variable=variable) - self(a, variable=variable))
 
+    def as_gnuplot_expression(self):
+        ''' Convert into the gnuplot format '''
+        # TODO: Replace with something much more general
+        from re import sub
+        expr = str(self)
+        expr = sub(r'[a-z]', r'x', expr, 100)
+        # Add * from multiplication
+        expr = sub(r'([0-9])x', r'\1*x', expr, 100)
+        # Add * for bracket multiplication
+        expr = sub(r'([^/ ])\(', r'\1*(', expr, 100)
+        # Replace ^ with ** for powers
+        expr = sub(r'\^', r'**', expr, 100)
+        return expr
+
 class Symbol(Algebra):
     ''' A class representing the variables in algebraic expressions '''
     def __init__(self, name):
@@ -193,15 +208,24 @@ class Symbol(Algebra):
         return other * self ** handle_type(-1)
 
     def order(self):
+        ''' The order of a variable is one '''
         return 1
+
+    def partial_differential(self, x):
+        ''' Return the partial differential with respect to x. '''
+        return ht(1) if self == x else y
+
+    def partial_integral(self, x):
+        ''' Return the partial integral with respect to x. '''
+        return (ht(1)/ht(2)) * (x ** ht(2))
 
     def __repr__(self):
         ''' Display a variable in string form '''
         return str(self.__name)
 
-    # This hash identifies in which circumstances an expression needs to be
+    # This set identifies in which circumstances an expression needs to be
     # surrounded by brackets
-    _brackets = {'m':0,'d':0,'p':0,'a':0}
+    _hints = {}
 
 def dedup(f, xs, identity):
     ''' Combine any elements possible in a sum or product.
@@ -261,37 +285,37 @@ class Product(Algebra):
             return terms[0]
 
     def __call__(self, x, variable=None):
-        ''' Evaluate self which variable is equal to x '''
+        ''' Evaluate self which variable is equal to x. '''
         ev = partial(evaluate, variable=variable, x=x)
         return reduce(mul, map(ev, self), 1)
 
     def __getitem__(self, i):
-        ''' Return the term(s) at/in position or range i '''
+        ''' Return the term(s) at/in position or range i. '''
         if isinstance(i, slice):
             return reduce(mul, self.__terms[i], 1)
         else:
             return self.__terms[i]
 
     def order(self):
-        ''' A method returning the order of a product '''
+        ''' A method returning the order of a product. '''
         assert len(self) == 2
         return max(map(lambda a: a.order() if hasattr(a,'order') else 0, self))
 
     def __len__(self):
-        ''' A method returning the length of a product '''
+        ''' A method returning the length of a product. '''
         return len(self.__terms)
 
     def __eq__(self, other):
-        ''' Products are equal if all terms are equal '''
+        ''' Products are equal if all terms are equal. '''
         listify = lambda a: list(a) if hasattr(a, '__getitem__') else [a]
         return listify(self) == listify(other)
 
     def __repr__(self):
-        ''' Return the string representation of the product '''
+        ''' Return the string representation of the product. '''
         return ('-' if isinstance(self[0], Number) and self[0] == -1 else m_str(self[0]))\
             + (''.join(map(m_str, self[1:])) if len(self) > 2 else m_str(self[1]))
 
-    _brackets = {'m':0,'d':1,'p':1,'a':0}
+    _hints = {'d','p'}
 
     def __mul__(self, other):
         return Product(*(list(self) + (list(other) if isinstance(other, Product) else [other])))
@@ -309,8 +333,23 @@ class Product(Algebra):
         else:
             return Algebra.__add__(self, other)
 
+    def partial_differential(self, x):
+        ''' Return the partial differential with respect to x. '''
+        if is_poly(self):
+            return self[0] * partial_differential(self[1],x)
+        else:
+            return NotImplemented
+
+    def partial_integral(self, x):
+        ''' Return the partial integral with respect to x. '''
+        if is_poly(self):
+            return self[0] * _partial_integral(self[1], x)
+        else:
+            return NotImplemented
+
+
 class Fraction(Algebra):
-    ''' A class representing a fraction '''
+    ''' A class representing a fraction. '''
     def __init__(self, a, b):
         self.__numerator, self.__denominator = a, b
 
@@ -326,10 +365,17 @@ class Fraction(Algebra):
     def __repr__(self):
         return d_str(self.numerator()) + '/' + d_str(self.denominator())
 
-    _brackets = {'m':1,'p':1,'d':1,'a':0}
+    def partial_differential(self, x):
+        ''' Return the partial differential with respect to x. '''
+        # Quotant rule
+        (partial_differential(self.numerator(),x)*self.denominator()
+            - partial_differential(self.denominator(),x)*self.numerator())\
+            / self.denominator()**2
+
+    _hints = {'m','d','p'}
 
 class Sum(Algebra):
-    ''' A class representing the sum of multiple terms '''
+    ''' A class representing the sum of multiple terms. '''
     def __new__(self, *a):
         I = isinstance
         # Order elements based on type and order to insure the order is always
@@ -347,11 +393,11 @@ class Sum(Algebra):
             return terms[0]
 
     def __call__(self, x, variable=None):
-        ''' Evaluate self when variable is equal to x '''
+        ''' Evaluate self when variable is equal to x. '''
         return reduce(lambda a,b: evaluate(a,x,variable) + evaluate(b,x,variable), self, 0)
 
     def __getitem__(self, i):
-        ''' Return the term(s) at/in position or range i '''
+        ''' Return the term(s) at/in position or range i. '''
         if isinstance(i, slice):
             return reduce(add, self.__terms[i], 0)
         else:
@@ -364,7 +410,7 @@ class Sum(Algebra):
         return Sum(*(list(self) + (list(other) if isinstance(other, Sum) else [other])))
 
     def order(self):
-        ''' Return the greatest order of any term '''
+        ''' Return the greatest order of any term. '''
         return max(map(lambda a: a.order() if hasattr(a,'order') else 0, self))
 
     def __eq__(self, other):
@@ -373,7 +419,7 @@ class Sum(Algebra):
         return listify(self) == listify(other)
 
     def __repr__(self):
-        ''' Return the string representation of the sum '''
+        ''' Return the string representation of the sum. '''
         def sf(a):
             if isinstance(a, Product) and isinstance(a[0], complex):
                 return ' ' + ('- ' + m_str(handle_type(abs(a[0].imag)) if a[0].real > -0.00001 else -a[0])
@@ -392,11 +438,11 @@ class Sum(Algebra):
 
         return str(self[0]) + ''.join(map(sf, listify(self[1:])))
 
-    _brackets = {'m':1,'p':1,'d':1,'a':1}
+    _hints = {'m','p','d','a'}
 
     def roots(self, n=1000):
         ''' Numerically locate all real and complex roots of an equation using
-        n iterations of the Durand-Kerner method '''
+        n iterations of the Durand-Kerner method. '''
         from cas.numeric import Complex
         assert is_poly(self)
         # For order 1 polynomials there is only 1 trivial root
@@ -414,6 +460,9 @@ class Sum(Algebra):
         return map(Complex, roots)
 
     def factors(self):
+        ''' The Fundermental Theorum of Artithmetic states that every integer
+        may be factorised into a unique product of prime factors. This function
+        lists them. '''
         if is_poly(self):
             a = 1 if isinstance(self[0], (Symbol, Power)) else self[0][0]
             x = self[0] if isinstance(self[0], Symbol)\
@@ -424,8 +473,16 @@ class Sum(Algebra):
         else:
             return NotImplemented
 
+    def partial_differential(self, x):
+        ''' Return the partial differential with respect to x. '''
+        return reduce(add, map(partial(partial_differential,x=x), y), 0)
+
+    def partial_integral(self, x):
+        ''' Return the partial integral with respect to x. '''
+        return reduce(add, map(partial(_partial_integral, x=x), self), ht(0))
+
 class Power(Algebra):
-    ''' A class representing a to the power b '''
+    ''' A class representing a to the power b. '''
     def __init__(self, a, b):
         self.__a = a
         self.__b = b
@@ -454,6 +511,20 @@ class Power(Algebra):
             else NotImplemented
 
     __rmul__ = __mul__
+
+    def partial_differential(self, x):
+        ''' Return the partial differential with respect to x. '''
+        if is_poly(self):
+            return self.b() * partial_differential(self.a(),x) * (self.a() ** (self.b() + ht(-1)))
+        else:
+            return NotImplemented
+
+    def partial_integral(self, x):
+        ''' Return the partial integral with respect to x. '''
+        if is_poly(self):
+            return ( ht(1) / (self.b() + ht(1)) ) * self.a() ** (self.b() + ht(1))
+        else:
+            return NotImplemented
 
     def __repr__(self):
         return p_str(self.__a) + '^' + p_str(self.__b)
