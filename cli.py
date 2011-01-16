@@ -1,9 +1,10 @@
 #!/usr/bin/env python3.1
 ''' A commandline interface. '''
+from __future__ import unicode_literals
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 import os
-from pyparsing_py3 import ParseException
+from pyparsing import ParseException
 
 if os.name == 'posix': import readline
 from calculator import Calculator
@@ -22,7 +23,7 @@ if __name__ == '__main__':
     while True:
         try:
             # Input, evaluate and print command
-            print(calc.evaluate(input('>>> ')))
+            print(calc.evaluate(raw_input('>>> ')))
 
             # Write command history
             if os.name == 'posix': readline.write_history_file()

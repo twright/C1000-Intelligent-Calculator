@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.1
 # coding=utf-8
+from __future__ import division, unicode_literals
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 from decimal import Decimal, getcontext, localcontext
@@ -19,8 +20,7 @@ from cas.statistics import nCr, nPr, binomialpdf, binomialcdf, poissonpdf,\
 import cas.numerical_methods as nm
 #from dmath import log, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh
 from gnuplot import Gnuplot
-from pyparsing_py3 import *
-#from pyparsing import *
+from pyparsing import *
 import help
 
 # The precision for internal working must be greater that for display
@@ -123,9 +123,9 @@ class Calculator():
         # Manipulation of functions
             'expand' : expand,
             'differentiate' : lambda a,b=Symbol('x'): partial_differential(a,b),
-            'integrate' : lambda a, *l, b=Symbol('x'): partial_integral(a,b)\
+            'integrate' : lambda y, a, b, x=Symbol('x'): partial_integral(y,x)\
                 if len(l) == 0 \
-                else partial_integral(a,b).limit(l[0],l[1], variable=b),
+                else partial_integral(y,x).limit(a, b, variable=x),
             'romberg' : lambda f,a,b,*n: f.romberg_integral(a,b,*n),
             'trapeziumrule' : lambda f,a,b,*n: f.trapezoidal_integral(a,b,*n),
             'simpsonrule' : lambda f,a,b,*n: f.simpson_integral(a,b,*n),
@@ -156,7 +156,7 @@ class Calculator():
             'arg' : lambda a: a.argument(),
             'conj' : lambda a: a.conjugate(),
         # Misc
-            'test' : pi,
+            'yum' : pi,
             'factorial' : factorial,
             'factors' : lambda a: a.factors(),
             'decimal' : lambda a: Decimal(a) if not isinstance(a, List) else List(*list(map(Decimal, a))),

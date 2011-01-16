@@ -2,6 +2,7 @@
 ''' Provides core types/classes from use throughout the Computer Algebra
 System representing simple objects such as Symbol, Products, Sums and Fractions
 whilst providing functions to allocate types. '''
+from __future__ import division, unicode_literals
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 import re
@@ -113,7 +114,7 @@ def partial_integral(y, x):
     I = expand(_partial_integral(y,x))
     return I + Symbol('c') if I != NotImplemented else NotImplemented
 
-class Algebra:
+class Algebra (object):
     ''' A class to hold an arbitrary algebraic expression; the superclass of all
     algebraic classes '''
     def __add__(self, other):
@@ -184,8 +185,8 @@ class Symbol(Algebra):
     ''' A class representing the variables in algebraic expressions '''
     def __init__(self, name):
         ''' A variable is defined in terms of its name '''
-        assert isinstance(name, str)
-        self.__name = name
+        assert isinstance(name, (str, unicode))
+        self.__name = str(name)
 
     def __call__(self, x, variable=None):
         ''' A variable may take a numeric value when evaluated '''
@@ -278,7 +279,7 @@ class Product(Algebra):
 
         terms = list(dedup(mul, sorted(a, key=rank), 1))
         if len(terms) > 1 and terms[0] != 0:
-            b = super().__new__(self); b.__terms = terms
+            b = Algebra.__new__(self); b.__terms = terms
             return b
         else:
             # For the product of 1 element, just return that element
@@ -384,9 +385,9 @@ class Sum(Algebra):
             + 4*I(a,Number))
         rank = lambda a: 10000 * rank_type(a) - (a.order() if hasattr(a,'order') else 100)
 
-        terms = list(dedup(add, sorted(a, key=rank), 0))
+        terms = list(dedup(add, sorted(a, key=rank), ht(0)))
         if len(terms) > 1:
-            b = super().__new__(self); b.__terms = terms
+            b = Algebra.__new__(self); b.__terms = terms
             return b
         else:
             # For the sum of one element, just return that element
@@ -475,7 +476,7 @@ class Sum(Algebra):
 
     def partial_differential(self, x):
         ''' Return the partial differential with respect to x. '''
-        return reduce(add, map(partial(partial_differential,x=x), y), 0)
+        return reduce(add, map(partial(partial_differential,x=x), self), 0)
 
     def partial_integral(self, x):
         ''' Return the partial integral with respect to x. '''
@@ -532,8 +533,8 @@ class Power(Algebra):
 class Function(Algebra):
     ''' A class representation a function of an algebraic expression '''
     def __init__(self, name, argument, action=None):
-        assert isinstance(name, str)
-        self.__name = name
+        assert isinstance(name, (str, unicode))
+        self.__name = str(name)
         self.__argument = argument
         self.__action = action
 
@@ -553,25 +554,25 @@ class Ln(Function):
     ''' A class representing the natural logarithm of an algebraic expression '''
     def __init__(self, argument):
         from cas.numeric import Integer
-        super().__init__('ln', argument, action=lambda x: dmath.log(x) if isinstance(x, (Decimal, Integer)) else math.log(x))
+        Function.__init__(self, 'ln', argument, action=lambda x: dmath.log(x) if isinstance(x, (Decimal, Integer)) else math.log(x))
 
 class Sin(Function):
     ''' A class representing the sine of an algebraic expression '''
     def __init__(self, argument):
         from cas.numeric import Integer
-        super().__init__('sin', argument, action=lambda x: dmath.sin(x) if isinstance(x, (Decimal, Integer)) else math.sin(x))
+        Function.__init__(self, 'sin', argument, action=lambda x: dmath.sin(x) if isinstance(x, (Decimal, Integer)) else math.sin(x))
 
 class Cos(Function):
     ''' A class representing the cosine of an algebraic expression '''
     def __init__(self, argument):
         from cas.numeric import Integer
-        super().__init__('cos', argument, action=lambda x: dmath.cos(x) if isinstance(x, (Decimal, Integer)) else math.cos(x))
+        Function.__init__(self, 'cos', argument, action=lambda x: dmath.cos(x) if isinstance(x, (Decimal, Integer)) else math.cos(x))
 
 class Tan(Function):
     ''' A class representing the tangent of an algebraic expression '''
     def __init__(self, argument):
         from cas.numeric import Integer
-        super().__init__('tan', argument, action=lambda x: dmath.tan(x) if isinstance(x, (Decimal, Integer)) else math.tan(x))
+        Function.__init__(self, 'tan', argument, action=lambda x: dmath.tan(x) if isinstance(x, (Decimal, Integer)) else math.tan(x))
 
 class List():
     ''' A list type suitable for displaying variables '''

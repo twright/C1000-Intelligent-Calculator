@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.1
+from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 from functools import reduce

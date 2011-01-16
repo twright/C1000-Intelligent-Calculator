@@ -2,15 +2,7 @@
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 import os
-import random
-from tempfile import gettempdir
-import re
-random.seed()
-
-def gen_file_name():
-    ''' Generates a random file name in tmp '''
-    return re.sub(r'\\', r'/',
-        (gettempdir() + '\\plot-%s' % str(random.randint(1000,9999))), 100)
+from misc import gen_file_name
 
 class Gnuplot:
     def __init__(self, *f):
@@ -20,7 +12,7 @@ class Gnuplot:
 
         # Set file name if specified or use a file in tmp
         if len(f) == 1: self.file_name = str(*f)
-        else: self.root_file_name = gen_file_name()
+        else: self.root_file_name = gen_file_name('plot')
 
         # Set gnuplot to output to png, at the correct size
         # and to the correct file

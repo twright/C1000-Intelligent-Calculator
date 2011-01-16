@@ -9,7 +9,7 @@ import help
 
 class CalculatorForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super(Form, self).__init__(parent)
         uic.loadUi('gui.ui', self)
         self.calc = Calculator()
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.1
 ''' Various abstract methods and functions '''
+from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 def gcd(a, b):

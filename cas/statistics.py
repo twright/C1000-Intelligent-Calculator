@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.1
 ''' This module implements various methods for statistics 
 '''
+from __future__ import division
 __author__ = 'Thomas Wright <tom.tdw@gmail.com>'
 
 from dmath import e, pi

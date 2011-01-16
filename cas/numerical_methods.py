@@ -3,6 +3,7 @@
 This module draws from methods at:
     - http://mathworld.wolfram.com/Newton-CotesFormulas.html
 '''
+from __future__ import division, nested_scopes
 __author__ = 'Thomas Wright <tom.tdw@gmail.com>'
 
 from operator import mul
@@ -35,7 +36,7 @@ def to_fraction(x, places=10):
         z = (z - int(z))**(-1)
         t = copy(b)
         b = b * int(z) + B
-        a = round(abs(x) * b)
+        a = int(round(abs(x) * b))
         B = copy(t)
         if abs(x - x.__class__(a)/x.__class__(b)) < 5*x.__class__(10)**(-places) or z == int(z):
             break
@@ -52,7 +53,7 @@ def trapezoidal_composite_integral(f,a,b,m=100):
 
 def simpson_composite_integral(f,a,b,m=100):
     ''' Order 2 Newton-Cotes aproximation over m strips. '''
-    m = 2*round(m/2)
+    m = 2*int(round(m/2))
     h = (b-a)/m
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
@@ -61,7 +62,7 @@ def simpson_composite_integral(f,a,b,m=100):
 
 def simpson38_composite_integral(f,a,b,m=100):
     ''' Order 3 Newton-Cotes aproximation over m strips. '''
-    m = 3*round(m/3)
+    m = 3*int(round(m/3))
     h = (b-a)/m
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
@@ -71,7 +72,7 @@ def simpson38_composite_integral(f,a,b,m=100):
 
 def boole_composite_integral(f,a,b,m=100):
     ''' Order 4 Newton-Cotes aproximation over m strips. '''
-    m = 4*round(m/4)
+    m = 4*int(round(m/4))
     h = (b-a)/m
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
@@ -98,10 +99,9 @@ def durand_kerner_roots(f, order, n=100):
     ''' Numerically locate all roots (real and complex) of Polynomial of
         leading coefficient 1 using n iterations of the Durand-Kerner method.
         See: http://en.wikipedia.org/wiki/Durand-Kerner_method '''
-    xs = [ (0.4+0.9j)**n for n in range(order) ]
+    xs = [ (0.4+0.9j)**k for k in range(order) ]
     product = lambda ys: reduce(mul, ys, 1)
-    for i in range(n):
+    for k in range(n):
         for i in range(order):
-            xs[i] -= f(xs[i]) / product(xs[i] - y for y in xs if y is not xs[i])
+            xs[i] -= f(xs[i]) / product(xs[i] - xs[j] for j in range(order) if i != j)
     return xs
-

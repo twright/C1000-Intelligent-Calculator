@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.1
 ''' Tests for the core funcitonality of the cas. '''
+from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 import py.test

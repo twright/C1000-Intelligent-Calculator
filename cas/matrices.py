@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.1
 # coding=utf-8
 ''' A module containing code relating to Matrices. '''
+from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 from functools import reduce

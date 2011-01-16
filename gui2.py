@@ -11,7 +11,7 @@ import help
 
 class CalculatorForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super(Form, self).__init__(parent)
 #        self.ui = Ui_Calculator()
         uic.loadUi('gui2.ui', self)
     #    self.ui.__init__(self)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.1
 ''' Test the accuracy of numerical methods. '''
+from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 from math import *
@@ -9,9 +10,24 @@ import py.test
 from cas.numerical_methods import *
 
 def almost_equal(a, b, percentage=1):
-    return 100 * abs( (a - b) / b ) <= percentage
+    return 100 * abs( (a - b) / b if b != 0 else a - b ) <= percentage
+    
+class TestNumericalRoots():
+    def setup_class(self):
+        self.data = (
+            (lambda x: x**2 - x - 6, 2), (lambda x: x**2 - 1, 2),
+            (lambda x: x**2 + 1, 2), (lambda x: x, 1),
+            (lambda x: x**2 - (3/4)*x + 7/9, 2),
+            (lambda x: x**3 - 3*x**2 + (1/7)*x - 5, 3)
+        )
+    
+    def test_durand_kerner(self):
+        for f, order in self.data:
+            xs = durand_kerner_roots(f, order)
+            for x in xs:
+                assert almost_equal(f(x), 0)
 
-class TestNumericalMethods():
+class TestNumericalIntegration():
     def setup_class(self):
         self.data = (
             (lambda x: x**2 - x, 1, 3, 14/3),

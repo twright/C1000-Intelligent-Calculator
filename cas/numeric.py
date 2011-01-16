@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.1
 ''' Numeric types such as integer, reals and complex numbers. '''
+from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 from decimal import Decimal, getcontext, localcontext
@@ -136,42 +137,42 @@ class Real(Decimal):
         return self.__string
 
     def __repr__(self):
-        return "'" + super().__str__() + "'"
+        return "'" + super(Real,self).__str__() + "'"
 
     def __float__(self):
-        return float(super().__str__())
+        return float(super(Real,self).__str__())
 
     def __add__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Real(super().__add__(other, context))
+        return Real(super(Real,self).__add__(other, context))
     __radd__ = __add__
 
     def __sub__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Real(super().__sub__(other, context))
+        return Real(super(Real,self).__sub__(other, context))
 
     def __rsub__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Real(super().__rsub__(other, context))
+        return Real(super(Real,self).__rsub__(other, context))
 
     def __mul__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Real(super().__mul__(other, context))
+        return Real(super(Real,self).__mul__(other, context))
     __rmul__ = __mul__
 
     def __truediv__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Real(super().__truediv__(other, context))
+        return Real(super(Real,self).__truediv__(other, context))
 
     def __rtruediv__(self, other, context=None):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Real(super().__rtruediv__(other, context))
+        return Real(super(Real,self).__rtruediv__(other, context))
 
 
     def __pow__(self, other, context=None):
@@ -185,10 +186,10 @@ class Real(Decimal):
         return self.__class__(Decimal(other) ** Decimal(self))
 
     def __pos__(self, context=None):
-        return Real(super().__pos__(context))
+        return Real(super(Real,self).__pos__(context))
 
     def __neg__(self, context=None):
-        return Real(super().__neg__(context))
+        return Real(super(Real,self).__neg__(context))
 
     def __deepcopy__(self, memo=None):
         return Real(eval(repr(self)))
@@ -208,6 +209,8 @@ class Complex(complex):
     ''' A class to provide better handling of complex numbers '''
     def __new__(self, x):
         small = 0.00001
+        x = complex(x)
+#        x = x if isinstance(x, complex) else complex(x)
         # Complex numbers sufficiently small in magnitide should be replaced
         # with zero.
         if abs(x.real) < small and abs(x.imag) < small:
@@ -217,7 +220,7 @@ class Complex(complex):
         elif abs(x.imag) < small:
             return handle_type(x.real)
         else:
-            a = super().__new__(self, x)
+            a = complex.__new__(self, x)
             # Do not display brackets in multiplication if a number is close to
             # the set of imaginary numbers.
             if abs(x.real) < small: a._hints = {'a'}
@@ -254,13 +257,13 @@ class Complex(complex):
     def __add__(self, other):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Complex(super().__add__(other))
+        return Complex(super(Complex,self).__add__(other))
     __radd__ = __add__
 
     def __sub__(self, other):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Complex(super().__sub__(other))
+        return Complex(super(Complex,self).__sub__(other))
 
     def __rsub__(self, other):
         other = self._convert_other(other)
@@ -270,24 +273,26 @@ class Complex(complex):
     def __mul__(self, other):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Complex(super().__mul__(other))
+        return Complex(super(Complex,self).__mul__(other))
     __rmul__ = __mul__
 
     def __truediv__(self, other):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Complex(super().__truediv__(other))
+        return Complex(super(Complex,self).__truediv__(other))
 
-    def __rtruediv__(self, other):
-        other = self._convert_other(other)
-        if other == NotImplemented: return other
-        return Complex(super().__truediv__(other))
+    def __rtruediv__(self,other):
+        raise NotImplementedError()
 
+#    def __rtruediv__(self, other):
+#        other = self._convert_other(other)
+#        if other == NotImplemented: return other
+#        return Complex(super(Complex,other).__truediv__(self))
 
     def __pow__(self, other):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        return Complex(super().__pow__(other))
+        return Complex(super(Complex,self).__pow__(other))
 
     # Due to the limitations of floating point complex numbers, equality is
     # approximate
@@ -300,12 +305,12 @@ class Complex(complex):
         return abs(self - other) < 0.01
 
     def __pos__(self):
-        return Complex(super().__pos__())
+        return Complex(super(Complex,self).__pos__())
 
     def __neg__(self):
-        return Complex(super().__neg__())
+        return Complex(super(Complex,self).__neg__())
 
     def conjugate(self):
         ''' Return the complex conjugate. '''
-        return Complex(super().conjugate())
+        return Complex(super(Complex,self).conjugate())
 
