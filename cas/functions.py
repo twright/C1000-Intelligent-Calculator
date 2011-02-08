@@ -7,8 +7,7 @@ def gcd(a, b):
     ''' A recursive implementation of the euclidian greatest common divisor
     algorithm. '''
     def _gcd_div(a, b):
-        if b == 0: return a
-        else: return _gcd_div(b, a % b)
+        return a if b == 1 else _gcd_div(b, a % b)
 
     def _gcd_sub(a, b):
         if a == 0: return b

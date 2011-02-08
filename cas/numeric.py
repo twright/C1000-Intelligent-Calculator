@@ -82,6 +82,9 @@ class Integer(int):
                 i += 1
 
     def factors(self):
+        ''' The Fundermental Theorum of Artithmetic states that every integer
+        may be factorised into a unique product of prime factors. This function
+        returns them as a List. '''
         from cas.core import List
         return List(*self._factors())
 
@@ -122,7 +125,7 @@ def _real_str(y, exact_form, prec_offset):
     # Otherwise display as a decimal
     with localcontext():
         getcontext().prec -= prec_offset
-        return (str(+Decimal(y)), False)
+        return (str(Decimal(y)), False)
 
 class Real(Decimal):
     ''' A class to provide better handling of real numbers '''

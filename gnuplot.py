@@ -1,29 +1,29 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 import os
 from misc import gen_file_name
 
-class Gnuplot:
+
+class Gnuplot(object):
+    ''' An object respresenting a graph drawn via gnuplot. '''
+
     def __init__(self, *f):
         # Locate and open a session with gnuplot
-        if os.name == 'posix': self.session = os.popen('gnuplot','w')
-        else: self.session = os.popen(r'gnuplot\binary\gnuplot.exe','w')
+        if os.name == 'posix':
+            self.session = os.popen('gnuplot', 'w')
+        else:
+            self.session = os.popen(r'gnuplot\binary\gnuplot.exe', 'w')
 
         # Set file name if specified or use a file in tmp
-        if len(f) == 1: self.file_name = str(*f)
-        else: self.root_file_name = gen_file_name('plot')
+        if len(f) == 1:
+            self.file_name = str(*f)
+        else:
+            self.root_file_name = gen_file_name('plot')
 
         # Set gnuplot to output to png, at the correct size
         # and to the correct file
         self.set_format('svg')
-        #self.send('set term svg enhanced size 400, 400')
-        #self.send('set output "{}"'.format(self.file_name))
-
-    #    self.send('set font "consolas"')
-    #    self.send('set enhanced')
-    #    self.send('set nocrop')
-    #    self.send('set size 60,50')
 
         # Specify appearance options
         self.send('set samples 1000')
@@ -31,7 +31,6 @@ class Gnuplot:
         self.send('set ylabel "y"')
         self.send('unset key')
         self.send('set grid')
-
 
     def set_format(self, format):
         if format == 'svg':
@@ -42,7 +41,7 @@ class Gnuplot:
         self.send('set output "{}"'.format(self.file_name))
 
     def set_size(self, x, y):
-        self.send('set size {}, {}'.format(x,y))
+        self.send('set size {}, {}'.format(x, y))
 
     def __del__(self):
         self.session.close()
@@ -68,4 +67,3 @@ class Gnuplot:
 
     def replot(self):
         self.send('replot')
-

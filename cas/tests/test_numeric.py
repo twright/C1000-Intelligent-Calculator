@@ -24,7 +24,10 @@ class TestComplex():
                 assert str(Complex(x)) == string
 
     def test_addition(self):
+        # TODO: Update/change
         assert isinstance(Complex(3+2j) + Complex(-1+5j), Complex)
+        
+    # TODO: Add some more tests for complex numbers
 
 class TestInteger():
     def test_init(self):

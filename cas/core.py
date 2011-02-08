@@ -134,7 +134,8 @@ class Algebra (object):
     __rmul__ = __mul__
 
     def __truediv__(self, other):
-        return self if other == 1 else Fraction(self, other)
+        return self if other == 1 else ht(1) if self == other\
+            else Fraction(self, other)
 
     def __rtruediv__(self, other):
         return handle_type(0) if other == 0 else Fraction(other, self)
@@ -234,7 +235,6 @@ def dedup(f, xs, identity):
     xs  - the list of elements
     identity - the elements which when present in the list, does not change the
         list's overall value (i.e. 1 is the multiplicative identity)'''
-    #print(list(map(str, xs)), f)
     def can_simplify(a, b):
         ''' Determine whether calling f on two variable will result in a single
         element within the list. If f is called with this not being the case,
@@ -372,6 +372,10 @@ class Fraction(Algebra):
         (partial_differential(self.numerator(),x)*self.denominator()
             - partial_differential(self.denominator(),x)*self.numerator())\
             / self.denominator()**2
+            
+    def __call__(self, x, variable=None):
+        ''' Evaluate the fraction when variable = x '''
+        return self.numerator()(x, variable) / self.denominator()(x, variable)
 
     _hints = {'m','d','p'}
 
@@ -442,10 +446,14 @@ class Sum(Algebra):
     _hints = {'m','p','d','a'}
 
     def roots(self, n=1000):
-        ''' Numerically locate all real and complex roots of an equation using
-        n iterations of the Durand-Kerner method. '''
+        ''' The Fundermental Theorum of Algebra states that a polynomial of
+        order m will have m complex roots. This function will numerically locate  
+        them using n iterations of the Durand-Kerner method and return them
+        as a List. '''
         from cas.numeric import Complex
         assert is_poly(self)
+        assert isinstance(n, int)
+        
         # For order 1 polynomials there is only 1 trivial root
         if order(self) == 1:
             return [ - self[1] ] if isinstance(self[0], Symbol)\
@@ -461,9 +469,8 @@ class Sum(Algebra):
         return map(Complex, roots)
 
     def factors(self):
-        ''' The Fundermental Theorum of Artithmetic states that every integer
-        may be factorised into a unique product of prime factors. This function
-        lists them. '''
+        ''' Return a polynomial equation as the product of its irreducible
+        factors '''
         if is_poly(self):
             a = 1 if isinstance(self[0], (Symbol, Power)) else self[0][0]
             x = self[0] if isinstance(self[0], Symbol)\

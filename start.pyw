@@ -1,36 +1,35 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 from PyQt4 import QtCore, QtGui, uic
 
+from gui2 import CalculatorForm as SimpleUiForm
+from gui import CalculatorForm as AdvancedUiForm
+from webstart import Form as WebUiForm
+
 class Form(QtGui.QDialog):
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
-#        self.ui = Ui_Calculator()
-        uic.loadUi('start.ui', self)
-    #    self.ui.__init__(self)
+        self.ui = uic.loadUi('start.ui', self)
 
     @QtCore.pyqtSlot()
     def on_btn_simple_pressed(self):
-        from gui2 import CalculatorForm
-        ui = CalculatorForm()
-        self.hide()
+        ui = SimpleUiForm()
+        # self.hide()
         ui.show()
 
     @QtCore.pyqtSlot()
     def on_btn_advanced_pressed(self):
-        from gui import CalculatorForm
-        ui = CalculatorForm()
-        self.hide()
+        ui = AdvancedUiForm()
+        # self.hide()
         ui.show()
 
     @QtCore.pyqtSlot()
     def on_btn_web_pressed(self):
-        from webstart import Form
-        form = Form()
-        form.show()
-#        WebUiManager()
-#        self.hide()
+        ui = WebUiForm()
+        ui.show()
+        # ui.webui.start()
+        # self.hide()
 
 
 if __name__ == '__main__':

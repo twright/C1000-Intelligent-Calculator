@@ -1,0 +1,21 @@
+<!doctype html>
+<head>
+    <title>C1000 Intelligent Calculator</title>
+    <link rel='stylesheet' href='css/style.css' />
+</head>
+<body>
+    <h1>C1000 Intelligent Calculator</h1>
+    <div class='center'>
+        <div contentEditable='True' onkeyup='keypress()' id='question' class='input'></div>
+        
+        <div id='answers' class='results' style='display : none'></div>
+        <p class='info'><a href='help/index.html' target='_blank'>help</a> |
+        <a href='workings'>save workings</a></p>
+    </div>
+
+    <script src='js/jquery-1.4.4.min.js'></script>
+    <script src='js/rangy-core.js'></script>
+    <script src='js/rangy-selectionsaverestore.js'></script>
+    <script src='js/graph.js'></script>
+    <script src='js/ui.js'></script>
+</body>
