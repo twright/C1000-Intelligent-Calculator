@@ -21,7 +21,8 @@ function simplePlot(f, a, b) {
     this.xmin = a; this.xmax = b;
     this.amin = a; this.amax = b;
     type = calc('type(' + f + ')');
-    samples = ((type.match('.*(Sin|Cos|Tan).*') == null) ? 5000 : 500);
+    samples = 500;
+    // samples = ((type.match('.*(Sin|Cos|Tan).*') == null) ? 5000 : 500);
     this.addRange(calc('evalbetween(' + f + ',' + a + ',' + b
         + ',' + samples + ')'));
     this.draw();

@@ -13,7 +13,7 @@ class CalculatorForm(QtGui.QMainWindow):
 
     def __init__(self, parent=None):
         super(CalculatorForm, self).__init__(parent)
-        uic.loadUi('gui.ui', self)
+        uic.loadUi('advancedui.ui', self)
         self.calc = Calculator()
 
     @QtCore.pyqtSlot()

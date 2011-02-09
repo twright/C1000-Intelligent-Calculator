@@ -16,7 +16,7 @@ class Form(QtGui.QDialog):
         super(Form, self).__init__(parent)
         uic.loadUi('webstart.ui', self)
         address = 'http://' + socket.gethostname() + ':8080/'
-        open_new(address)
+        #open_new(address)
         self.label.setText('Web Interface running at'
             + ' <a href = "{0}">{0}</a>'.format(address))
         self.webui = Thread(target=start_webui)

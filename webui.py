@@ -81,8 +81,6 @@ def start_webui():
         '/': {'tools.sessions.on': True, 'tools.sessions.timeout': 90},
         '/help': {'tools.staticdir.on': True,
             'tools.staticdir.dir': abspath('help')},
-        '/stuff': {'tools.staticdir.on': True,
-            'tools.staticdir.dir': abspath('stuff')},
         '/js': {'tools.staticdir.on': True,
             'tools.staticdir.dir': abspath('webui/js')},
         '/css': {'tools.staticdir.on': True,
