@@ -54,7 +54,7 @@ def gnuplot(f, *between):
     file_name, root_file_name = graph.file_name, graph.root_file_name
     graph.plot_function(f, *between)
     return StrWithHtml('Image saved to ' + file_name,
-        '''<img src="{}.png" style="width: 100%" />'''.format(root_file_name))
+        '''<img src="{}.svg" style="width: 100%" />'''.format(root_file_name))
 
 #PI = Real('3.14159265358979323846264338327950288419716939937510582097230781'
 #    + '640628620899862803458534211706798')
@@ -149,8 +149,8 @@ class Calculator(object):
         # Misc
             'yum': pi,
             'plot': lambda f, a=-10, b=10: StrWithHtml('testing...',
-                '''<canvas id="{0}" onclick="new CartesianPlot('{0}').simplePlot('{1}',{2},{3})" width="600" height="600"></canvas>'''.format('graph-'
-                    + str(random.randint(1, 1000)), f, a, b)),
+                '''<canvas id="{0}" onclick="new CartesianPlot('{0}').simplePlot('{1}',{2},{3})" width="600" height="600">{4}</canvas>'''.format('graph-'
+                    + str(random.randint(1, 1000)), f, a, b, gnuplot(f, a, b).html)),
             'polarplot': lambda f, a=-pi(), b=pi(): StrWithHtml('testing...',
                 '''<canvas id="{0}" onclick="new PolarPlot('{0}').simplePlot('{1}',{2},{3})" width="600" height="600"></canvas>'''.format('graph-'
                     + str(random.randint(1, 1000)), f, a, b)),

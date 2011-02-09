@@ -21,7 +21,6 @@ class Form(QtGui.QDialog):
     def on_btn_advanced_pressed(self):
         advancedui.show()
         self.hide()
-        
 
     @QtCore.pyqtSlot()
     def on_btn_web_pressed(self):
@@ -39,4 +38,3 @@ if __name__ == '__main__':
     form = Form()
     form.show()
     sys.exit(app.exec_())
-

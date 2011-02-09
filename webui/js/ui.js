@@ -7,7 +7,7 @@ function add_result(a, q) {
     var answers = document.getElementById('answers');
     div.innerHTML = '<h4 class="question">' + q + '</h4>' + '<p>' + a + '</p>';
     answers.insertBefore(div, answers.firstChild);
-        
+    
     if (a.match('/.*canvas.*'))
         eval(a.match('<canvas.*onclick="([^"]*)".*>.*</canvas>')[1]);
 }

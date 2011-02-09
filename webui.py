@@ -40,13 +40,15 @@ class Root:
         if isinstance(ans, StrWithHtml):
             ans = re.sub(r'c:/users/.*/appdata/local/temp/', r'/tmp/',
                 ans.html, 100)
+            ans = re.sub('[ ]?style=".*"', '', ans, 100)
+            ans = re.sub('</?canvas[^>]*>', '', ans, 100)
+            ans = re.sub('svg', 'png', ans, 100)
         else:
             ans = '\n'.join(map(lambda a: '<p>' + a + '</p>',
                 re.split(r"\n", ans)))
         cherrypy.session['workings'] += ('<div style="page-break-after">'
             + '<h4 style="-pdf-keep-with-next">{}'
-            + '</h4>\n<div>{}\n</div></div>\n').format(question,
-            re.sub('[ ]?style=".*"', '', ans, 100))
+            + '</h4>\n<div>{}\n</div></div>\n').format(question, ans)
         return json.dumps({'answer': ans})
 
     @cherrypy.expose
