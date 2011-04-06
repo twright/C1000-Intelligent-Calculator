@@ -1,0 +1,35 @@
+<page xmlns="http://projectmallard.org/1.0/"
+    type="guide" id="getting_started">
+    <info><link type="guide" xref="index"/></info>
+    <title>Accessing And Using The Calculator</title>
+    <p>To get started with the calculator, open the calculator's folder
+    and double click start.pyw</p>
+    <media type='image' src='images/opening-start.png' width='450' />
+    <p>This should give you the choice of three ways of using the
+    calculator: Simple Mode, Advanced Mode and Web Interface</p>
+    <media type='image' src='images/start.png' />
+    
+    <section id='simple'>
+		<title>Simple Mode</title>
+		<p>The simple mode provides a button driven interface similar to
+		traditional calculators which is similar to traditional 
+		calculators and suitable for use with an interactive
+		whiteboard.</p>
+		<p>You can press button to add common functions, manually type
+		expressions and press <code>enter</code> or the <code>=</code>
+		button to calculate the result.</p>
+		<media type='image' src='images/simple.png'
+		width='450' />
+    </section>
+    
+    <section id='simple'>
+		<title>Advanced Mode</title>
+		<p>The advanced mode provides a text driven interface which
+		may be harder to get farmilar with but provides more
+		functionality and allows for faster calculation.</p>
+		<p>You can type expressions into the box at the top and press
+		<code>enter</code> to calculate the result.</p>
+		<media type='image' src='images/advanced.png'
+		width='450' />
+    </section>
+</page>
