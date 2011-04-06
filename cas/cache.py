@@ -6,9 +6,7 @@ def lru_cache(maxsize=100):
 
     Arguments to the cached function must be hashable.
     Cache performance statistics stored in f.hits and f.misses.
-    http://en.wikipedia.org/wiki/Cache_algorithms#Least_Recently_Used
-
-    '''
+    http://en.wikipedia.org/wiki/Cache_algorithms#Least_Recently_Used '''
     def decorating_function(user_function):
         cache = collections.OrderedDict()    # order: least recent to most recent
 

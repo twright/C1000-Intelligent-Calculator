@@ -1,109 +1,158 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python
+# coding=utf-8
 ''' Provides core types/classes from use throughout the Computer Algebra
 System representing simple objects such as Symbol, Products, Sums and Fractions
 whilst providing functions to allocate types. '''
 from __future__ import division, unicode_literals
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
+# Standard modules
+import math
 import re
 from decimal import Decimal
 from functools import reduce, partial
 from operator import add, mul
 from numbers import Number
 
+# Third party modules
 import dmath
-import math
+
+# Project modules
 import cas.numerical_methods as nm
-#from cas.matrices import Matrix
+from algorithms import sort as sorted
 
 # Convert object to strings based on their precedence
-#m_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_brackets') and a._brackets['m'] else ('*' if isinstance(a, Function) else '') + str(a)
-m_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'm' in a._hints else str(a)
-m_str.__doc__ = ''' Convert an object to a string within the context of a product '''
-d_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'd' in a._hints else str(a)
-d_str.__doc__ = ''' Convert an object to a string within the context of a fraction '''
-p_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'p' in a._hints else str(a)
-p_str.__doc__ = ''' Convert an object to a string within the context of indices '''
-a_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'a' in a._hints else str(a)
-a_str.__doc__ = ''' Convert an object to a string within the context of a sum '''
+m_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'm'\
+    in a._hints else str(a)
+m_str.__doc__ = ''' Convert an object to a string within the context of 
+a product '''
+d_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'd'\
+    in a._hints else str(a)
+d_str.__doc__ = ''' Convert an object to a string within the context of 
+a fraction '''
+p_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'p'\
+    in a._hints else str(a)
+p_str.__doc__ = ''' Convert an object to a string within the context of
+indices '''
+a_str = lambda a: '(' + str(a) + ')' if hasattr(a, '_hints') and 'a'\
+    in a._hints else str(a)
+a_str.__doc__ = ''' Convert an object to a string within the context of
+a sum '''
 order = lambda a: a.order() if hasattr(a, 'order') else 0
 order.__doc__ = ''' Return the order of an equation '''
-evaluate = lambda y, x, variable=None: y(x, variable) if hasattr(y, '__call__') else y
+evaluate = lambda y, x, variable=None: y(x, variable)\
+    if hasattr(y, '__call__') else y
 evaluate.__doc__ = ''' Evaluate y at x '''
 
 def handle_type (x):
-    ''' Takes in a variable (x) and output it in the most desirable type '''
+    ''' Takes in a variable, x, and output it in the most desirable
+    type '''
+    # Required types are imported within the scope of the function rather than
+    # that of the module to prevent a circular dependency.
     from cas.numeric import Integer, Complex, Real
-    if isinstance(x, Integer) or isinstance(x, Real) or isinstance(x,Complex):
+    if isinstance(x, Integer) or isinstance(x, Real)\
+        or isinstance(x,Complex):
+        # Leave Integers, Reals and Complexs unchanged.
         return x
     elif isinstance(x, int):
+        # Convert standard python ints to Integers.
         return Integer(x)
     elif isinstance(x, Decimal):
+        # Convert standard python Decimals to Reals
         return Real(x)
     elif isinstance(x, str) and re.match(r'^[0-9]+$', x):
+        # Convert strs representing integers to Integers
         return Integer(x)
     elif isinstance(x, str) and re.match(r'^[0-9]+\.[0-9]+$', x):
+        # Convert strs representing decimals to Reals
         return Real(x)
     elif isinstance(x, float):
+        # Convert standard python floats to Reals
         return +Real(repr(x))
+        # FIXME: .normalize() may be better here
     elif isinstance(x, complex):
+        # Handle complex numbers
         if abs(x.imag) < 0.0001:
+            # Covert complex numbers with small imaginary parts to Reals.
+            # FIXME: This will inversely impact precision.
             return +Real.from_float(x.real)
+            # FIXME: .normalize() may be better here
         else:
+            # Convert all other standard python 
             return Complex(x)
     else:
         return x
+# Set ht as a shortcut to handle_type.
 ht = handle_type
 
 def expand(a):
     ''' Fully expand an equation '''
     if isinstance(a, Sum):
+        # Recursively expand all elements of a sum
         return sum(map(expand, a))
-    elif isinstance(a, Product) and len(a) == 2 and isinstance(a[1], Sum):
+    elif isinstance(a, Product) and len(a) == 2\
+        and isinstance(a[1], Sum):
+        # Apply the distributive principle to 2 item products where the second
+        # item is a sum (note that sums are guaranteed to be placed at the end
+        # of products). This acts as the base case for products of more items.
         return sum(map(lambda b: expand(a[0] * b), a[1]))
     elif isinstance(a, Product) and len(a) > 2:
+        # Recursively expand products with more than 2 items.
         return expand(a[0] * expand(a[1:]))
     else:
+        # Anything else cannot be expanded.
         return a
 
-def is_poly(a):
-    ''' Determine whether an equation is in a polynomial-like form '''
-    if isinstance(a,(Symbol, Number)):
+def is_poly(y):
+    ''' Determine whether an equation, y, is in a polynomial-like
+    form. '''
+    if isinstance(y,(Symbol, Number)):
+        # Lone variables and numbers are polynomials.
         return True
-    elif isinstance(a,Sum):
-        return reduce(lambda a,b: a and b, map(is_poly, a))
-    elif isinstance(a,Product) and len(a) == 2:
-        return is_poly(a[0]) and is_poly(a[1])
-    elif isinstance(a,Power):
-        return isinstance(a.a(), Symbol) and isinstance(a.b(), Number)
+    elif isinstance(y,(Product, Sum)):
+        # Products or Sums of polynomials are considered to be polynomials.
+        return reduce(lambda a,b: a and b, map(is_poly, y))
+    elif isinstance(y,Power):
+        # Anything of form x^n where n is a constant is considered to be
+        # polynomial-like (note this deviates from the exact mathematical
+        # definition where n must be a natural number).
+        return isinstance(y.a(), Symbol) and isinstance(y.b(), Number)
     else:
+        # Anything else is non-polynomial-like.
         return False
 
 def partial_differential(y, x):
     ''' Return the partial differential of y with respect to x '''
     pd = partial(partial_differential, x=x)
     if isinstance(y,Number):
+        # All constants have a rate of change of 0.
         return 0
     elif hasattr(y, 'partial_differential'):
+        # Most algebraic classes implement differentiation as a method.
         return y.partial_differential(x)
     elif isinstance(y,Ln):
+        # Apply chain rule to natural logarithms.
         return pd(y.x()) / y.x()
     elif isinstance(y,Sin):
+        # Apply chain rule to Sine.
         return pd(y.x()) * Cos(y.x())
     elif isinstance(y,Cos):
+        # Apply chain rule to Cosine.
         return pd(y.x()) * -Sin(y.x())
     elif isinstance(y,Tan):
+        # Apply chain rule to Tangent.
         return pd(y.x()) / Cos(y.x())**2
     else:
         return NotImplemented
 
 def _partial_integral(y, x):
         ''' A recursive function to perform the actual integration'''
-        ht = handle_type
         assert isinstance(x, Symbol)
         if isinstance(y,Number):
+            # The integral of a constant y with respect to x is y·x.
             return y*x
         elif hasattr(y, 'partial_integral'):
+            # Most algebraic classes implement integration as a method.
             return y.partial_integral(x)
         else:
             return NotImplemented
@@ -114,11 +163,13 @@ def partial_integral(y, x):
     I = expand(_partial_integral(y,x))
     return I + Symbol('c') if I != NotImplemented else NotImplemented
 
+
 class Algebra (object):
-    ''' A class to hold an arbitrary algebraic expression; the superclass of all
-    algebraic classes '''
+    ''' A class to hold an arbitrary algebraic expression; the superclass of
+    all algebraic classes '''
     def __add__(self, other):
-        return self if other == 0 else 2 * self if self == other else Sum(self, other)
+        return self if other == 0 else 2 * self if self == other\
+            else Sum(self, other)
 
     __radd__ = __add__
 
@@ -129,7 +180,8 @@ class Algebra (object):
         return (-self) + other
 
     def __mul__(self, other):
-        return self if other == 1 else handle_type(0) if other == 0 else Product(self, other)
+        return self if other == 1 else handle_type(0) if other == 0\
+            else Product(self, other)
 
     __rmul__ = __mul__
 
@@ -144,12 +196,15 @@ class Algebra (object):
         return (-1) * self
 
     def __pow__(self, other):
-        return self if other == 1 else 1 if other == 0 else Power(self, other)
+        return self if other == 1 else 1 if other == 0\
+            else Power(self, other)
 
     def numerical_integral(self, method, a, b, *n):
-        ''' Numerically integrate between b and a using the specified method '''
+        ''' Numerically integrate between b and a using the specified 
+        method '''
         f = lambda x: float(self(x))
-        return Decimal.from_float(method(f, float(a), float(b), *n)).normalize()
+        return Decimal.from_float(method(f, float(a), float(b),
+            *n)).normalize()
 
     def trapezoidal_integral(self, *a):
         ''' Numerically integrate via the trapezium rule '''
@@ -171,15 +226,14 @@ class Algebra (object):
     def as_gnuplot_expression(self):
         ''' Convert into the gnuplot format '''
         # TODO: Replace with something much more general
-        from re import sub
         expr = str(self)
-        expr = sub(r'[a-z]', r'x', expr, 100)
+        expr = re.sub(r'[a-z]', r'x', expr, 100)
         # Add * from multiplication
-        expr = sub(r'([0-9])x', r'\1*x', expr, 100)
+        expr = re.sub(r'([0-9])x', r'\1*x', expr, 100)
         # Add * for bracket multiplication
-        expr = sub(r'([^/ ])\(', r'\1*(', expr, 100)
+        expr = re.sub(r'([^/ ])\(', r'\1*(', expr, 100)
         # Replace ^ with ** for powers
-        expr = sub(r'\^', r'**', expr, 100)
+        expr = re.sub(r'\^', r'**', expr, 100)
         return expr
 
 class Symbol(Algebra):
@@ -226,21 +280,29 @@ class Symbol(Algebra):
         return str(self.__name)
 
     # This set identifies in which circumstances an expression needs to be
-    # surrounded by brackets
+    # surrounded by brackets.
     _hints = {}
 
+#_dedup_recurring = False
 def dedup(f, xs, identity):
     ''' Combine any elements possible in a sum or product.
     f   - the basic operation underlying the list (i.e. add, mul)
     xs  - the list of elements
-    identity - the elements which when present in the list, does not change the
+    identity - the element which when present in the list, does not change tphe
         list's overall value (i.e. 1 is the multiplicative identity)'''
+#    global _dedup_recurring
     def can_simplify(a, b):
         ''' Determine whether calling f on two variable will result in a single
         element within the list. If f is called with this not being the case,
         it will infinitely recurse. '''
+#        global simp_called
         # TODO: This bit really needs replacing with something much more robust
         I = isinstance
+#        if simp_called:
+#            return False
+#        else:
+#            simp_called = True
+#            return True
         if I(a, Number) and I(b, Number):
             return True
         elif I(a, Symbol) and I(b, Symbol) and a == b:
@@ -257,19 +319,36 @@ def dedup(f, xs, identity):
 
     i = 1; prev = xs[0]
     while i < len(xs):
-        if can_simplify(prev, xs[i]):
+        if can_simplify(prev, xs[i]):#not _dedup_recurring:
+        #    print 'test'
+        #    _dedup_recurring = True
             prev = f(prev, xs[i])
         else:
+        #    print prev
             if prev != identity: yield prev
             prev = xs[i]
+        #_dedup_recurring = False
         i += 1
+    #print prev
     if prev != identity or len(xs) == 1: yield prev
+
+#_dedup_recurring = False
+#def dedup(f, xs, identity):
+#    global _dedup_recurring
+#    if _dedup_recurring:
+#        return xs
+#    else:
+#        _dedup_recurring = True
+#        print ys
+#        ys = reduce(f, xs, identity)
+#        _dedup_recurring = False
+#        return ys
 
 class Product(Algebra):
     ''' A class representing the product of multiple elements '''
     def __new__(self, *a):
-        # Order the elements based upon their type and position within the alphabet,
-        # to ensure the order is always deterministic
+        # Order the elements based upon their type and position within the
+        # alphabet, to ensure the order is always deterministic
         I = isinstance
         rank_type = lambda a: (1*I(a, Number) + 2*I(a, Symbol) + 3*I(a, Power)
             + 4*I(a, Product) + 5*I(a, Sum) + 6*I(a, Function))
@@ -277,6 +356,7 @@ class Product(Algebra):
             else ord(str(a.a())) if I(a, Power) and I(a.b(), Symbol)
             else 100)
 
+        #print dedup(mul, sorted(a, key=rank), 1)
         terms = list(dedup(mul, sorted(a, key=rank), 1))
         if len(terms) > 1 and terms[0] != 0:
             b = Algebra.__new__(self); b.__terms = terms
@@ -313,13 +393,17 @@ class Product(Algebra):
 
     def __repr__(self):
         ''' Return the string representation of the product. '''
-        return ('-' if isinstance(self[0], Number) and self[0] == -1 else m_str(self[0]))\
-            + (''.join(map(m_str, self[1:])) if len(self) > 2 else m_str(self[1]))
+        return ('-' if isinstance(self[0], Number) and self[0] == -1
+            else m_str(self[0])) + (''.join(map(m_str, self[1:]))
+            if len(self) > 2 else m_str(self[1]))
 
+    # This set identifies in which circumstances an expression needs to be
+    # surrounded by brackets.
     _hints = {'d','p'}
 
     def __mul__(self, other):
-        return Product(*(list(self) + (list(other) if isinstance(other, Product) else [other])))
+        return Product(*(list(self)
+            + (list(other) if isinstance(other, Product) else [other])))
 
     __rmul__ = __mul__
 
@@ -333,13 +417,15 @@ class Product(Algebra):
             return Product(self[0] + handle_type(1), self[1])
         else:
             return Algebra.__add__(self, other)
+    __radd__ = __add__
 
     def partial_differential(self, x):
         ''' Return the partial differential with respect to x. '''
         if is_poly(self):
             return self[0] * partial_differential(self[1],x)
         else:
-            return NotImplemented
+            return expand(self[0] * partial_differential(self[1:], x)
+                + self[1:] * partial_differential(self[0], x))
 
     def partial_integral(self, x):
         ''' Return the partial integral with respect to x. '''
@@ -368,15 +454,17 @@ class Fraction(Algebra):
 
     def partial_differential(self, x):
         ''' Return the partial differential with respect to x. '''
-        # Quotant rule
+        # Quotient rule
         (partial_differential(self.numerator(),x)*self.denominator()
             - partial_differential(self.denominator(),x)*self.numerator())\
             / self.denominator()**2
-            
+
     def __call__(self, x, variable=None):
         ''' Evaluate the fraction when variable = x '''
         return self.numerator()(x, variable) / self.denominator()(x, variable)
 
+    # This set identifies in which circumstances an expression needs to be
+    # surrounded by brackets
     _hints = {'m','d','p'}
 
 class Sum(Algebra):
@@ -387,7 +475,8 @@ class Sum(Algebra):
         # deterministic.
         rank_type = lambda a: (2*I(a,Power) + 2*I(a,Product) + 3*I(a,Symbol)
             + 4*I(a,Number))
-        rank = lambda a: 10000 * rank_type(a) - (a.order() if hasattr(a,'order') else 100)
+        rank = lambda a: 10000 * rank_type(a)\
+            - (a.order() if hasattr(a,'order') else 100)
 
         terms = list(dedup(add, sorted(a, key=rank), ht(0)))
         if len(terms) > 1:
@@ -399,7 +488,8 @@ class Sum(Algebra):
 
     def __call__(self, x, variable=None):
         ''' Evaluate self when variable is equal to x. '''
-        return reduce(lambda a,b: evaluate(a,x,variable) + evaluate(b,x,variable), self, 0)
+        return reduce(lambda a, b: evaluate(a,x,variable)
+            + evaluate(b,x,variable), self, 0)
 
     def __getitem__(self, i):
         ''' Return the term(s) at/in position or range i. '''
@@ -411,8 +501,18 @@ class Sum(Algebra):
     def __len__(self):
         return len(self.__terms)
 
+#    def __mul__(self, other):
+#        # TODO: Test this
+#        return Sum(*map(lambda x: x*other, self))
+#    __rmul__ = __mul__
+
     def __add__(self, other):
-        return Sum(*(list(self) + (list(other) if isinstance(other, Sum) else [other])))
+        if other == 0:
+            return self
+        else:
+            return Sum(*(list(self) + (list(other) if isinstance(other, Sum)
+                else [other])))
+    __radd__ = __add__
 
     def order(self):
         ''' Return the greatest order of any term. '''
@@ -426,13 +526,19 @@ class Sum(Algebra):
     def __repr__(self):
         ''' Return the string representation of the sum. '''
         def sf(a):
+            ''' It's complicated! '''
+            # TODO: I must somehow explain this function in simple language.
             if isinstance(a, Product) and isinstance(a[0], complex):
-                return ' ' + ('- ' + m_str(handle_type(abs(a[0].imag)) if a[0].real > -0.00001 else -a[0])
-                    if a[0].imag < 0 and a[0].real < 0.00001 else '+ ' + m_str(a[0])) + m_str(a[1:])
+                return ' ' + ('- ' + m_str(handle_type(abs(a[0].imag))
+                    if a[0].real > -0.00001 else -a[0])
+                    if a[0].imag < 0 and a[0].real < 0.00001
+                    else '+ ' + m_str(a[0])) + m_str(a[1:])
             if isinstance(a, Product) and isinstance(a[0], Number):
-                return ' ' + ('-' if a[0] < 0 else '+') + ' ' + str(abs(a[0]) * a[1:])
+                return ' ' + ('-' if a[0] < 0 else '+') + ' '\
+                    + str(abs(a[0]) * a[1:])
             elif isinstance(a, complex):
-                return ' ' + ('- ' + a_str(handle_type(abs(a.imag)) if a.real > -0.00001 else -a)
+                return ' ' + ('- ' + a_str(handle_type(abs(a.imag))
+                    if a.real > -0.00001 else -a)
                     if a.imag < 0 and a.real < 0.00001 else '+ ' + a_str(a))
             elif isinstance(a, Number):
                 return ' ' + ('-' if a < 0 else '+') + ' ' + a_str(abs(a))
@@ -443,17 +549,19 @@ class Sum(Algebra):
 
         return str(self[0]) + ''.join(map(sf, listify(self[1:])))
 
+    # This set identifies in which circumstances an expression needs to be
+    # surrounded by brackets.
     _hints = {'m','p','d','a'}
 
     def roots(self, n=1000):
         ''' The Fundermental Theorum of Algebra states that a polynomial of
-        order m will have m complex roots. This function will numerically locate  
-        them using n iterations of the Durand-Kerner method and return them
-        as a List. '''
+        order m will have m complex roots. This function will numerically
+        locate them using n iterations of the Durand-Kerner method and return
+        them as a List. '''
         from cas.numeric import Complex
         assert is_poly(self)
         assert isinstance(n, int)
-        
+
         # For order 1 polynomials there is only 1 trivial root
         if order(self) == 1:
             return [ - self[1] ] if isinstance(self[0], Symbol)\
@@ -512,25 +620,29 @@ class Power(Algebra):
             if isinstance(other, self.__class__) else False
 
     def __mul__(self, other):
-        return Power(self.a(), self.b() + other.b()) if isinstance(other, self.__class__) \
-            and self.a() == other.a()\
+        return Power(self.a(), self.b() + other.b())\
+            if isinstance(other, self.__class__) and self.a() == other.a()\
             else self.a() ** (self.b() + handle_type(1)) if self.a() == other\
-            else Algebra.__mul__(self, other) if not isinstance(other, Algebra)\
-            else NotImplemented
+            else Algebra.__mul__(self, other)
 
     __rmul__ = __mul__
 
+    def __add__(self, other):
+        if isinstance(other, Product):
+            return NotImplemented
+        else:
+            return Algebra.__add__(self, other)
+
     def partial_differential(self, x):
         ''' Return the partial differential with respect to x. '''
-        if is_poly(self):
-            return self.b() * partial_differential(self.a(),x) * (self.a() ** (self.b() + ht(-1)))
-        else:
-            return NotImplemented
+        return self.b() * partial_differential(self.a(), x)\
+            * (self.a() ** (self.b() + ht(-1)))
 
     def partial_integral(self, x):
         ''' Return the partial integral with respect to x. '''
         if is_poly(self):
-            return ( ht(1) / (self.b() + ht(1)) ) * self.a() ** (self.b() + ht(1))
+            return ( ht(1) / (self.b() + ht(1)) )\
+                * self.a() ** (self.b() + ht(1))
         else:
             return NotImplemented
 
@@ -558,28 +670,34 @@ class Function(Algebra):
         return self.__name + '(' + str(self.__argument) + ')'
 
 class Ln(Function):
-    ''' A class representing the natural logarithm of an algebraic expression '''
+    ''' A class representing the natural logarithm of an algebraic
+    expression '''
     def __init__(self, argument):
         from cas.numeric import Integer
-        Function.__init__(self, 'ln', argument, action=lambda x: dmath.log(x) if isinstance(x, (Decimal, Integer)) else math.log(x))
+        Function.__init__(self, 'ln', argument, action=lambda x: dmath.log(x)
+            if isinstance(x, (Decimal, Integer)) else math.log(x))
 
 class Sin(Function):
     ''' A class representing the sine of an algebraic expression '''
     def __init__(self, argument):
         from cas.numeric import Integer
-        Function.__init__(self, 'sin', argument, action=lambda x: dmath.sin(x) if isinstance(x, (Decimal, Integer)) else math.sin(x))
+        Function.__init__(self, 'sin', argument, action=lambda x: dmath.sin(x)
+            if isinstance(x, (Decimal, Integer)) else math.sin(x))
 
 class Cos(Function):
     ''' A class representing the cosine of an algebraic expression '''
     def __init__(self, argument):
         from cas.numeric import Integer
-        Function.__init__(self, 'cos', argument, action=lambda x: dmath.cos(x) if isinstance(x, (Decimal, Integer)) else math.cos(x))
+        Function.__init__(self, 'cos', argument, action=lambda x: dmath.cos(x)
+            if isinstance(x, (Decimal, Integer)) else math.cos(x))
 
 class Tan(Function):
     ''' A class representing the tangent of an algebraic expression '''
     def __init__(self, argument):
         from cas.numeric import Integer
-        Function.__init__(self, 'tan', argument, action=lambda x: dmath.tan(x) if isinstance(x, (Decimal, Integer)) else math.tan(x))
+        Function.__init__(self, 'tan', argument,
+            action=lambda x: dmath.tan(x if isinstance(x, (Decimal, Integer))
+            else math.tan(x)))
 
 class List():
     ''' A list type suitable for displaying variables '''
@@ -602,4 +720,3 @@ class StrWithHtml():
 
     def __str__(self):
         return str(self.plain)
-

@@ -192,8 +192,8 @@ var PolarPlot = Plot.extend({
         if (true) {
             this.ctx.fillStyle = colour;
             this.ctx.beginPath();
-            this.ctx.arc(this.raToXPx(r, a), this.raToYPx(r, a), dotsize, 0,
-                Math.PI*2, true);
+            this.ctx.arc(this.raToXPx(r, a), this.raToYPx(r, a), dotsize, 
+                0, Math.PI*2, true);
             this.ctx.closePath();
             this.ctx.fill();
         }

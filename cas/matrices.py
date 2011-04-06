@@ -1,50 +1,61 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python
 # coding=utf-8
 ''' A module containing code relating to Matrices. '''
 from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
+# Standard modules
 from functools import reduce
 from copy import deepcopy
 from decimal import Decimal
 
+# Project modules
 from cas.core import Algebra, Product, Symbol, expand
 from cas.numeric import Integer
 
 def identity_matrix(n):
-    ''' Create an n*n identity matrix I(n) e.g. [[1,0],[0,1]] '''
+    ''' Create an n*n identity matrix I(n) e.g. I(2) = [[1,0],[0,1]] '''
+    # Create our new matrix a (whose entries will be defaulted to 0)
     a = Matrix(n,n)
     for i in range(n):
+        # Set every entry on the first diagonal to 1
         a.values[i][i] = Integer(1)
+    # Return our matrix a
     return a
 
-def diagonal_matrix(*a):
-    ''' Create a diagonal matrix with elements from arguments '''
-    n = len(a)
-    ans = Matrix(n, n)
-    for i, item in enumerate(a):
-        ans[i][i] = item
-    return ans
+def diagonal_matrix(*xs):
+    ''' Create a diagonal matrix with elements xs on the first diagonal '''
+    # Create our new matrix whose diagonal matches xs in length.
+    n = len(xs)
+    a = Matrix(n, n)
+    for i, x in enumerate(xs):
+        # Set every ith entry on the first diagonal to the ith element of xs.
+        a[i][i] = x
+    return a
 
 class Matrix(Algebra):
     ''' A class to represent a matrix (2D array) '''
     def __init__(self, *a):
-        ''' Initiate the the matrix based on ... '''
+        ''' Initiate the the matrix based on the tuple of arguments a '''
         if len(a) == 2 and isinstance(a[0], int) and isinstance(a[1], int)\
             and a[0] >= 1 and a[0] >= 1:
-            ''' If passed an order create a zero matrix of that order '''
+            # If passed an order create a zero matrix of that order.
+            # FIXME: These should all be private
             self.rows, self.cols = a
             self.values = [ [ Integer(0) for j in range(self.cols) ]
                 for i in range(self.rows) ]
-        elif len(a)==1 and reduce(lambda a,b: a==b, map(len, a)):
-            ''' If passed a multidimensional list with equal length rows,
-            use that for initial values '''
+        elif len(a) == 1 and reduce(lambda a, b: a == b, map(len, a)):
+            # FIXME: Something is wrong.
+            # If passed a multidimensional list with equal length rows,
+            # use that for initial values.
             self.values = list(a[0])
             self.rows = len(self.values)
             self.cols = len(self.values[0])
+            # Check the multidimensional list passed is valid
             for row in self.values:
                 if len(row) != self.cols:
-                    raise ValueError('All rows of a matrix must be of equal length')
+                    raise ValueError('All rows of a matrix must be of equal'
+                        + 'length')
         else:
             raise ValueError()
 
@@ -59,11 +70,11 @@ class Matrix(Algebra):
         return (self.rows, self.cols)
 
     def row(self, i):
-        ''' Return a list representing one rowumn '''
+        ''' Return a list representing one row '''
         return self.values[i]
 
     def col(self, j):
-        ''' Return a list representing one col '''
+        ''' Return a list representing one column. '''
         r = []
         for row in self.values:
             r += [ row[j] ]
@@ -87,10 +98,14 @@ class Matrix(Algebra):
     def __add__(self, other):
         ''' Add two matrices '''
         if isinstance(other, Matrix) and self.order() == other.order():
+            # The result will be of the same order as self and other
             result = Matrix(*self.order())
             for i in range(self.rows):
                 for j in range(self.cols):
-                    result.values[i][j] = self.values[i][j] + other.values[i][j]
+                    # Each element of the result is the sum of the
+                    # corresponding elements of self and other.
+                    result.values[i][j]\
+                        = self.values[i][j] + other.values[i][j]
             return result
         else:
             return NotImplemented
@@ -123,15 +138,16 @@ class Matrix(Algebra):
         return r
 
     def determinant(self, row=0):
-        ''' The determinant of a 1*1 matrix is trivial and those for square matrices
-        can be derived recursively from it. '''
+        ''' The determinant of a 1*1 matrix is trivial and those for square
+        matrices can be derived recursively from it. '''
         if self.rows == self.cols == 1:
             return self[0][0]
         elif self.rows == self.cols:
             ans = Integer(0)
             i = row;
             for j in range(self.cols):
-                ans += Integer(-1) ** j * self.values[i][j] * self.minor(i,j).determinant()
+                ans += Integer(-1) ** j * self.values[i][j]\
+                    * self.minor(i,j).determinant()
             return ans
         else:
             raise ValueError('This matrix is not square')
@@ -144,21 +160,24 @@ class Matrix(Algebra):
         ans = Matrix(*self.order())
         for i in range(self.order()[0]):
             for j in range(self.order()[1]):
-                ans.values[i][j] = Integer(-1)**(i+j) * self.minor(j,i).determinant()
+                ans.values[i][j] = Integer(-1)**(i+j)\
+                    * self.minor(j,i).determinant()
         return ans
 
     def eigenvalues(self):
+        ''' The Eigenvalues of a matrix are defined as the roots of its
+        characteristic polynomial. '''
         return self.characteristic_polynomial().roots()
 
     def __mul__(self, other):
         ''' Implement multiplication by Matrices or scalars '''
         if isinstance(other, Matrix):
             if self.cols == other.rows:
-                # If A = (𝛂ij)[l×m] and B = (𝛃ij)[m×n]
-                # then AB is defined as the matrix C = (𝛄ij)[l×m]
+                # If A = (𝛂ij)[l·m] and B = (𝛃ij)[m·n]
+                # then AB is defined as the matrix C = (𝛄ij)[l·m]
                 # such that 𝛄ij = 𝛂i1𝛃1j + 𝛂i2𝛃2j + ... + 𝛂im𝛃mj
-                # For obvious reasons, this algorithm's complexity should increase
-                # at around O(n^3)
+                # For obvious reasons, this algorithm's complexity should 
+                # increase at around O(n^3)
                 r = Matrix(self.rows, other.cols)
                 for i in range(self.rows):
                     for j in range(other.cols):
@@ -171,18 +190,21 @@ class Matrix(Algebra):
             return self.map_to_all(lambda a: a*other)
 
     def __rmul__(self, other):
-        ''' Matrix multiplication is not communicative so rely on other function '''
+        ''' Matrix multiplication is not communicative so rely on the
+        multiplication function of other. '''
         if isinstance(other, Matrix):
             return other.__mul__(self)
         else:
             return self.map_to_all(lambda a: other*a)
 
     def __str__(self):
-        ''' Return a string representation '''
+        ''' Return a string representation. '''
         p = lambda a: +a if isinstance(a, Decimal) else a
-        # Recursively convert a multidimensional list to a string
+        p.__doc__ = ''' Normalize a class if it is a subclass of decimal. '''
         s = lambda a: '[' + ', '.join(map(s, a)) + ']' if isinstance(a, list)\
             else str(p(a))
+        s.__doc__ = ''' Recursively convert a multidimensional list to a
+        string. '''
         return s(self.values)
 
     def _scale_row(self, row, factor):
@@ -190,12 +212,13 @@ class Matrix(Algebra):
         for j in range(self.cols):
             self.values[row][j] *= factor
 
-    def _swap_rows(self, r1, r2):
+    def _swap_rows(self, a, b):
         ''' Swap two rows of a matrix '''
-        self.values[r1], self.values[r2] = self.values[r2], self.values[r1]
+        self.values[a], self.values[b] = self.values[b], self.values[a]
 
     def _scale_add_rows(self, a, b, factor):
-        ''' Multiply each value in row a by a constant factor and add to row b '''
+        ''' Multiply each value in row a by a constant factor and add to
+        row b '''
         for j in range(self.cols):
             self.values[b][j] += factor * self.values[a][j]
 
@@ -204,9 +227,9 @@ class Matrix(Algebra):
         n = self.order()[0]
         L = identity_matrix(n); U = deepcopy(self)
 
-        # Perform naive Gaussian elimination to find L and U
+        # Perform Gaussian elimination to find L and U
         for j in range(n):
-            for i in range(j+1,n):
+            for i in range(j + 1, n):
                 scale = U.values[i][j] / U.values[j][j]
                 L.values[i][j] = scale
                 U._scale_add_rows(j, i, -scale)
@@ -218,8 +241,9 @@ class Matrix(Algebra):
         of the matrix. '''
         # Note that some define the characteristic polynomial of a matrix as
         # the determinant of the product of abscissa and identity matrix
-        # minus the matrix i.e. the inverse of this form
-        return expand((self - Symbol('x') * identity_matrix(self.order()[0])).determinant())
+        # minus the matrix i.e. the inverse of this form.
+        return expand((self - Symbol('x') 
+            * identity_matrix(self.order()[0])).determinant())
 
     def inverse(self):
         ''' Calculate the matrix inverse using Gauss-Jordan elimination. '''
@@ -250,12 +274,12 @@ class Matrix(Algebra):
                         A._swap_rows(i,j)
                         B._swap_rows(i,j)
                         break
-                    # If when the final row is reached, no rows have been swapped,
-                    # the Matrix is singular.
+                    # If when the final row is reached, no rows have been 
+                    # swapped, the Matrix is singular.
                     elif i == n:
                         raise ValueError('This matrix is singular!')
 
-            # Divide both halves by the pivot to gain to 1 of the identity matrix
+            # Divide both halves by the pivot to gain 1 of the identity matrix.
             scale = Integer(1) / A.values[j][j]
             A._scale_row(j, scale)
             B._scale_row(j, scale)
@@ -263,17 +287,14 @@ class Matrix(Algebra):
             # For each other row
             for i in range(n):
                 if i != j:
-                    # Subtract by a multiple of the 1st row to make 0 for identity
+                    # Subtract by a multiple of row 1 to make 0 for identity
                     scale = - A.values[i][j]
                     A._scale_add_rows(j, i, scale)
                     B._scale_add_rows(j, i, scale)
 
-        # By this stage A should be an identity matrix, and B the inverse matrix
+        # By this stage A should be an identity matrix and B the inverse matrix
         return B
 
     def __repr__(self):
+        ''' An string representing the matrix in python code. '''
         return 'Matrix(' + str(self) + ')'
-
-if __name__ == '__main__':
-    print (Matrix([[1,2],[3,4]]).adjgate())
-

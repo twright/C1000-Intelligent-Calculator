@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python
 ''' This module includes a collection of numerical methods for use in analysis.
 This module draws from methods at:
     - http://mathworld.wolfram.com/Newton-CotesFormulas.html
@@ -12,9 +12,9 @@ from copy import copy
 from decimal import Decimal, getcontext, localcontext
 
 def pi(n=None):
-    ''' Estimate pi using n terms of the Chudnovsky brothers' formula. By default
-    this will attempt to calculate it to the maximum number of digits storable
-    in a decimal number. '''
+    ''' Estimate pi using n terms of the Chudnovsky brothers' formula. By 
+    default this will attempt to calculate it to the maximum number of digits 
+    storable in a decimal number. '''
     from math import factorial
     D = Decimal
     if n == None: n = round(getcontext().prec/D(14)) + 10
@@ -38,21 +38,22 @@ def to_fraction(x, places=10):
         b = b * int(z) + B
         a = int(round(abs(x) * b))
         B = copy(t)
-        if abs(x - x.__class__(a)/x.__class__(b)) < 5*x.__class__(10)**(-places) or z == int(z):
+        if abs(x - x.__class__(a)/x.__class__(b))\
+            < 5*x.__class__(10)**(-places) or z == int(z):
             break
         i += 1
 
     return (sign * a, b)
 
 def trapezoidal_composite_integral(f,a,b,m=100):
-    ''' Order 1 Newton-Cotes aproximation over m strips. '''
+    ''' Order 1 Newton-Cotes approximation over m strips. '''
     h = (b-a)/(m)
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
     return h*( fx(0)/2 + sum(fx(n) for n in range(1,m)) + fx(m)/2 )
 
 def simpson_composite_integral(f,a,b,m=100):
-    ''' Order 2 Newton-Cotes aproximation over m strips. '''
+    ''' Order 2 Newton-Cotes approximation over m strips. '''
     m = 2*int(round(m/2))
     h = (b-a)/m
     x = lambda k: a + k*h
@@ -61,7 +62,7 @@ def simpson_composite_integral(f,a,b,m=100):
         + 4*fx(m-1) + fx(m))
 
 def simpson38_composite_integral(f,a,b,m=100):
-    ''' Order 3 Newton-Cotes aproximation over m strips. '''
+    ''' Order 3 Newton-Cotes approximation over m strips. '''
     m = 3*int(round(m/3))
     h = (b-a)/m
     x = lambda k: a + k*h
@@ -71,7 +72,7 @@ def simpson38_composite_integral(f,a,b,m=100):
         + fx(m))
 
 def boole_composite_integral(f,a,b,m=100):
-    ''' Order 4 Newton-Cotes aproximation over m strips. '''
+    ''' Order 4 Newton-Cotes approximation over m strips. '''
     m = 4*int(round(m/4))
     h = (b-a)/m
     x = lambda k: a + k*h
@@ -103,5 +104,6 @@ def durand_kerner_roots(f, order, n=100):
     product = lambda ys: reduce(mul, ys, 1)
     for k in range(n):
         for i in range(order):
-            xs[i] -= f(xs[i]) / product(xs[i] - xs[j] for j in range(order) if i != j)
+            xs[i] -= f(xs[i])\
+                / product(xs[i] - xs[j] for j in range(order) if i != j)
     return xs

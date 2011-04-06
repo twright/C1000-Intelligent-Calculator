@@ -22,8 +22,8 @@ function calc(x) {
         success: function(data) {y = data.answer},
         async: false
     });
-    // y = y.replace(/(<([^>]+)>|&[a-z]+;)/ig,'');
-    // y = y.replace(/[^a-z0-9\(\)+\-\*\/\|\[\]\,\.\^]+/ig,'');
+    y = y.replace(/(<([^>]+)>|&[a-z]+;)/ig,'');
+    y = y.replace(/[^a-z0-9\(\)+\-\*\/\|\[\]\,\.\^]+/ig,'');
     y = y.slice(5, -4).replace(/None/gi, 'null');
     try {return eval(y)} catch(err) {return y};
 }

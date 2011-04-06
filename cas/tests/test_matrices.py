@@ -1,5 +1,5 @@
-#!/usr/bin/env python3.1
-''' Tests for matrix funcitonality. '''
+#!/usr/bin/env python
+''' Tests for matrix functionality. '''
 from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
@@ -33,7 +33,7 @@ class TestMatrix():
     def test_equality(self):
         assert Matrix([[1,2],[3,4]]) == Matrix([[1,2],[3,4]])
         assert Matrix([[1,2],[3,4]]) != Matrix([[1,2],[4,3]])
-    
+
     def test_addition(self):
         assert Matrix([[1,2],[3,4]]) + Matrix([[6,7],[8,9]]) == Matrix([[7,9],[11,13]])
         assert Matrix([[1,2],[3,4],[5,6]]) + Matrix([[2,3],[1,5],[3,4]])\
@@ -42,13 +42,13 @@ class TestMatrix():
             == Matrix([[5,2,7],[2,6,5],[10,6,10]])
         with py.test.raises(TypeError):
             Matrix([[1,2],[3,4]]) + Matrix([[1,2],[4,5],[5,6]])
-            
+
     def test_subtraction(self):
         assert Matrix([[2,7],[4,1]]) - Matrix([[1,2],[3,4]]) == Matrix([[1,5],[1,-3]])
-        
+
     def test_negation(self):
         assert -Matrix([[1,2],[3,4]]) == Matrix([[-1,-2],[-3,-4]])
-        
+
     def test_multiplication(self):
         assert 2*Matrix([[1,2],[3,4]]) == Matrix([[2,4],[6,8]])
         assert 5*Matrix([[1,3],[2,1],[4,7]]) == Matrix([[5,15],[10,5],[20,35]])
@@ -76,13 +76,13 @@ class TestMatrix():
         assert Matrix([[1,2],[3,4]]).determinant() == -2
         assert Matrix([[1,3,5],[4,7,-2],[2,1,6]]).determinant() == -90
         with py.test.raises(ValueError): Matrix([[1,2],[3,4],[5,6]]).determinant()
-        
+
     def test_adjugate(self):
         assert Matrix([[1,2],[3,4]]).adjgate() == Matrix([[4,-2],[-3,1]])
         assert Matrix([[1,2,3],[4,5,6],[7,8,9]]).adjgate()\
             == Matrix([[-3,6,-3],[6,-12,6],[-3,6,-3]])
         with py.test.raises(ValueError): Matrix([[1,2],[3,4],[5,6]]).adjgate()
-            
+
     def test_inverse(self):
         I = Integer; D = Decimal
         assert Matrix([[I(1),I(2)],[I(3),I(4)]]).inverse()\
@@ -92,20 +92,21 @@ class TestMatrix():
                 [D('1.25'),D(-2),D('0.25')]])
         with py.test.raises(ValueError):
             Matrix([[1,2,3],[4,5,6],[7,8,9]]).inverse()
-            
+
     def test_charactoristic_polynomial(self):
         from cas.core import Symbol
         x = Symbol('x')
         assert Matrix([[1,2],[3,4]]).characteristic_polynomial()\
             == x**2 - 5*x - 2
+        print Matrix([[1,3,2],[4,5,2],[2,3,1]]).characteristic_polynomial()
         assert Matrix([[1,3,2],[4,5,2],[2,3,1]]).characteristic_polynomial()\
             == -x**3 + 7*x**2 + 11*x + 3
-            
+
     def test_eigenvalues(self):
         xs = (5.372, -0.372)
         for a, b in zip(Matrix([[1,2],[3,4]]).eigenvalues(), xs):
             assert abs(a - b) < a.__class__('0.001')
-            
+
     def test_transpose(self):
         assert Matrix([[1,2],[3,4]]).transpose() == Matrix([[1,3],[2,4]])
         assert Matrix([[1,2],[3,4],[5,6]]).transpose() == Matrix([[1,3,5],[2,4,6]])
@@ -113,7 +114,7 @@ class TestMatrix():
         assert Matrix([[1,2,3]]).transpose() == Matrix([[1],[2],[3]])
         assert Matrix([[1,2,3],[4,5,6],[7,8,9]]).transpose()\
             == Matrix([[1,4,7],[2,5,8],[3,6,9]])
-            
+
     def test_LU_decomposition(self):
         from cas.core import Product
         assert Matrix([[1,2],[3,4]]).LU_decomposition()\
@@ -121,3 +122,4 @@ class TestMatrix():
         assert Matrix([[1,2,3],[4,5,6],[7,8,9]]).LU_decomposition()\
             == Product(Matrix([[1,0,0],[4,1,0],[7,2,1]]),
                 Matrix([[1,2,3],[0,-3,-6],[0,0,0]]))
+

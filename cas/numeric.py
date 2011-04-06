@@ -1,15 +1,19 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python
 ''' Numeric types such as integer, reals and complex numbers. '''
 from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
+# Standard modules
 from decimal import Decimal, getcontext, localcontext
 from functools import reduce
 from operator import mul
 from copy import copy, deepcopy
 from numbers import Number
 
+# Third party modules
 from dmath import pi
+
+# Project modules
 from cas.cache import lru_cache
 from cas.core import handle_type, a_str, m_str
 import cas.numerical_methods as nm
@@ -67,29 +71,32 @@ class Integer(int):
 
     def _factors(self):
         ''' Naively factorise an integer using trial division. '''
+        # Copy self to a
         a = self
 
         if a < 0:
+            # Handle negative numbers
             a = abs(a)
             yield Integer(-1)
 
         i = Integer(2)
         while a > 1:
             if a % i == 0:
+                # Return all other integral factors greater that one
                 yield i
                 a /= i
             else:
                 i += 1
 
     def factors(self):
-        ''' The Fundermental Theorum of Artithmetic states that every integer
+        ''' The Fundamental Theorem of Arithmetic states that every integer
         may be factorised into a unique product of prime factors. This function
         returns them as a List. '''
         from cas.core import List
         return List(*self._factors())
 
-# Use a least recently used cache to prevent redundant conversions of real numbers
-# to strings.
+# Use a least recently used cache to prevent redundant conversions of real 
+# numbers to strings.
 @lru_cache(maxsize=1000)
 def _real_str(y, exact_form, prec_offset):
     ''' Convert a Real number to a string, with nice display.
@@ -106,7 +113,8 @@ def _real_str(y, exact_form, prec_offset):
 
         # Display small fractions as such
         a, b = nm.to_fraction(x)
-        if b < 50: return ('{}/{}'.format(a,b), True) if b != 1 else (str(a), False)
+        if b < 50: return ('{}/{}'.format(a,b), True) if b != 1\
+            else (str(a), False)
 
         # Display small fractional coefficients of pi in exact form
         q = x / float(pi()); a, b = nm.to_fraction(q);
@@ -125,15 +133,18 @@ def _real_str(y, exact_form, prec_offset):
     # Otherwise display as a decimal
     with localcontext():
         getcontext().prec -= prec_offset
-        return (str(Decimal(y)), False)
+        return (str(Decimal(y).normalize()), False)
 
 class Real(Decimal):
     ''' A class to provide better handling of real numbers '''
-    prec_offset = 0 # Print this fewer signficant figures than are used intenally
-    exact_form = True # Print fractions as fractions including pi and square roots
+    # Print this fewer significant figures than are used internally
+    prec_offset = 0
+    # Print fractions as fractions including pi and square roots
+    exact_form = True 
 
     def __init__(self, x='0'):
-        self.__string, a = _real_str(x, self.__class__.exact_form, self.__class__.prec_offset)
+        self.__string, a = _real_str(x, self.__class__.exact_form,
+            self.__class__.prec_offset)
         self._hints = {'m','f','p'} if a else {}
 
     def __str__(self):
@@ -213,13 +224,12 @@ class Complex(complex):
     def __new__(self, x):
         small = 0.00001
         x = complex(x)
-#        x = x if isinstance(x, complex) else complex(x)
         # Complex numbers sufficiently small in magnitide should be replaced
         # with zero.
         if abs(x.real) < small and abs(x.imag) < small:
             return Integer(0)
-        # Complex numbers very close to Real numbers should be replaced with the
-        # Real number.
+        # Complex numbers very close to Real numbers should be replaced with 
+        # the Real number.
         elif abs(x.imag) < small:
             return handle_type(x.real)
         else:

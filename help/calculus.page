@@ -11,7 +11,12 @@ differentiate (3x^3 - 4.5x^2 + 6x - 2)
 </code>
 <p>trigonometric functions:</p>
 <code>
-
+differentiate sin(x)
+   = cos(x)
+differentiate cos(x)
+   = -sin(x)
+differentiate tan(x)
+   = 1/cos(x)^2
 </code>
 <p>and logarithms:</p>
 <code>

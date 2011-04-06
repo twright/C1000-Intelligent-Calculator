@@ -1,10 +1,10 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python
 ''' Various abstract methods and functions '''
 from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
 def gcd(a, b):
-    ''' A recursive implementation of the euclidian greatest common divisor
+    ''' A recursive implementation of the euclidean greatest common divisor
     algorithm. '''
     def _gcd_div(a, b):
         return a if b == 1 else _gcd_div(b, a % b)

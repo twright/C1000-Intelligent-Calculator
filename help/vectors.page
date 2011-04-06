@@ -23,7 +23,7 @@
 [1,2,3] * [4,5,6]
    = 32
 </code>
-    <p>and find the Eclidian Norm (length) of a vector:</p>
+    <p>and find the Euclidian Norm (length) of a vector:</p>
 <code>
 || [1,2,3] ||
    = 3.74

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python
 ''' Test the accuracy of numerical methods. '''
 from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'

@@ -36,19 +36,20 @@ class Root:
             calc = cherrypy.session['calc']
 
         ans = calc.evaluate(question)
+        strippedans = ''
         # TODO: Make general
         if isinstance(ans, StrWithHtml):
             ans = re.sub(r'c:/users/.*/appdata/local/temp/', r'/tmp/',
                 ans.html, 100)
-            ans = re.sub('[ ]?style=".*"', '', ans, 100)
-            ans = re.sub('</?canvas[^>]*>', '', ans, 100)
-            ans = re.sub('svg', 'png', ans, 100)
+            strippedans = re.sub('[ ]?style=".*"', '', ans, 100)
+            strippedans = re.sub('</?canvas[^>]*>', '', strippedans, 100)
+            strippedans = re.sub('svg', 'png', strippedans, 100)
         else:
             ans = '\n'.join(map(lambda a: '<p>' + a + '</p>',
                 re.split(r"\n", ans)))
         cherrypy.session['workings'] += ('<div style="page-break-after">'
             + '<h4 style="-pdf-keep-with-next">{}'
-            + '</h4>\n<div>{}\n</div></div>\n').format(question, ans)
+            + '</h4>\n<div>{}\n</div></div>\n').format(question, strippedans)
         return json.dumps({'answer': ans})
 
     @cherrypy.expose

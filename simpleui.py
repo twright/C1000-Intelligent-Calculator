@@ -1,9 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
 
+# Standard modules
 from PyQt4 import QtCore, QtGui, uic
 import re
 
+# Project modules
 from calculator import Calculator
 import help
 
@@ -12,34 +14,42 @@ class CalculatorForm(QtGui.QMainWindow):
     ''' The simple interface '''
 
     def __init__(self, parent=None):
+        ''' Initialize the interface. '''
         super(type(self), self).__init__(parent)
-#        self.ui = Ui_Calculator()
         uic.loadUi('simpleui.ui', self)
-    #    self.ui.__init__(self)
         self.calc = Calculator()
 
     def _command(self):
-        return self.input.text()
+        ''' Return the user's command. '''
+        return str(self.input.text())
 
-    def _append(self, a):
+    def _append(self, text):
+        ''' Append text to the command entry box. '''
+        # Retrieve the current command
         cmd = self._command()
-
-        if len(cmd) == 0:
-            self.input.setText(a)
-        elif re.match(r'[ ()]', cmd[-1]):
-            self.input.setText(cmd + a)
+        if re.match(r'[ ()]', cmd[-1]):
+            # If the command ends with a space just append text.
+            self.input.setText(cmd + text)
         else:
-            self.input.setText(cmd + ' ' + a)
+            # Otherwise append a space followed by text.
+            self.input.setText(cmd + ' ' + text)
 
-    def _append_digit(self, a):
+    def _append_digit(self, digit):
+        # Retrieve the current command
         cmd = self._command()
-
         if len(cmd) == 0:
-            self.input.setText(a)
-        elif re.match(r'^([^a-z][a-z]|.*[0-9\.^ (])$', cmd):
-            self.input.setText(cmd + a)
+            # If the command is of zero length, just replace it with
+            # digit.
+            self.input.setText(digit)
+        elif re.match(r'^([^a-z][a-z]|.*[0-9\.^ (])$', self._comma):
+            # If the commands ends with a digit or and opening bracket,
+            # just append the digit.
+            self.input.setText(cmd + digit)
         else:
-            self.input.setText(cmd + ' ' + a)
+            # Otherwise append a space followed by digit.
+            self.input.setText(cmd + ' ' + digit)
+
+    # Event handlers for the buttons
 
     @QtCore.pyqtSlot()
     def on_btn_help_clicked(self):

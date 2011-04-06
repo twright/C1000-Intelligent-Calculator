@@ -18,7 +18,7 @@ will be taken as radians</em>. To specific an angle is in degrees, just write
 sin (5 degs)
 = 0.0872
 </code>
-<p>Note that whenever, exact answers will be given:</p>
+<p>Note that whereeven possible, exact answers will be given:</p>
 <code>
 sin (pi/6)
 = 1/2
