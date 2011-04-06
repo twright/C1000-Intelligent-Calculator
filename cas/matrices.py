@@ -40,57 +40,55 @@ class Matrix(Algebra):
         if len(a) == 2 and isinstance(a[0], int) and isinstance(a[1], int)\
             and a[0] >= 1 and a[0] >= 1:
             # If passed an order create a zero matrix of that order.
-            # FIXME: These should all be private
-            self.rows, self.cols = a
-            self.values = [ [ Integer(0) for j in range(self.cols) ]
-                for i in range(self.rows) ]
+            self.__rows, self.__cols = a
+            self.__values = [ [ Integer(0) for j in range(self.__cols) ]
+                for i in range(self.__rows) ]
         elif len(a) == 1 and reduce(lambda a, b: a == b, map(len, a)):
-            # FIXME: Something is wrong.
             # If passed a multidimensional list with equal length rows,
             # use that for initial values.
-            self.values = list(a[0])
-            self.rows = len(self.values)
-            self.cols = len(self.values[0])
+            self.__values = list(a[0])
+            self.__rows = len(self.__values)
+            self.__cols = len(self.__values[0])
             # Check the multidimensional list passed is valid
-            for row in self.values:
-                if len(row) != self.cols:
+            for row in self.__values:
+                if len(row) != self.__cols:
                     raise ValueError('All rows of a matrix must be of equal'
                         + 'length')
         else:
             raise ValueError()
 
     def __getitem__(self, i):
-        return self.values[i]
+        return self.__values[i]
 
     def trace(self):
-        return sum(self.values[i][i] for i in range(self.order()[0]))
+        return sum(self.__values[i][i] for i in range(self.order()[0]))
 
     def order(self):
         ''' Return a tuple representing the order of the matrix '''
-        return (self.rows, self.cols)
+        return (self.__rows, self.__cols)
 
     def row(self, i):
         ''' Return a list representing one row '''
-        return self.values[i]
+        return self.__values[i]
 
     def col(self, j):
         ''' Return a list representing one column. '''
         r = []
-        for row in self.values:
+        for row in self.__values:
             r += [ row[j] ]
         return r
 
     def transpose(self):
         ''' Return a copy with rows and columns swapped. '''
-        ans = Matrix(self.cols, self.rows)
-        for i in range(self.cols):
-            for j in range(self.rows):
-                ans.values[i][j] = self.values[j][i]
+        ans = Matrix(self.__cols, self.__rows)
+        for i in range(self.__cols):
+            for j in range(self.__rows):
+                ans.values[i][j] = self.__values[j][i]
         return ans
 
     def map_to_all(self, f):
         ''' Apply a function to each value in the matrix '''
-        return Matrix(list(map(lambda a: list(map(f, a)), self.values)))
+        return Matrix(list(map(lambda a: list(map(f, a)), self.__values)))
 
     def __neg__(self):
         return self.map_to_all(lambda a: -a)
@@ -100,12 +98,12 @@ class Matrix(Algebra):
         if isinstance(other, Matrix) and self.order() == other.order():
             # The result will be of the same order as self and other
             result = Matrix(*self.order())
-            for i in range(self.rows):
-                for j in range(self.cols):
+            for i in range(self.__rows):
+                for j in range(self.__cols):
                     # Each element of the result is the sum of the
                     # corresponding elements of self and other.
                     result.values[i][j]\
-                        = self.values[i][j] + other.values[i][j]
+                        = self.__values[i][j] + other.values[i][j]
             return result
         else:
             return NotImplemented
@@ -119,8 +117,8 @@ class Matrix(Algebra):
         if isinstance(other, Matrix):
             if self.order() != other.order():
                 return False
-            for i in range(self.rows):
-                for j in range(self.cols):
+            for i in range(self.__rows):
+                for j in range(self.__cols):
                     if self[i][j] != other[i][j]:
                         return False
             return True
@@ -140,13 +138,13 @@ class Matrix(Algebra):
     def determinant(self, row=0):
         ''' The determinant of a 1*1 matrix is trivial and those for square
         matrices can be derived recursively from it. '''
-        if self.rows == self.cols == 1:
+        if self.__rows == self.__cols == 1:
             return self[0][0]
-        elif self.rows == self.cols:
+        elif self.__rows == self.__cols:
             ans = Integer(0)
             i = row;
-            for j in range(self.cols):
-                ans += Integer(-1) ** j * self.values[i][j]\
+            for j in range(self.__cols):
+                ans += Integer(-1) ** j * self.__values[i][j]\
                     * self.minor(i,j).determinant()
             return ans
         else:
@@ -154,7 +152,7 @@ class Matrix(Algebra):
 
     def adjgate(self):
         # adj(A)ij = (-1)^(i+j)*det[A(j|i)]
-        if self.rows != self.cols:
+        if self.__rows != self.__cols:
             raise ValueError('This matrix is not square')
 
         ans = Matrix(*self.order())
@@ -172,14 +170,14 @@ class Matrix(Algebra):
     def __mul__(self, other):
         ''' Implement multiplication by Matrices or scalars '''
         if isinstance(other, Matrix):
-            if self.cols == other.rows:
+            if self.__cols == other.rows:
                 # If A = (𝛂ij)[l·m] and B = (𝛃ij)[m·n]
                 # then AB is defined as the matrix C = (𝛄ij)[l·m]
                 # such that 𝛄ij = 𝛂i1𝛃1j + 𝛂i2𝛃2j + ... + 𝛂im𝛃mj
                 # For obvious reasons, this algorithm's complexity should 
                 # increase at around O(n^3)
-                r = Matrix(self.rows, other.cols)
-                for i in range(self.rows):
+                r = Matrix(self.__rows, other.cols)
+                for i in range(self.__rows):
                     for j in range(other.cols):
                         for k in range(len(self.row(i))):
                             r.values[i][j] += self.row(i)[k] * other.col(j)[k]
@@ -205,22 +203,22 @@ class Matrix(Algebra):
             else str(p(a))
         s.__doc__ = ''' Recursively convert a multidimensional list to a
         string. '''
-        return s(self.values)
+        return s(self.__values)
 
     def _scale_row(self, row, factor):
         ''' Multiply all elements in a row by a constant factor '''
-        for j in range(self.cols):
-            self.values[row][j] *= factor
+        for j in range(self.__cols):
+            self.__values[row][j] *= factor
 
     def _swap_rows(self, a, b):
         ''' Swap two rows of a matrix '''
-        self.values[a], self.values[b] = self.values[b], self.values[a]
+        self.__values[a], self.__values[b] = self.__values[b], self.__values[a]
 
     def _scale_add_rows(self, a, b, factor):
         ''' Multiply each value in row a by a constant factor and add to
         row b '''
-        for j in range(self.cols):
-            self.values[b][j] += factor * self.values[a][j]
+        for j in range(self.__cols):
+            self.__values[b][j] += factor * self.__values[a][j]
 
     def LU_decomposition(self):
         ''' Split a square matrix into an upper and lower triangle matrix '''
@@ -251,13 +249,13 @@ class Matrix(Algebra):
         # It will also break in the case of divide by zero
         # By inspection, the complexity grows at around O(n^3)
 
-        if self.rows != self.cols:
+        if self.__rows != self.__cols:
             raise ValueError('Only square matrices may be inverted.')
 
         if self.determinant() == 0:
             raise ValueError('This matrix is singular!')
 
-        scale = 0; n = self.rows
+        scale = 0; n = self.__rows
 
         # A and B represent halves of an augmented matrix
         A = deepcopy(self)

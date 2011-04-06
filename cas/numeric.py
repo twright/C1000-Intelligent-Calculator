@@ -312,7 +312,6 @@ class Complex(complex):
     def __eq__(self, other):
         other = self._convert_other(other)
         if other == NotImplemented: return other
-        # TODO: Convert to method
         mag = lambda a: ( a.real**2 + a.imag**2 )**(1/2)
         mag.__doc__ = ''' Euclidean normal / magnitude of complex number. '''
         return abs(self - other) < 0.01

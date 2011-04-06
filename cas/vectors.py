@@ -65,7 +65,6 @@ class Vector(tuple, Algebra):
             else ht(xs[midpoint] + xs[midpoint-1]) / ht(2)
 
     def mode(self):
-        # TODO: Fix this
         counts = {}
 
         for x in self:

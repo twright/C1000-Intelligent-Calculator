@@ -69,14 +69,11 @@ def handle_type (x):
     elif isinstance(x, float):
         # Convert standard python floats to Reals
         return +Real(repr(x))
-        # FIXME: .normalize() may be better here
     elif isinstance(x, complex):
         # Handle complex numbers
         if abs(x.imag) < 0.0001:
             # Covert complex numbers with small imaginary parts to Reals.
-            # FIXME: This will inversely impact precision.
             return +Real.from_float(x.real)
-            # FIXME: .normalize() may be better here
         else:
             # Convert all other standard python 
             return Complex(x)
@@ -225,7 +222,6 @@ class Algebra (object):
 
     def as_gnuplot_expression(self):
         ''' Convert into the gnuplot format '''
-        # TODO: Replace with something much more general
         expr = str(self)
         expr = re.sub(r'[a-z]', r'x', expr, 100)
         # Add * from multiplication
@@ -283,26 +279,17 @@ class Symbol(Algebra):
     # surrounded by brackets.
     _hints = {}
 
-#_dedup_recurring = False
 def dedup(f, xs, identity):
     ''' Combine any elements possible in a sum or product.
     f   - the basic operation underlying the list (i.e. add, mul)
     xs  - the list of elements
     identity - the element which when present in the list, does not change tphe
         list's overall value (i.e. 1 is the multiplicative identity)'''
-#    global _dedup_recurring
     def can_simplify(a, b):
         ''' Determine whether calling f on two variable will result in a single
         element within the list. If f is called with this not being the case,
         it will infinitely recurse. '''
-#        global simp_called
-        # TODO: This bit really needs replacing with something much more robust
         I = isinstance
-#        if simp_called:
-#            return False
-#        else:
-#            simp_called = True
-#            return True
         if I(a, Number) and I(b, Number):
             return True
         elif I(a, Symbol) and I(b, Symbol) and a == b:
@@ -319,30 +306,14 @@ def dedup(f, xs, identity):
 
     i = 1; prev = xs[0]
     while i < len(xs):
-        if can_simplify(prev, xs[i]):#not _dedup_recurring:
-        #    print 'test'
-        #    _dedup_recurring = True
+        if can_simplify(prev, xs[i]):
             prev = f(prev, xs[i])
         else:
-        #    print prev
             if prev != identity: yield prev
             prev = xs[i]
-        #_dedup_recurring = False
         i += 1
-    #print prev
     if prev != identity or len(xs) == 1: yield prev
 
-#_dedup_recurring = False
-#def dedup(f, xs, identity):
-#    global _dedup_recurring
-#    if _dedup_recurring:
-#        return xs
-#    else:
-#        _dedup_recurring = True
-#        print ys
-#        ys = reduce(f, xs, identity)
-#        _dedup_recurring = False
-#        return ys
 
 class Product(Algebra):
     ''' A class representing the product of multiple elements '''
@@ -356,7 +327,6 @@ class Product(Algebra):
             else ord(str(a.a())) if I(a, Power) and I(a.b(), Symbol)
             else 100)
 
-        #print dedup(mul, sorted(a, key=rank), 1)
         terms = list(dedup(mul, sorted(a, key=rank), 1))
         if len(terms) > 1 and terms[0] != 0:
             b = Algebra.__new__(self); b.__terms = terms
@@ -408,7 +378,6 @@ class Product(Algebra):
     __rmul__ = __mul__
 
     def __add__(self, other):
-        # TODO: Replace with something more general
         if isinstance(other, self.__class__) and len(self) == len(other) == 2\
             and self[1] == other[1]:
             return Product(self[0] + other[0], self[1])
@@ -501,11 +470,6 @@ class Sum(Algebra):
     def __len__(self):
         return len(self.__terms)
 
-#    def __mul__(self, other):
-#        # TODO: Test this
-#        return Sum(*map(lambda x: x*other, self))
-#    __rmul__ = __mul__
-
     def __add__(self, other):
         if other == 0:
             return self
@@ -526,8 +490,8 @@ class Sum(Algebra):
     def __repr__(self):
         ''' Return the string representation of the sum. '''
         def sf(a):
-            ''' It's complicated! '''
-            # TODO: I must somehow explain this function in simple language.
+            ''' A particularly complicated function to return a term in a
+            string as the simplest possible mathematical expression '''
             if isinstance(a, Product) and isinstance(a[0], complex):
                 return ' ' + ('- ' + m_str(handle_type(abs(a[0].imag))
                     if a[0].real > -0.00001 else -a[0])
