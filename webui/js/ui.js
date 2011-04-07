@@ -23,8 +23,9 @@ function calc(x) {
         async: false
     });
     y = y.replace(/(<([^>]+)>|&[a-z]+;)/ig,'');
-    y = y.replace(/[^a-z0-9\(\)+\-\*\/\|\[\]\,\.\^]+/ig,'');
-    y = y.slice(5, -4).replace(/None/gi, 'null');
+    y = y.replace(/[^a-z0-9\(\)+\-\*\/\|\[\]\,\.\^\:\=]+/ig,'');
+    y = y.slice(1).replace(/None/gi, 'null');
+    y = y.replace(/None/gi, 'null');
     try {return eval(y)} catch(err) {return y};
 }
 
@@ -32,7 +33,7 @@ function calc(x) {
 function calculate(x) {
     x = x || document.getElementById('question').innerHTML;
     x = x.replace(/(<([^>]+)>|&[a-z]+;)/ig,'');
-    x = x.replace(/[^a-z0-9\(\) +\-\*\/\|\=\[\]\,\.\^]+/ig,'');
+    x = x.replace(/[^a-z0-9\(\) +\-\*\/\|\=\[\]\,\.\^\:\=]+/ig,'');
     $.getJSON('calculate', {question : x}, function(data) {
         add_result( data.answer, x );
     })
