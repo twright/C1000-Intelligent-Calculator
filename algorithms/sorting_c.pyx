@@ -1,0 +1,86 @@
+# This code has been written in cython and then compiled to a highly optimized
+# c python extension to allow for greater performance
+# The cython language is similar to python except:
+# cdef creates a pure c variable
+# def creates a python function which is exposed via the extension api
+# cpdef creates a function which is accessed as a c function from inside the
+#   extension and exposed as a python function outside
+# the loop for i in range(0, n) is compiled to the c loop
+#   for(int i; i < n; ++i) when i is a pure c variable
+
+def radix_sort(xs, long r=8):
+    ''' Efficient Radix Sort -- See http://www.koders.com/python/fidF772268CB8176B16FFA7B81B012D0253E894DBEB.aspx?s=merge+sort '''
+    cdef long k = 2**r
+    cdef long i, x, j
+    cdef long mask = int('1'*r, 2)
+    cdef long J = len(xs)
+    for i in range(0, 32/r):
+        counter = [0]*k
+        for j in range(0,J):
+            counter[(xs[j]>>(i*r))&mask] += 1
+        for j in range(1, k):
+            counter[j] = counter[j-1] + counter[j]
+        for x in reversed(xs[:]):
+            xs[counter[(x>>(i*r))&mask]-1] = x
+            counter[(x>>(i*r))&mask] -= 1
+    return xs
+
+
+cpdef inline insertionsort(xs):
+    ''' Sort a list xs using the insertionsort algorithm '''
+    cdef long i, ptr
+    for i in range(1, len(xs)):
+        current = xs[i]
+        ptr = i - 1
+        while xs[ptr] > current and ptr >= 0:
+            xs[ptr+1] = xs[ptr]
+            ptr = ptr - 1
+        xs[ptr+1] = current
+    return xs
+
+
+cpdef merge(a, b):
+    ''' Merge two sorted lists into another sorted list '''
+    # If the ranges of values in the two lists do not overlap, we can just
+    # concatinate them
+    if a[-1] <= b[0]:
+        return a + b
+    elif b[-1] <= a[0]:
+        return b + a
+    # Start at 0 and store the length of each array
+    cdef long i = 0, I = len(a), j = 0, J = len(b)
+    xs = []
+    # Traverse each list, adding the lesser element to the answer array each
+    # step
+    while i < I and j < J:
+        if a[i] <= b[j]:
+            xs.append(a[i])
+            i += 1
+        else:
+            xs.append(b[j])
+            j += 1
+    # Append any remaing elements
+    xs += a[i:] + b[j:]
+    return xs
+
+
+cpdef mergesort(xs):
+    ''' Sort a list using the merge sort algorithm '''
+    cdef long l = len(xs), middle
+    if l < 2:
+        return xs
+    elif l <= 32:
+        return insertionsort(xs)
+    else:
+        middle = l / 2
+        left = mergesort(xs[:middle])
+        right = mergesort(xs[middle:])
+        return merge(left, right)
+        
+
+def schwartzian_transform(xs, f, key=hash):
+    ''' A wrapper function which allows a list to be sorted based upon the
+    output of key and makes any comparison based sort stable. '''
+    def pack(a): i, x = a; return (key(x), i, x)
+    def unpack(x): return x[2]
+    return map(unpack, f(map(pack, enumerate(xs))))
