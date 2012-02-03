@@ -19,7 +19,7 @@ def identity_matrix(n):
     a = Matrix(n,n)
     for i in range(n):
         # Set every entry on the first diagonal to 1
-        a.values[i][i] = Integer(1)
+        a[i][i] = Integer(1)
     # Return our matrix a
     return a
 
@@ -83,7 +83,7 @@ class Matrix(Algebra):
         ans = Matrix(self.__cols, self.__rows)
         for i in range(self.__cols):
             for j in range(self.__rows):
-                ans.values[i][j] = self.__values[j][i]
+                ans[i][j] = self[j][i]
         return ans
 
     def map_to_all(self, f):
@@ -102,8 +102,8 @@ class Matrix(Algebra):
                 for j in range(self.__cols):
                     # Each element of the result is the sum of the
                     # corresponding elements of self and other.
-                    result.values[i][j]\
-                        = self.__values[i][j] + other.values[i][j]
+                    result[i][j]\
+                        = self[i][j] + other[i][j]
             return result
         else:
             return NotImplemented
@@ -124,15 +124,18 @@ class Matrix(Algebra):
             return True
         else:
             return NotImplemented
+            
+    def __delitem__(self, i):
+        del self.__values[i]
 
     def minor(self, i, j):
         ''' Return a matrix after removing one col and rowumn '''
         r = self.transpose()
-        del r.values[j]
-        r.rows -= 1
+        del r[j]
+        r.__rows -= 1
         r = r.transpose()
-        del r.values[i]
-        r.rows -= 1
+        del r[i]
+        r.__rows -= 1
         return r
 
     def determinant(self, row=0):
@@ -158,7 +161,7 @@ class Matrix(Algebra):
         ans = Matrix(*self.order())
         for i in range(self.order()[0]):
             for j in range(self.order()[1]):
-                ans.values[i][j] = Integer(-1)**(i+j)\
+                ans[i][j] = Integer(-1)**(i+j)\
                     * self.minor(j,i).determinant()
         return ans
 
@@ -170,17 +173,17 @@ class Matrix(Algebra):
     def __mul__(self, other):
         ''' Implement multiplication by Matrices or scalars '''
         if isinstance(other, Matrix):
-            if self.__cols == other.rows:
+            if self.__cols == other.__rows:
                 # If A = (𝛂ij)[l·m] and B = (𝛃ij)[m·n]
                 # then AB is defined as the matrix C = (𝛄ij)[l·m]
                 # such that 𝛄ij = 𝛂i1𝛃1j + 𝛂i2𝛃2j + ... + 𝛂im𝛃mj
                 # For obvious reasons, this algorithm's complexity should 
                 # increase at around O(n^3)
-                r = Matrix(self.__rows, other.cols)
+                r = Matrix(self.__rows, other.__cols)
                 for i in range(self.__rows):
-                    for j in range(other.cols):
+                    for j in range(other.__cols):
                         for k in range(len(self.row(i))):
-                            r.values[i][j] += self.row(i)[k] * other.col(j)[k]
+                            r[i][j] += self.row(i)[k] * other.col(j)[k]
                 return r
             else:
                 return NotImplemented
@@ -228,8 +231,8 @@ class Matrix(Algebra):
         # Perform Gaussian elimination to find L and U
         for j in range(n):
             for i in range(j + 1, n):
-                scale = U.values[i][j] / U.values[j][j]
-                L.values[i][j] = scale
+                scale = U[i][j] / U[j][j]
+                L[i][j] = scale
                 U._scale_add_rows(j, i, -scale)
 
         return Product(L, U)
@@ -264,11 +267,11 @@ class Matrix(Algebra):
         # For each column or iteration
         for j in range(n):
             # Attempt to swap rows if the pivot is zero.
-            if A.values[j][j] == 0:
+            if A[j][j] == 0:
                 # For every row after the current
                 for i in range(j+1,n+1):
                     # If the coresponding value is non-zero, swap and continue
-                    if A.values[i][j] != 0:
+                    if A[i][j] != 0:
                         A._swap_rows(i,j)
                         B._swap_rows(i,j)
                         break
@@ -278,7 +281,7 @@ class Matrix(Algebra):
                         raise ValueError('This matrix is singular!')
 
             # Divide both halves by the pivot to gain 1 of the identity matrix.
-            scale = Integer(1) / A.values[j][j]
+            scale = Integer(1) / A[j][j]
             A._scale_row(j, scale)
             B._scale_row(j, scale)
 
@@ -286,7 +289,7 @@ class Matrix(Algebra):
             for i in range(n):
                 if i != j:
                     # Subtract by a multiple of row 1 to make 0 for identity
-                    scale = - A.values[i][j]
+                    scale = - A[i][j]
                     A._scale_add_rows(j, i, scale)
                     B._scale_add_rows(j, i, scale)
 

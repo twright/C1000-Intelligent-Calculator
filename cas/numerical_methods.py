@@ -67,8 +67,7 @@ def simpson38_composite_integral(f,a,b,m=100):
     h = (b-a)/m
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
-    return (3*h/8)*(fx(0)
-        + sum(3*fx(n-2) + 3*fx(n-1) + 2*fx(n) for n in range(3,m,3))
+    return (3*h/8)*(sum(3*fx(n-2) + 3*fx(n-1) + 2*fx(n) for n in range(3,m,3))
         + fx(m))
 
 def boole_composite_integral(f,a,b,m=100):
@@ -79,7 +78,7 @@ def boole_composite_integral(f,a,b,m=100):
     fx = lambda n: f(x(n))
     return (2*h/45)\
         * sum(7*fx(n-4) + 32*fx(n-3) + 12*fx(n-2) + 32*fx(n-1) + 7*fx(n)
-        for n in range(4,m,4))
+        for n in range(4,m,5))
 
 def romberg_integral(f,a,b,n=7,m=7):
     ''' A recursive implementation of Romberg's method of integration.

@@ -93,6 +93,10 @@ def expand(a):
         # item is a sum (note that sums are guaranteed to be placed at the end
         # of products). This acts as the base case for products of more items.
         return sum(map(lambda b: expand(a[0] * b), a[1]))
+    elif isinstance(a, Product) and len(a) == 2\
+        and isinstance(a[0], Sum):
+        # Do the same but in the opposite order
+        return sum(map(lambda b: expand(a[1] * b), a[0]))
     elif isinstance(a, Product) and len(a) > 2:
         # Recursively expand products with more than 2 items.
         return expand(a[0] * expand(a[1:]))
@@ -178,6 +182,7 @@ class Algebra (object):
 
     def __mul__(self, other):
         return self if other == 1 else handle_type(0) if other == 0\
+            else self**ht(2) if self == other\
             else Product(self, other)
 
     __rmul__ = __mul__
@@ -292,6 +297,8 @@ def dedup(f, xs, identity):
         I = isinstance
         if I(a, Number) and I(b, Number):
             return True
+        elif I(a, Product) and a == b:
+            return True
         elif I(a, Symbol) and I(b, Symbol) and a == b:
             return True
         elif I(a, Product) and I(b, (Symbol,Power)) and len(a) == 2 and a[1] == b:
@@ -349,7 +356,7 @@ class Product(Algebra):
 
     def order(self):
         ''' A method returning the order of a product. '''
-        assert len(self) == 2
+        #assert len(self) == 2
         return max(map(lambda a: a.order() if hasattr(a,'order') else 0, self))
 
     def __len__(self):
@@ -363,8 +370,9 @@ class Product(Algebra):
 
     def __repr__(self):
         ''' Return the string representation of the product. '''
+        listify = lambda a: list(a) if hasattr(a, '__getitem__') else [a]
         return ('-' if isinstance(self[0], Number) and self[0] == -1
-            else m_str(self[0])) + (''.join(map(m_str, self[1:]))
+            else m_str(self[0])) + (''.join(map(m_str, listify(self[1:])))
             if len(self) > 2 else m_str(self[1]))
 
     # This set identifies in which circumstances an expression needs to be
@@ -390,11 +398,15 @@ class Product(Algebra):
 
     def partial_differential(self, x):
         ''' Return the partial differential with respect to x. '''
-        if is_poly(self):
-            return self[0] * partial_differential(self[1],x)
-        else:
-            return expand(self[0] * partial_differential(self[1:], x)
-                + self[1:] * partial_differential(self[0], x))
+        product = lambda xs: reduce(mul, xs, ht(1))
+        return sum(product((partial_differential(self[j], x) if i == j else self[j])
+            for j in range(len(self)))
+            for i in range(len(self)))
+    #    if is_poly(self):
+    #        return self[0] * partial_differential(self[1],x)
+    #    else:
+    #        return expand(self[0] * partial_differential(self[1:], x)
+    #            + self[1:] * partial_differential(self[0], x))
 
     def partial_integral(self, x):
         ''' Return the partial integral with respect to x. '''
@@ -407,7 +419,7 @@ class Product(Algebra):
 class Fraction(Algebra):
     ''' A class representing a fraction. '''
     def __init__(self, a, b):
-        self.__numerator, self.__denominator = a, b
+        self.__numerator, self.__denominator = ht(a), ht(b)
 
     def numerator(self):
         return self.__numerator
@@ -427,6 +439,12 @@ class Fraction(Algebra):
         (partial_differential(self.numerator(),x)*self.denominator()
             - partial_differential(self.denominator(),x)*self.numerator())\
             / self.denominator()**2
+    
+    def partial_integral(self, x):
+        if 1 == order(self.a()) and 0 == order(self.b()):
+            return self.a() * Ln(self.b())
+        else:
+            return NotImplemented
 
     def __call__(self, x, variable=None):
         ''' Evaluate the fraction when variable = x '''
@@ -509,7 +527,9 @@ class Sum(Algebra):
             else:
                 return ' + ' + a_str(a)
 
-        listify = lambda a: list(a) if isinstance(a, Sum) else [a]
+        listify = lambda a: a if isinstance(a, Sum) else [a]
+
+        #print type(list(self[1:]))
 
         return str(self[0]) + ''.join(map(sf, listify(self[1:])))
 
@@ -564,8 +584,8 @@ class Sum(Algebra):
 class Power(Algebra):
     ''' A class representing a to the power b. '''
     def __init__(self, a, b):
-        self.__a = a
-        self.__b = b
+        self.__a = ht(a)
+        self.__b = ht(b)
 
     def __call__(self, x, variable=None):
         ev = partial(evaluate, variable=variable, x=x)
@@ -604,7 +624,9 @@ class Power(Algebra):
 
     def partial_integral(self, x):
         ''' Return the partial integral with respect to x. '''
-        if is_poly(self):
+        if 1 == self.a().order() and -1 == self.b():
+            return Ln(self.a())
+        elif is_poly(self):
             return ( ht(1) / (self.b() + ht(1)) )\
                 * self.a() ** (self.b() + ht(1))
         else:
@@ -633,6 +655,13 @@ class Function(Algebra):
         ''' A string representation of the function '''
         return self.__name + '(' + str(self.__argument) + ')'
 
+    def __eq__(self, other):
+        if isinstance(other, Function):
+            return isinstance(other, self.__class__) \
+                and self.x() == other.x()
+        else:
+            return NotImplemented
+
 class Ln(Function):
     ''' A class representing the natural logarithm of an algebraic
     expression '''
@@ -647,6 +676,10 @@ class Sin(Function):
         from cas.numeric import Integer
         Function.__init__(self, 'sin', argument, action=lambda x: dmath.sin(x)
             if isinstance(x, (Decimal, Integer)) else math.sin(x))
+            
+    def partial_integral(self, x):
+        assert x == self.x()
+        return -Cos(self.x())
 
 class Cos(Function):
     ''' A class representing the cosine of an algebraic expression '''
@@ -654,6 +687,10 @@ class Cos(Function):
         from cas.numeric import Integer
         Function.__init__(self, 'cos', argument, action=lambda x: dmath.cos(x)
             if isinstance(x, (Decimal, Integer)) else math.cos(x))
+
+    def partial_integral(self, x):
+        assert x == self.x()
+        return Sin(self.x())
 
 class Tan(Function):
     ''' A class representing the tangent of an algebraic expression '''

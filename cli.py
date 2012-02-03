@@ -56,6 +56,6 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             # Handle Ctrl+C (cancel command)
             print('Command cancelled.')
-        except:
+        #except:
             # Handle generic errors
-            print('Invalid operation!')
+        #    print('Invalid operation!')

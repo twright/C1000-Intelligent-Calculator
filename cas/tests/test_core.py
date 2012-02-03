@@ -8,6 +8,7 @@ from decimal import Decimal
 
 from cas.core import *
 from cas.numeric import Integer
+from cas.core import handle_type as ht
 
 
 class TestHandleType():
@@ -37,7 +38,9 @@ class TestExpand():
         data = [[self.x*(1 + self.x), 'x^2 + x'],
             [(self.x + 1)*self.x, 'x^2 + x'],
             [(self.x + 1)*(self.x - 1), 'x^2 - 1'],
-            [Sin(self.x)*(1 + Sin(self.x)), 'sin(x) + sin(x)^2']]
+            [Sin(self.x)*(1 + Sin(self.x)), 'sin(x) + sin(x)^2'],
+            [self.x*self.x*self.x, 'x^3'],
+            [Sin(self.x)*Sin(self.x)*Sin(self.x), 'sin(x)^3']]
         for y, s in data:
             assert str(expand(y)) == s
 
@@ -84,9 +87,16 @@ class TestPartialDifferential():
             assert str(partial_differential(y, self.x)) == s
 
     def test_rules(self):
-        # TODO: Add product rule and quotient rule
-        data = [[(self.x**2 + 3)**(1/2), 'x(x^2 + 3)^(-1/2)']]
+        data = [[(self.x**2 + 3)**(ht(1)/ht(2)), 'x(x^2 + 3)^(-1/2)']]
         for y, s in data:
+            print y, partial_differential(y, self.x), s
+            assert str(partial_differential(y, self.x)) == s
+
+    def test_products(self):
+        data = [[self.x * Cos(self.x) * Sin(self.x),
+            '-xsin(x)sin(x) + xcos(x)^2 + cos(x)sin(x)']]
+        for y, s in data:
+            print y, partial_differential(y, self.x), s
             assert str(partial_differential(y, self.x)) == s
 
 
@@ -205,6 +215,14 @@ class TestProduct():
         print(list((2*s + (self.x + 3)*s)[0]))
         assert str(2*s + (self.x + 3)*s) == '(x + 5)sin(x)'
 
+
+class TestFunctions(object):
+
+    def setup_class(self):
+        self.x = Symbol('x')
+
+    def test_equality(self):
+        assert Sin(self.x) == Sin(self.x)
 
 # TODO: Insert tests for Functions, Sums, Powers and Fractions here.
 

@@ -30,6 +30,11 @@ class TestMatrix():
         with py.test.raises(ValueError): Matrix(0,2)
         with py.test.raises(ValueError): Matrix([1,2],[3,4])
 
+    def test_order(self):
+        assert Matrix([[1,2,3],[4,5,6]]).order() == (2,3)
+        assert Matrix([[1,2],[3,4],[5,6]]).order() == (3,2)
+        assert Matrix([[1,2],[3,4]]).order() == (2,2)
+
     def test_equality(self):
         assert Matrix([[1,2],[3,4]]) == Matrix([[1,2],[3,4]])
         assert Matrix([[1,2],[3,4]]) != Matrix([[1,2],[4,3]])
