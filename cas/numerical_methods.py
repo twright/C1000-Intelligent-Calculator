@@ -22,7 +22,7 @@ def pi(n=None):
         getcontext().prec += 5
         f = lambda k: factorial(6*k)*D(13591409 + 545140134*k)\
             / (factorial(3*k)*factorial(k)**3*D(-640320)**(3*k))
-        return 426880*D(10005)**D('0.5') / sum([f(k) for k in range (100)])
+        return 426880*D(10005)**D('0.5') / sum(f(k) for k in range (100))
 
 def to_fraction(x, places=10):
     ''' Convert the decimal x to a fraction, a / b'''
@@ -67,8 +67,8 @@ def simpson38_composite_integral(f,a,b,m=100):
     h = (b-a)/m
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
-    return (3*h/8)*(sum(3*fx(n-2) + 3*fx(n-1) + 2*fx(n) for n in range(3,m,3))
-        + fx(m))
+    return (3*h/8)*(fx(0) + sum(3*fx(n-2) + 3*fx(n-1) + 2*fx(n) for n in range(3,m,3))
+        + 3*fx(m-2) + 3*fx(m-1) + fx(m))
 
 def boole_composite_integral(f,a,b,m=100):
     ''' Order 4 Newton-Cotes approximation over m strips. '''
@@ -76,9 +76,8 @@ def boole_composite_integral(f,a,b,m=100):
     h = (b-a)/m
     x = lambda k: a + k*h
     fx = lambda n: f(x(n))
-    return (2*h/45)\
-        * sum(7*fx(n-4) + 32*fx(n-3) + 12*fx(n-2) + 32*fx(n-1) + 7*fx(n)
-        for n in range(4,m,5))
+    return (2*h/45)*sum(7*fx(n-4) + 32*fx(n-3) + 12*fx(n-2) + 32*fx(n-1)
+        + 7*fx(n) for n in range(4,m+1,4))
 
 def romberg_integral(f,a,b,n=7,m=7):
     ''' A recursive implementation of Romberg's method of integration.

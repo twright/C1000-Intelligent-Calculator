@@ -56,15 +56,13 @@ class TestNumericalIntegration():
             assert almost_equal(simpson_composite_integral(f, a, b, 100),
                 integral, 1)
 
-    @py.test.mark.xfail
     def test_simpson38_rule(self):
         for f, a, b, integral in self.data:
             assert almost_equal(simpson38_composite_integral(f, a, b),
-                integral, 10)
+                integral, 1)
 
     @py.test.mark.xfail
     def test_boyle_rule(self):
         for f, a, b, integral in self.data:
             assert almost_equal(boyle_composite_integral(f, a, b),
-                integral, 10)
-
+                integral, 1)

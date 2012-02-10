@@ -213,8 +213,12 @@ class Algebra (object):
         return self.numerical_integral(nm.trapezoidal_composite_integral, *a)
 
     def simpson_integral(self, *a):
-        ''' Numerically integrate via the trapezium rule '''
+        ''' Numerically integrate via simpson's rule '''
         return self.numerical_integral(nm.simpson_composite_integral, *a)
+
+    def simpson38_integral(self, *a):
+        ''' Numerically integrate via simpson's 3/8 rule '''
+        return self.numerical_integral(nm.simpson38_composite_integral, *a)
 
     def romberg_integral(self, *a):
         ''' Numerically integrate using Romberg's method (this is the most

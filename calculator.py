@@ -149,6 +149,7 @@ class Calculator(object):
             'trapeziumrule': lambda f, a, b, *n:\
                 f.trapezoidal_integral(a, b, *n),
             'simpsonrule': lambda f, a, b, *n: f.simpson_integral(a, b, *n),
+            'simpsonthreeeightrule': lambda f, a, b, *n: f.simpson38_integral(a, b, *n),
             'roots': lambda a, n=1000: List(*list(a.roots(n))),
             'maxima': lambda a, n=100: List(*a.maxima(n)),
             'minima': lambda a, n=100: List(*a.minima(n)),
@@ -162,7 +163,7 @@ class Calculator(object):
             'diag': diagonal_matrix,
             'inv': lambda a: a.inverse(),
             'invert': lambda a: a.inverse(),
-            'decompose': lambda a: a.LU_decomposition(),
+            'decompose': lambda a: List(*a.LU_decomposition()),
             'trace': lambda a: a.trace(),
             'poly': lambda a: a.characteristic_polynomial(),
             'adj': lambda a: a.adjgate(),
@@ -170,6 +171,7 @@ class Calculator(object):
             'minor': lambda a, b, c: a.minor(b, c),
             'det': lambda a: a.determinant(),
             'eigenvalues': lambda a: List(*a.eigenvalues()),
+            'rank': lambda a: a.rank(),
         # Complex Numbers
             're': lambda a: a.real,
             'im': lambda a: a.imag,

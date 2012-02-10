@@ -128,15 +128,12 @@ class Matrix(Algebra):
     def __delitem__(self, i):
         del self.__values[i]
 
-    def minor(self, i, j):
-        ''' Return a matrix after removing one col and rowumn '''
-        r = self.transpose()
-        del r[j]
-        r.__rows -= 1
-        r = r.transpose()
-        del r[i]
-        r.__rows -= 1
-        return r
+    # TODO: Fix this stuff
+    def minor(self, b, a):
+        ''' Return a matrix after removing one col and row '''
+        I, J = self.order()
+        return Matrix([[self[j][i] for i in range(I) if i != a]
+            for j in range(J) if j != b])
 
     def determinant(self, row=0):
         ''' The determinant of a 1*1 matrix is trivial and those for square
@@ -174,17 +171,15 @@ class Matrix(Algebra):
         ''' Implement multiplication by Matrices or scalars '''
         if isinstance(other, Matrix):
             if self.__cols == other.__rows:
-                # If A = (𝛂ij)[l·m] and B = (𝛃ij)[m·n]
-                # then AB is defined as the matrix C = (𝛄ij)[l·m]
-                # such that 𝛄ij = 𝛂i1𝛃1j + 𝛂i2𝛃2j + ... + 𝛂im𝛃mj
+                # If A = (αij)[l·m] and B = (αij)[m·n]
+                # then AB is defined as the matrix C = (ij)[l·m]
+                # such that αij = αi1α1j + αi2α2j + ... + αimαmj
                 # For obvious reasons, this algorithm's complexity should 
                 # increase at around O(n^3)
-                r = Matrix(self.__rows, other.__cols)
-                for i in range(self.__rows):
-                    for j in range(other.__cols):
-                        for k in range(len(self.row(i))):
-                            r[i][j] += self.row(i)[k] * other.col(j)[k]
-                return r
+                return Matrix([[sum(self.row(i)[k] * other.col(j)[k]
+                    for k in range(self.__cols))
+                    for j in range(other.__cols)]
+                    for i in range(self.__rows)])
             else:
                 return NotImplemented
         else:
@@ -236,6 +231,17 @@ class Matrix(Algebra):
                 U._scale_add_rows(j, i, -scale)
 
         return Product(L, U)
+
+    def rank(self):
+        ''' Return the rank of the matrix (considering the equality of the row
+        and column rank) '''
+        # Currently based on the largest minor; this is not optimally
+        # performant
+        I, J = self.order()
+        zero_matrix = Matrix(I, J)
+        return max(self.minor(i, j).order()
+            for i in range(I) for j in range(J)
+            if self.minor(i, j) != zero_matrix)[0]
 
     def characteristic_polynomial(self):
         ''' The polynomial equations whose roots represent the eigenvalues
