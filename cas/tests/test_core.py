@@ -33,6 +33,8 @@ class TestExpand():
 
     def setup_class(self):
         self.x = Symbol('x')
+        self.y = Symbol('y')
+        self.z = Symbol('z')
 
     def test_products(self):
         data = [[self.x*(1 + self.x), 'x^2 + x'],
@@ -40,7 +42,8 @@ class TestExpand():
             [(self.x + 1)*(self.x - 1), 'x^2 - 1'],
             [Sin(self.x)*(1 + Sin(self.x)), 'sin(x) + sin(x)^2'],
             [self.x*self.x*self.x, 'x^3'],
-            [Sin(self.x)*Sin(self.x)*Sin(self.x), 'sin(x)^3']]
+            [Sin(self.x)*Sin(self.x)*Sin(self.x), 'sin(x)^3'],
+            [(self.x/self.y + self.z)*self.y, 'yz + x']]
         for y, s in data:
             assert str(expand(y)) == s
 

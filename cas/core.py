@@ -5,6 +5,21 @@ System representing simple objects such as Symbol, Products, Sums and Fractions
 whilst providing functions to allocate types. '''
 from __future__ import division, unicode_literals
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
+# Copyright 2012 Thomas Wright <tom.tdw@gmail.com>
+# This file is part of C1000 Intelligent Calculator.
+#
+# C1000 Intelligent Calculator is free software: you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the License,
+# or (at your option) any later version.
+#
+# C1000 Intelligent Calculator is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# C1000 Intelligent Calculator.  If not, see <http://www.gnu.org/licenses/>.
 
 # Standard modules
 import math
@@ -299,31 +314,31 @@ def dedup(f, xs, identity):
         element within the list. If f is called with this not being the case,
         it will infinitely recurse. '''
         I = isinstance
-        if I(a, Number) and I(b, Number):
-            return True
-        elif I(a, Product) and a == b:
-            return True
-        elif I(a, Symbol) and I(b, Symbol) and a == b:
-            return True
-        elif I(a, Product) and I(b, (Symbol,Power)) and len(a) == 2 and a[1] == b:
-            return True
-        elif I(a, Product) and I(b, Product) and len(a) == len(b) == 2\
-            and a[1] == b[1]:
-            return True
-        elif identity == 1 and I(a, Power) and I(b, Power) and a.a() == b.a():
-            return True
-        else:
-            return False
+        return (I(a, Number) and I(b, Number)
+            or I(a, Product) and a == b
+            or I(a, Symbol) and I(b, Symbol) and a == b
+            or I(a, Product) and I(b, (Symbol,Power)) and len(a) == 2 and a[1] == b
+            or I(a, Product) and I(b, Product) and len(a) == len(b) == 2\
+            and a[1] == b[1]
+            or I(a, Fraction) and b == a.denominator()
+            or I(b, Fraction) and a == b.denominator()
+            or identity == 1 and I(a, Power) and I(b, Power) and a.a() == b.a())
 
-    i = 1; prev = xs[0]
-    while i < len(xs):
-        if can_simplify(prev, xs[i]):
-            prev = f(prev, xs[i])
-        else:
-            if prev != identity: yield prev
-            prev = xs[i]
-        i += 1
-    if prev != identity or len(xs) == 1: yield prev
+    if len(xs) == 0:
+        yield identity
+    elif len(xs) == 1:
+        yield xs[0]
+    else:
+        i = 1; prev = xs[0]
+        while i < len(xs):
+            if can_simplify(prev, xs[i]):
+                prev = f(prev, xs[i])
+            else:
+                if prev != identity: yield prev
+                prev = xs[i]
+            i += 1
+        if prev != identity:
+            yield prev
 
 
 class Product(Algebra):
@@ -424,6 +439,18 @@ class Fraction(Algebra):
     ''' A class representing a fraction. '''
     def __init__(self, a, b):
         self.__numerator, self.__denominator = ht(a), ht(b)
+
+    def __mul__(self, other):
+        from matrices import Matrix
+        from vectors import Vector
+        if other == self.denominator():
+            return self.numerator()
+        elif isinstance(other, (Matrix, Vector)):
+            return super.__mul__(self, other)
+        else:
+            return Fraction(self.numerator()*other,
+                self.denominator())
+    __rmul__ = __mul__
 
     def numerator(self):
         return self.__numerator

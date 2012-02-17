@@ -3,11 +3,27 @@
 ''' A module containing code relating to Matrices. '''
 from __future__ import division
 __author__ = 'Tom Wright <tom.tdw@gmail.com>'
+# Copyright 2012 Thomas Wright <tom.tdw@gmail.com>
+# This file is part of C1000 Intelligent Calculator.
+#
+# C1000 Intelligent Calculator is free software: you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the License,
+# or (at your option) any later version.
+#
+# C1000 Intelligent Calculator is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# C1000 Intelligent Calculator.  If not, see <http://www.gnu.org/licenses/>.
 
 # Standard modules
 from functools import reduce
 from copy import deepcopy
 from decimal import Decimal
+from operator import mul
 
 # Project modules
 from cas.core import Algebra, Product, Symbol, expand
@@ -138,15 +154,20 @@ class Matrix(Algebra):
     def determinant(self, row=0):
         ''' The determinant of a 1*1 matrix is trivial and those for square
         matrices can be derived recursively from it. '''
-        if self.__rows == self.__cols == 1:
-            return self[0][0]
-        elif self.__rows == self.__cols:
-            ans = Integer(0)
-            i = row;
-            for j in range(self.__cols):
-                ans += Integer(-1) ** j * self.__values[i][j]\
-                    * self.minor(i,j).determinant()
-            return ans
+        if self.__rows == self.__cols:
+            L, U = self.LU_decomposition()
+            print L, U
+            return reduce(mul, [U[i][i] for i in range(self.__rows)],
+                Integer(1))
+        # if self.__rows == self.__cols == 1:
+        #     return self[0][0]
+        # elif self.__rows == self.__cols:
+        #     ans = Integer(0)
+        #     i = row;
+        #     for j in range(self.__cols):
+        #         ans += Integer(-1) ** j * self.__values[i][j]\
+        #             * self.minor(i,j).determinant()
+        #     return ans
         else:
             raise ValueError('This matrix is not square')
 
@@ -221,7 +242,7 @@ class Matrix(Algebra):
     def LU_decomposition(self):
         ''' Split a square matrix into an upper and lower triangle matrix '''
         n = self.order()[0]
-        L = identity_matrix(n); U = deepcopy(self)
+        L = identity_matrix(n); U = Matrix(self.__values)
 
         # Perform Gaussian elimination to find L and U
         for j in range(n):
